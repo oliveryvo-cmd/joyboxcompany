@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Order a Box — Joy Box Company</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--red:#e63030;--navy:#1a2744;--blue:#3a6fd8;--lightblue:#d6e4f7;--white:#ffffff;--silver:#6b7a99;}
+body{background:linear-gradient(160deg,var(--lightblue) 0%,var(--white) 60%);min-height:100vh;font-family:'Nunito',sans-serif;padding:40px 20px;}
+
+nav{max-width:640px;margin:0 auto 48px;display:flex;align-items:center;}
+nav a{font-weight:800;color:var(--navy);text-decoration:none;font-size:14px;letter-spacing:1px;}
+nav a:hover{color:var(--red);}
+
+.card{background:var(--white);border-radius:24px;padding:48px;max-width:640px;margin:0 auto;box-shadow:0 20px 60px rgba(26,39,68,0.12);}
+.emoji{font-size:56px;margin-bottom:16px;}
+h1{font-family:'Fredoka One',sans-serif;font-size:36px;color:var(--navy);margin-bottom:8px;}
+h1 span{color:var(--red);}
+.sub{color:var(--silver);font-size:15px;line-height:1.7;margin-bottom:36px;}
+
+.box-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px;}
+.box-opt{border:2px solid var(--lightblue);border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;}
+.box-opt:hover{border-color:var(--blue);}
+.box-opt.selected{border-color:var(--red);background:rgba(230,48,48,0.05);}
+.box-opt-icon{font-size:28px;margin-bottom:6px;}
+.box-opt-name{font-weight:900;font-size:14px;color:var(--navy);}
+.box-opt-price{font-family:'Fredoka One',sans-serif;font-size:20px;color:var(--red);}
+
+label{display:block;font-weight:800;font-size:13px;letter-spacing:1px;color:var(--navy);margin-bottom:6px;margin-top:20px;}
+input,textarea,select{width:100%;padding:14px 18px;border:2px solid var(--lightblue);border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:var(--navy);outline:none;transition:border .2s;background:var(--white);}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);}
+input::placeholder,textarea::placeholder{color:#b0bec5;font-weight:600;}
+textarea{resize:vertical;min-height:100px;}
+
+.btn{width:100%;padding:18px;background:var(--red);color:var(--white);border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;cursor:pointer;transition:all .2s;letter-spacing:1px;margin-top:28px;}
+.btn:hover{background:#ff4d4d;transform:translateY(-2px);}
+
+.success{display:none;background:#e8f5e9;border:2px solid #66bb6a;border-radius:16px;padding:28px;margin-top:24px;text-align:center;}
+.success h2{color:#2e7d32;font-size:24px;margin-bottom:8px;}
+.success p{color:#388e3c;font-size:15px;line-height:1.7;}
+
+.note{font-size:13px;color:var(--silver);text-align:center;margin-top:16px;line-height:1.6;}
+
+@media(max-width:500px){.box-picker{grid-template-columns:repeat(2,1fr);}  .card{padding:28px 20px;}}
+</style>
+</head>
+<body>
+
+<nav><a href="index.html">← Back to Joy Box Company</a></nav>
+
+<div class="card">
+  <div class="emoji">🎁</div>
+  <h1>Order a <span>Joy Box.</span></h1>
+  <p class="sub">Pick a box size, fill in the details, and we'll pack it with surprise toys and a handwritten note just for the kid.</p>
+
+  <div class="box-picker">
+    <div class="box-opt" onclick="selectBox(this,'Mini','$5')">
+      <div class="box-opt-icon">🌱</div>
+      <div class="box-opt-name">Mini</div>
+      <div class="box-opt-price">$5</div>
+    </div>
+    <div class="box-opt" onclick="selectBox(this,'Spark','$15')">
+      <div class="box-opt-icon">✦</div>
+      <div class="box-opt-name">Spark</div>
+      <div class="box-opt-price">$15</div>
+    </div>
+    <div class="box-opt" onclick="selectBox(this,'Blaze','$30')">
+      <div class="box-opt-icon">🔥</div>
+      <div class="box-opt-name">Blaze</div>
+      <div class="box-opt-price">$30</div>
+    </div>
+    <div class="box-opt" onclick="selectBox(this,'Inferno','$50')">
+      <div class="box-opt-icon">⚡</div>
+      <div class="box-opt-name">Inferno</div>
+      <div class="box-opt-price">$50</div>
+    </div>
+    <div class="box-opt" onclick="selectBox(this,'Legend','$100')">
+      <div class="box-opt-icon">👑</div>
+      <div class="box-opt-name">Legend</div>
+      <div class="box-opt-price">$100</div>
+    </div>
+    <div class="box-opt" onclick="selectBox(this,'Ultimate','$200')">
+      <div class="box-opt-icon">🔱</div>
+      <div class="box-opt-name">Ultimate</div>
+      <div class="box-opt-price">$200</div>
+    </div>
+  </div>
+
+  <label>YOUR NAME</label>
+  <input type="text" id="sender-name" placeholder="Your name">
+
+  <label>YOUR EMAIL</label>
+  <input type="email" id="sender-email" placeholder="your@email.com">
+
+  <label>KID'S NAME</label>
+  <input type="text" id="kid-name" placeholder="Who is this box for?">
+
+  <label>KID'S AGE</label>
+  <input type="number" id="kid-age" placeholder="How old are they?" min="1" max="18">
+
+  <label>DELIVERY ADDRESS</label>
+  <input type="text" id="address" placeholder="Street address, city, state, zip">
+
+  <label>ANYTHING WE SHOULD KNOW ABOUT THE KID?</label>
+  <textarea id="notes" placeholder="Favorite colors, interests, allergies, anything — totally optional"></textarea>
+
+  <button class="btn" onclick="submitOrder()">🎁 PLACE ORDER</button>
+  <p class="note">We'll email you to confirm payment after reviewing your order.<br>Every box is packed by hand with love. 💛</p>
+
+  <div class="success" id="success">
+    <h2>🎉 Order Received!</h2>
+    <p>We got your order and will email you at <strong id="confirm-email"></strong> soon to confirm payment and delivery details. Thank you for spreading joy! 💛</p>
+  </div>
+</div>
+
+<script>
+let selectedBox = '';
+
+function selectBox(el, name, price) {
+  document.querySelectorAll('.box-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedBox = name + ' ' + price;
+}
+
+function submitOrder() {
+  const name = document.getElementById('sender-name').value.trim();
+  const email = document.getElementById('sender-email').value.trim();
+  const kid = document.getElementById('kid-name').value.trim();
+  const age = document.getElementById('kid-age').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+
+  if (!selectedBox || !name || !email || !kid || !address) {
+    alert('Please fill in all required fields and pick a box!');
+    return;
+  }
+
+  const subject = encodeURIComponent('Joy Box Order — ' + selectedBox);
+  const body = encodeURIComponent(
+    'Box: ' + selectedBox + '\n' +
+    'From: ' + name + '\n' +
+    'Email: ' + email + '\n' +
+    "Kid's name: " + kid + '\n' +
+    "Kid's age: " + age + '\n' +
+    'Address: ' + address + '\n' +
+    'Notes: ' + (notes || 'None')
+  );
+
+  window.location.href = 'mailto:truongnvo@gmail.com?subject=' + subject + '&body=' + body;
+
+  document.getElementById('confirm-email').textContent = email;
+  document.getElementById('success').style.display = 'block';
+}
+</script>
+</body>
+</html>
