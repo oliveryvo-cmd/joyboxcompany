@@ -233,8 +233,8 @@ footer{background:var(--dark);padding:60px 48px 40px;}
       <div class="stat-label">BIKE DELIVERY · LADERA RANCH</div>
     </div>
     <div>
-      <span class="stat-num">💛</span>
-      <div class="stat-label">EVERY NOTE HANDWRITTEN</div>
+      <span class="stat-num" id="member-count">...</span>
+      <div class="stat-label">MEMBERS JOINED</div>
     </div>
   </div>
 </div>
@@ -481,5 +481,29 @@ footer{background:var(--dark);padding:60px 48px 40px;}
   </div>
 </footer>
 
+<script>
+const SUPABASE_URL = 'https://qbzpyhsbrjagyqsruzcb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs';
+
+async function loadMemberCount() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/members?select=id`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'count=exact',
+        'Range': '0-0'
+      }
+    });
+    const range = res.headers.get('content-range');
+    const count = range ? range.split('/')[1] : '0';
+    document.getElementById('member-count').textContent = Number(count).toLocaleString();
+  } catch(e) {
+    document.getElementById('member-count').textContent = '0';
+  }
+}
+
+loadMemberCount();
+</script>
 </body>
 </html>

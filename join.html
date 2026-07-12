@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Join the Crew — Joy Box Company</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--red:#e63030;--navy:#1a2744;--blue:#3a6fd8;--lightblue:#d6e4f7;--white:#ffffff;--silver:#6b7a99;}
+body{background:linear-gradient(160deg,var(--lightblue) 0%,var(--white) 60%);min-height:100vh;font-family:'Nunito',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
+
+nav{width:100%;max-width:600px;margin-bottom:48px;display:flex;align-items:center;gap:12px;}
+nav a{font-weight:800;color:var(--navy);text-decoration:none;font-size:14px;letter-spacing:1px;}
+nav a:hover{color:var(--red);}
+nav span{color:var(--silver);}
+
+.card{background:var(--white);border-radius:24px;padding:48px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(26,39,68,0.12);text-align:center;}
+.emoji{font-size:64px;margin-bottom:16px;}
+h1{font-family:'Fredoka One',sans-serif;font-size:36px;color:var(--navy);margin-bottom:8px;}
+h1 span{color:var(--red);}
+.sub{color:var(--silver);font-size:15px;line-height:1.7;margin-bottom:32px;}
+
+.count-box{background:var(--navy);border-radius:16px;padding:20px;margin-bottom:32px;}
+.count-num{font-family:'Fredoka One',sans-serif;font-size:48px;color:var(--red);display:block;}
+.count-label{font-size:11px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-top:4px;}
+
+input{width:100%;padding:16px 20px;border:2px solid var(--lightblue);border-radius:12px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:var(--navy);outline:none;margin-bottom:12px;transition:border .2s;}
+input:focus{border-color:var(--blue);}
+input::placeholder{color:#b0bec5;font-weight:600;}
+
+.btn{width:100%;padding:18px;background:var(--red);color:var(--white);border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;cursor:pointer;transition:all .2s;letter-spacing:1px;}
+.btn:hover{background:#ff4d4d;transform:translateY(-2px);}
+.btn:disabled{background:#ccc;transform:none;cursor:not-allowed;}
+
+.success{display:none;background:#e8f5e9;border:2px solid #66bb6a;border-radius:16px;padding:24px;margin-top:24px;}
+.success h2{color:#2e7d32;font-size:22px;margin-bottom:8px;}
+.success p{color:#388e3c;font-size:14px;}
+
+.error-msg{color:var(--red);font-size:13px;margin-top:8px;display:none;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html">← Back to Joy Box Company</a>
+</nav>
+
+<div class="card">
+  <div class="emoji">🚲</div>
+  <h1>Join the <span>Crew.</span></h1>
+  <p class="sub">Sign up to support Joy Box Company and help us spread joy to disabled kids. You'll be part of something real.</p>
+
+  <div class="count-box">
+    <span class="count-num" id="member-count">...</span>
+    <div class="count-label">CREW MEMBERS SO FAR</div>
+  </div>
+
+  <input type="text" id="name" placeholder="Your name" autocomplete="off">
+  <input type="email" id="email" placeholder="Your email">
+  <div class="error-msg" id="error-msg">Please fill in both fields.</div>
+  <button class="btn" id="join-btn" onclick="joinCrew()">🚲 JOIN THE CREW</button>
+
+  <div class="success" id="success">
+    <h2>🎉 You're in!</h2>
+    <p>Welcome to the Joy Box Crew! You're now part of something that's helping disabled kids feel joy.</p>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://qbzpyhsbrjagyqsruzcb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs';
+
+async function loadCount() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/members?select=id`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'count=exact',
+        'Range': '0-0'
+      }
+    });
+    const range = res.headers.get('content-range');
+    const count = range ? range.split('/')[1] : '0';
+    document.getElementById('member-count').textContent = Number(count).toLocaleString();
+  } catch(e) {
+    document.getElementById('member-count').textContent = '0';
+  }
+}
+
+async function joinCrew() {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const errMsg = document.getElementById('error-msg');
+
+  if (!name || !email) {
+    errMsg.style.display = 'block';
+    return;
+  }
+  errMsg.style.display = 'none';
+
+  const btn = document.getElementById('join-btn');
+  btn.disabled = true;
+  btn.textContent = 'Joining...';
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/members`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ name, email })
+    });
+
+    if (res.ok || res.status === 201) {
+      document.getElementById('success').style.display = 'block';
+      btn.textContent = '✅ JOINED!';
+      loadCount();
+    } else {
+      btn.disabled = false;
+      btn.textContent = '🚲 JOIN THE CREW';
+      errMsg.textContent = 'Something went wrong. Try again!';
+      errMsg.style.display = 'block';
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '🚲 JOIN THE CREW';
+  }
+}
+
+loadCount();
+</script>
+</body>
+</html>
