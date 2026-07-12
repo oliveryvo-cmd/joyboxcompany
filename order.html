@@ -124,7 +124,7 @@ function selectBox(el, name, price) {
   selectedBox = name + ' ' + price;
 }
 
-function submitOrder() {
+async function submitOrder() {
   const name = document.getElementById('sender-name').value.trim();
   const email = document.getElementById('sender-email').value.trim();
   const kid = document.getElementById('kid-name').value.trim();
@@ -148,10 +148,37 @@ function submitOrder() {
     'Notes: ' + (notes || 'None')
   );
 
-  window.location.href = 'mailto:truongnvo@gmail.com?subject=' + subject + '&body=' + body;
+  const btn = document.querySelector('.btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
 
-  document.getElementById('confirm-email').textContent = email;
-  document.getElementById('success').style.display = 'block';
+  try {
+    const res = await fetch('https://qbzpyhsbrjagyqsruzcb.supabase.co/rest/v1/orders', {
+      method: 'POST',
+      headers: {
+        'apikey': 'sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs',
+        'Authorization': 'Bearer sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs',
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ box: selectedBox, sender_name: name, sender_email: email, kid_name: kid, kid_age: age, address, notes })
+    });
+
+    if (res.ok || res.status === 201) {
+      window.location.href = 'mailto:truongnvo@gmail.com?subject=' + subject + '&body=' + body;
+      document.getElementById('confirm-email').textContent = email;
+      document.getElementById('success').style.display = 'block';
+      btn.textContent = '✅ ORDER PLACED!';
+    } else {
+      btn.disabled = false;
+      btn.textContent = '🎁 PLACE ORDER';
+      alert('Something went wrong. Try again!');
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '🎁 PLACE ORDER';
+    alert('Something went wrong. Try again!');
+  }
 }
 </script>
 </body>
