@@ -144,7 +144,7 @@ async function loadOrders() {
 
   list.innerHTML = orders.map(o => `
     <div class="order-row">
-      <div class="cell">${o.sender_name || '—'}<br><span class="muted">${o.sender_email || ''}</span></div>
+      <div class="cell">${o.sender_name || '—'}<br><span class="muted">#JBC-${String(o.order_number).padStart(4,'0')} · ${o.sender_email || ''}</span></div>
       <div class="cell">${o.kid_name || '—'}<br><span class="muted">Age ${o.kid_age || '?'}</span></div>
       <div class="cell"><span class="box-badge">${o.box || '—'}</span></div>
       <div class="cell muted">${o.address || '—'}</div>

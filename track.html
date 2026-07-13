@@ -70,7 +70,10 @@ input::placeholder{color:#b0bec5;font-weight:600;}
 <div class="result-card" id="result-card">
   <div class="result-top">
     <div class="result-box">Your <span id="result-box-name">Joy Box</span></div>
-    <div class="result-date" id="result-date"></div>
+    <div>
+      <div class="result-date" id="result-order-num" style="color:var(--red);font-size:13px;font-weight:900;margin-bottom:4px;"></div>
+      <div class="result-date" id="result-date"></div>
+    </div>
   </div>
 
   <div class="steps">
@@ -116,7 +119,7 @@ async function trackOrder() {
   notFound.style.display = 'none';
   document.getElementById('result-card').style.display = 'none';
 
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/orders?sender_email=eq.${encodeURIComponent(email)}&order=created_at.desc&limit=1`, {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/orders?sender_email=eq.${encodeURIComponent(email)}&order=created_at.desc&limit=1&select=*,order_number`, {
     headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
   });
   const orders = await res.json();
@@ -127,6 +130,7 @@ async function trackOrder() {
   const step = statusSteps[o.status] ?? 0;
 
   document.getElementById('result-box-name').textContent = o.box || 'Joy Box';
+  document.getElementById('result-order-num').textContent = 'Order #JBC-' + String(o.order_number).padStart(4,'0');
   document.getElementById('result-date').textContent = new Date(o.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   document.getElementById('result-kid-name').textContent = o.kid_name || '—';
   document.getElementById('result-sender-name').textContent = o.sender_name || '—';
