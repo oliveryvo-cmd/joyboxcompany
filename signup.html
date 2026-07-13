@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sign Up Sheet — Joy Box Company</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap');
+
+@media screen {
+  body{background:#f0f4ff;display:flex;flex-direction:column;align-items:center;padding:40px 20px;font-family:'Nunito',sans-serif;}
+  .print-btn{background:#e63030;color:#fff;border:none;padding:14px 48px;font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;border-radius:100px;cursor:pointer;margin-bottom:24px;letter-spacing:1px;}
+  .print-btn:hover{background:#ff4d4d;}
+  .page{box-shadow:0 8px 40px rgba(0,0,0,0.15);}
+}
+
+@media print {
+  body{margin:0;padding:0;background:#fff;}
+  .print-btn{display:none;}
+  .page{box-shadow:none;margin:0;}
+  @page{margin:0.5in;size:letter;}
+}
+
+.page{
+  width:7.5in;
+  max-width:100%;
+  background:#fff;
+  padding:0.4in 0.5in;
+  font-family:'Nunito',sans-serif;
+  color:#1a2744;
+}
+
+.header{text-align:center;margin-bottom:24px;border-bottom:4px solid #e63030;padding-bottom:20px;}
+.header h1{font-family:'Fredoka One',sans-serif;font-size:42px;color:#1a2744;margin-bottom:4px;}
+.header h1 span{color:#e63030;}
+.header p{font-size:14px;color:#6b7a99;font-weight:700;letter-spacing:1px;}
+.tagline{font-size:16px;color:#e63030;font-weight:900;margin-top:8px;}
+
+.intro{background:#f0f4ff;border-left:4px solid #e63030;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:13px;line-height:1.7;color:#1a2744;}
+.intro strong{color:#e63030;}
+
+table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+thead tr{background:#1a2744;}
+thead th{color:#fff;padding:10px 12px;font-size:11px;font-weight:900;letter-spacing:2px;text-align:left;}
+tbody tr{border-bottom:1px solid #e8eef8;}
+tbody tr:nth-child(even){background:#f8faff;}
+tbody td{padding:0;height:36px;}
+tbody td input-line{display:block;width:100%;height:100%;border:none;background:transparent;}
+
+.col-num{width:40px;text-align:center;padding:10px 8px;font-weight:900;color:#6b7a99;font-size:13px;}
+.col-name{width:28%;}
+.col-email{width:32%;}
+.col-phone{width:22%;}
+.col-box{width:18%;}
+
+.footer{display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;padding-top:16px;border-top:2px solid #e8eef8;}
+.footer-left{font-size:11px;color:#6b7a99;line-height:1.8;}
+.footer-left strong{color:#1a2744;}
+.footer-right{text-align:right;font-size:11px;color:#6b7a99;}
+.website{font-family:'Fredoka One',sans-serif;font-size:18px;color:#e63030;}
+
+.boxes-ref{background:#fff8f0;border:2px solid #e63030;border-radius:8px;padding:10px 14px;margin-bottom:20px;display:flex;gap:24px;flex-wrap:wrap;}
+.boxes-ref span{font-size:12px;font-weight:800;color:#1a2744;}
+.boxes-ref span b{color:#e63030;}
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">🖨️ PRINT SIGN-UP SHEET</button>
+
+<div class="page">
+
+  <div class="header">
+    <h1>Joy Box <span>Company</span></h1>
+    <div class="tagline">Surprise Joy Boxes for Disabled Kids 🎁</div>
+    <p>CREW SIGN-UP SHEET · JOYBOXCOMPANY.COM</p>
+  </div>
+
+  <div class="intro">
+    <strong>What is Joy Box Company?</strong> We pack surprise boxes full of mystery toys and deliver them to disabled kids — completely by hand, with a handwritten note inside every single box. Sign up below to join the crew and get updates!
+  </div>
+
+  <div class="boxes-ref">
+    <span>😊 <b>Smile</b> — $1</span>
+    <span>😄 <b>Giggle</b> — $5</span>
+    <span>☀️ <b>Sunshine</b> — $10</span>
+    <span>🌈 <b>Rainbow</b> — $20</span>
+    <span style="color:#6b7a99;font-weight:700;">Order at joyboxcompany.com</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>FULL NAME</th>
+        <th>EMAIL ADDRESS</th>
+        <th>PHONE (optional)</th>
+        <th>FAVORITE BOX</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="col-num">1</td><td class="col-name"></td><td class="col-email"></td><td class="col-phone"></td><td class="col-box"></td></tr>
+      <tr><td class="col-num">2</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">3</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">4</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">5</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">6</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">7</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">8</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">9</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">10</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">11</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">12</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">13</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">14</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">15</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">16</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">17</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">18</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">19</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td class="col-num">20</td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <div class="footer-left">
+      <strong>Hand this sheet to:</strong> truongnvo@gmail.com<br>
+      or bring it to any Joy Box Company event.<br>
+      Every person who signs up gets added to the crew! 🚲
+    </div>
+    <div class="footer-right">
+      <div class="website">joyboxcompany.com</div>
+      <div>Surprise Joy Boxes for Disabled Kids 💛</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
