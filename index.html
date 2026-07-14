@@ -166,6 +166,16 @@ footer{background:var(--dark);padding:60px 48px 40px;}
 .footer-bottom p{font-size:11px;letter-spacing:2px;color:#333;}
 .footer-bottom span{color:var(--red);}
 
+/* HAMBURGER */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;}
+.hamburger span{display:block;width:24px;height:3px;background:var(--navy);border-radius:2px;transition:all .3s;}
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--white);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:32px;}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--navy);text-decoration:none;letter-spacing:1px;}
+.mobile-menu a:hover{color:var(--red);}
+.mobile-menu .nav-cta{background:var(--red);color:var(--white)!important;padding:16px 40px;border-radius:100px;}
+.mobile-close{font-size:32px;position:absolute;top:24px;right:28px;cursor:pointer;color:var(--navy);background:none;border:none;font-weight:900;}
+
 /* RESPONSIVE */
 @media(max-width:900px){
   .hero-content,.founder-grid,.inside-grid,.delivery-grid{grid-template-columns:1fr;}
@@ -173,10 +183,14 @@ footer{background:var(--dark);padding:60px 48px 40px;}
   .stats-grid{grid-template-columns:repeat(2,1fr);}
   .footer-grid{grid-template-columns:1fr;}
   nav,.hero,.section,.mission,.founder,.delivery-section,.footer-bottom{padding-left:20px;padding-right:20px;}
+  .nav-links{display:none;}
+  .hamburger{display:flex;}
 }
 @media(max-width:560px){
   .boxes-grid,.how-steps{grid-template-columns:1fr;}
   .stats-grid{grid-template-columns:1fr 1fr;}
+  .hero{padding:60px 20px;}
+  .hero-img{display:none;}
 }
 </style>
 </head>
@@ -198,7 +212,21 @@ footer{background:var(--dark);padding:60px 48px 40px;}
     <a href="track.html">📦 Track My Box</a>
     <a href="order.html" class="nav-cta">🎁 Order Now</a>
   </div>
+  <button class="hamburger" onclick="document.getElementById('mobile-menu').classList.add('open')">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-close" onclick="document.getElementById('mobile-menu').classList.remove('open')">✕</button>
+  <a href="#boxes" onclick="document.getElementById('mobile-menu').classList.remove('open')">The Boxes</a>
+  <a href="#how" onclick="document.getElementById('mobile-menu').classList.remove('open')">How It Works</a>
+  <a href="#mission" onclick="document.getElementById('mobile-menu').classList.remove('open')">Mission</a>
+  <a href="about.html">About</a>
+  <a href="join.html">🚲 Join the Crew</a>
+  <a href="track.html">📦 Track My Box</a>
+  <a href="order.html" class="nav-cta">🎁 Order Now</a>
+</div>
 
 <!-- HERO -->
 <div class="hero">
