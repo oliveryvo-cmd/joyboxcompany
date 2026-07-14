@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Boxy Jump — Joy Box Company</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#1a2744;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:'Nunito',sans-serif;overflow:hidden;}
+
+nav{position:fixed;top:0;left:0;right:0;padding:12px 24px;display:flex;align-items:center;z-index:10;}
+nav a{font-weight:900;color:rgba(255,255,255,0.4);text-decoration:none;font-size:13px;letter-spacing:1px;}
+nav a:hover{color:#fff;}
+
+#game-wrap{position:relative;}
+canvas{border-radius:16px;display:block;}
+
+#ui{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
+
+#start-screen,#over-screen{background:rgba(26,39,68,0.92);border-radius:16px;padding:40px 48px;text-align:center;pointer-events:all;}
+#start-screen h1,#over-screen h1{font-family:'Fredoka One',sans-serif;font-size:48px;color:#fff;margin-bottom:8px;}
+#start-screen h1 span,#over-screen h1 span{color:#e63030;}
+#start-screen p{color:rgba(255,255,255,0.6);margin-bottom:28px;font-size:16px;}
+#over-screen p{color:rgba(255,255,255,0.6);margin-bottom:8px;font-size:16px;}
+#final-score{font-family:'Fredoka One',sans-serif;font-size:40px;color:#e63030;margin-bottom:24px;}
+.play-btn{background:#e63030;color:#fff;border:none;padding:16px 48px;border-radius:100px;font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;cursor:pointer;letter-spacing:1px;transition:all .2s;}
+.play-btn:hover{background:#ff4d4d;transform:translateY(-2px);}
+
+#score-display{position:absolute;top:20px;right:24px;font-family:'Fredoka One',sans-serif;font-size:28px;color:#fff;pointer-events:none;}
+#over-screen{display:none;}
+</style>
+</head>
+<body>
+
+<nav><a href="index.html">← Joy Box Company</a></nav>
+
+<div id="game-wrap">
+  <canvas id="c" width="800" height="300"></canvas>
+  <div id="ui">
+    <div id="start-screen">
+      <h1>🎁 <span>Boxy</span> Jump</h1>
+      <p>Jump over the spikes! Press SPACE or tap to jump.<br>How far can Boxy go?</p>
+      <button class="play-btn" onclick="startGame()">▶ PLAY</button>
+    </div>
+    <div id="over-screen">
+      <h1>Game <span>Over!</span></h1>
+      <p>You scored</p>
+      <div id="final-score">0</div>
+      <button class="play-btn" onclick="startGame()">▶ PLAY AGAIN</button>
+    </div>
+  </div>
+  <div id="score-display" style="display:none;">0</div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+const W = canvas.width;
+const H = canvas.height;
+const GROUND = H - 60;
+
+let boxy, obstacles, score, speed, frame, running, animId;
+
+function initGame() {
+  boxy = { x: 100, y: GROUND, w: 50, h: 50, vy: 0, jumping: false };
+  obstacles = [];
+  score = 0;
+  speed = 5;
+  frame = 0;
+  running = false;
+}
+
+function startGame() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('over-screen').style.display = 'none';
+  document.getElementById('score-display').style.display = 'block';
+  if (animId) cancelAnimationFrame(animId);
+  initGame();
+  running = true;
+  loop();
+}
+
+function jump() {
+  if (!boxy.jumping) {
+    boxy.vy = -16;
+    boxy.jumping = true;
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); if (running) jump(); } });
+canvas.addEventListener('click', () => { if (running) jump(); });
+canvas.addEventListener('touchstart', e => { e.preventDefault(); if (running) jump(); });
+
+function spawnObstacle() {
+  const h = 30 + Math.random() * 30;
+  obstacles.push({ x: W, w: 20, h });
+}
+
+function drawBoxy(x, y, w, h) {
+  // Box body
+  ctx.fillStyle = '#e63030';
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, 8);
+  ctx.fill();
+
+  // Shine
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.beginPath();
+  ctx.roundRect(x + 4, y + 4, w/2 - 4, h/3, 4);
+  ctx.fill();
+
+  // Ribbon vertical
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(x + w/2 - 3, y, 6, h);
+
+  // Ribbon horizontal
+  ctx.fillRect(x, y + h/2 - 3, w, 6);
+
+  // Bow left
+  ctx.fillStyle = '#ffd000';
+  ctx.beginPath();
+  ctx.ellipse(x + w/2 - 10, y + 2, 10, 6, -0.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Bow right
+  ctx.beginPath();
+  ctx.ellipse(x + w/2 + 10, y + 2, 10, 6, 0.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Bow center
+  ctx.fillStyle = '#ff6b00';
+  ctx.beginPath();
+  ctx.ellipse(x + w/2, y + 2, 5, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Eyes
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.ellipse(x + 14, y + h * 0.45, 6, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(x + 32, y + h * 0.45, 6, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Pupils
+  ctx.fillStyle = '#1a2744';
+  ctx.beginPath();
+  ctx.ellipse(x + 15, y + h * 0.45, 3, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(x + 33, y + h * 0.45, 3, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Smile
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(x + w/2, y + h * 0.65, 8, 0.1, Math.PI - 0.1);
+  ctx.stroke();
+}
+
+function drawSpike(x, w, h) {
+  ctx.fillStyle = '#3a6fd8';
+  ctx.beginPath();
+  ctx.moveTo(x, GROUND + 1);
+  ctx.lineTo(x + w/2, GROUND - h);
+  ctx.lineTo(x + w, GROUND + 1);
+  ctx.fill();
+
+  // Shine
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.beginPath();
+  ctx.moveTo(x + 2, GROUND + 1);
+  ctx.lineTo(x + w/2, GROUND - h + 6);
+  ctx.lineTo(x + w/2 - 3, GROUND + 1);
+  ctx.fill();
+}
+
+function drawGround() {
+  // Ground
+  ctx.fillStyle = '#0d1220';
+  ctx.fillRect(0, GROUND + 1, W, H - GROUND - 1);
+
+  // Ground line
+  ctx.strokeStyle = '#3a6fd8';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND + 1);
+  ctx.lineTo(W, GROUND + 1);
+  ctx.stroke();
+
+  // Dashes
+  ctx.strokeStyle = 'rgba(58,111,216,0.3)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([20, 20]);
+  const dashOffset = -(frame * speed * 0.5) % 40;
+  ctx.beginPath();
+  ctx.moveTo(dashOffset, GROUND - 20);
+  for (let x = dashOffset; x < W; x += 40) {
+    ctx.moveTo(x, GROUND - 20);
+    ctx.lineTo(x + 20, GROUND - 20);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawBg() {
+  // Sky gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, GROUND);
+  grad.addColorStop(0, '#0d1220');
+  grad.addColorStop(1, '#1a2744');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, GROUND);
+
+  // Stars
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  const stars = [[50,30],[150,60],[300,20],[450,50],[600,30],[700,60],[750,20],[200,80],[520,70]];
+  stars.forEach(([sx, sy]) => {
+    ctx.beginPath();
+    ctx.arc(sx, sy, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Clouds / joy emojis floating
+  ctx.font = '20px serif';
+  ctx.globalAlpha = 0.15;
+  const emojis = ['🎁','💛','🎁','💛','🎁'];
+  emojis.forEach((e, i) => {
+    const ex = ((i * 200) - (frame * speed * 0.3) % (W + 200) + W * 1.5) % (W + 200) - 100;
+    ctx.fillText(e, ex, 40 + (i % 2) * 30);
+  });
+  ctx.globalAlpha = 1;
+}
+
+function loop() {
+  ctx.clearRect(0, 0, W, H);
+  drawBg();
+  drawGround();
+
+  // Physics
+  boxy.vy += 0.8;
+  boxy.y += boxy.vy;
+  if (boxy.y >= GROUND - boxy.h) {
+    boxy.y = GROUND - boxy.h;
+    boxy.vy = 0;
+    boxy.jumping = false;
+  }
+
+  // Obstacles
+  frame++;
+  const spawnRate = Math.max(60, 120 - Math.floor(score / 10));
+  if (frame % spawnRate === 0) spawnObstacle();
+
+  obstacles.forEach(o => o.x -= speed);
+  obstacles = obstacles.filter(o => o.x > -50);
+
+  // Collision
+  for (let o of obstacles) {
+    const bx = boxy.x + 6, by = boxy.y + 6, bw = boxy.w - 12, bh = boxy.h - 6;
+    const ox = o.x + 3, ow = o.w - 6;
+    if (bx < ox + ow && bx + bw > ox && by + bh > GROUND - o.h) {
+      gameOver();
+      return;
+    }
+  }
+
+  // Draw obstacles
+  obstacles.forEach(o => drawSpike(o.x, o.w, o.h));
+
+  // Draw boxy
+  drawBoxy(boxy.x, boxy.y, boxy.w, boxy.h);
+
+  // Score
+  score++;
+  speed = 5 + Math.floor(score / 200) * 0.5;
+  document.getElementById('score-display').textContent = Math.floor(score / 10);
+
+  animId = requestAnimationFrame(loop);
+}
+
+function gameOver() {
+  running = false;
+  cancelAnimationFrame(animId);
+  document.getElementById('final-score').textContent = Math.floor(score / 10);
+  document.getElementById('over-screen').style.display = 'block';
+  document.getElementById('score-display').style.display = 'none';
+}
+
+initGame();
+
+// Draw initial frame
+ctx.fillStyle = '#1a2744';
+ctx.fillRect(0, 0, W, H);
+drawBg();
+drawGround();
+drawBoxy(boxy.x, GROUND - boxy.h, boxy.w, boxy.h);
+</script>
+</body>
+</html>
