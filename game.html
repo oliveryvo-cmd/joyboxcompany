@@ -291,10 +291,8 @@ function gameOver() {
 
 initGame();
 
-// Music
-const music = new Audio('https://cdn1.suno.ai/9c3f5443-4d6b-4794-b1d9-5054af808b9f.mp3');
-music.loop = true;
-music.volume = 0.4;
+// Music placeholder
+const music = { play: ()=>Promise.resolve(), pause: ()=>{} };
 
 // Draw initial frame
 ctx.fillStyle = '#1a2744';
