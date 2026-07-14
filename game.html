@@ -73,6 +73,7 @@ function initGame() {
 }
 
 function startGame() {
+  music.play().catch(()=>{});
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('over-screen').style.display = 'none';
   document.getElementById('score-display').style.display = 'block';
@@ -289,6 +290,11 @@ function gameOver() {
 }
 
 initGame();
+
+// Music
+const music = new Audio('https://cdn1.suno.ai/9c3f5443-4d6b-4794-b1d9-5054af808b9f.mp3');
+music.loop = true;
+music.volume = 0.4;
 
 // Draw initial frame
 ctx.fillStyle = '#1a2744';
