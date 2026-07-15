@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Letter to Mom — Joy Box Company</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap');
+
+@media screen {
+  body{background:#fff0f5;display:flex;flex-direction:column;align-items:center;padding:40px 20px;font-family:'Nunito',sans-serif;}
+  .print-btn{background:#e63030;color:#fff;border:none;padding:14px 48px;font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;border-radius:100px;cursor:pointer;margin-bottom:24px;letter-spacing:1px;}
+  .print-btn:hover{background:#ff4d4d;}
+  .page{box-shadow:0 8px 40px rgba(0,0,0,0.12);}
+}
+
+@media print {
+  body{margin:0;padding:0;background:#fff;}
+  .print-btn{display:none;}
+  .page{box-shadow:none;margin:0;}
+  @page{margin:0.7in;size:letter;}
+}
+
+.page{
+  width:7.5in;
+  max-width:100%;
+  background:#fff;
+  padding:0.6in 0.7in;
+  font-family:'Nunito',sans-serif;
+  color:#1a2744;
+  line-height:1.9;
+  font-size:15px;
+}
+
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;padding-bottom:24px;border-bottom:3px solid #e63030;}
+.logo-text{font-family:'Fredoka One',sans-serif;font-size:32px;color:#1a2744;}
+.logo-text span{color:#e63030;}
+.logo-sub{font-size:11px;font-weight:800;letter-spacing:2px;color:#6b7a99;margin-top:2px;}
+
+.hearts{font-size:32px;text-align:center;margin-bottom:16px;letter-spacing:8px;}
+.dear{font-size:22px;font-weight:900;margin-bottom:20px;color:#1a2744;}
+.big{font-family:'Fredoka One',sans-serif;font-size:26px;color:#e63030;margin-bottom:20px;line-height:1.4;}
+
+p{margin-bottom:16px;color:#1a2744;}
+p strong{color:#e63030;}
+
+.proof-box{background:#fff0f5;border:2px solid #e63030;border-radius:12px;padding:20px 24px;margin:24px 0;}
+.proof-box h3{font-family:'Fredoka One',sans-serif;font-size:18px;color:#e63030;margin-bottom:12px;}
+.proof-row{display:flex;gap:24px;flex-wrap:wrap;}
+.proof-stat{text-align:center;}
+.proof-num{font-family:'Fredoka One',sans-serif;font-size:36px;color:#1a2744;display:block;}
+.proof-label{font-size:11px;font-weight:800;letter-spacing:1px;color:#6b7a99;}
+
+.post-box{background:#f9f9f9;border:2px dashed #e63030;border-radius:12px;padding:18px 22px;font-style:italic;margin:24px 0;font-size:14px;line-height:1.8;color:#1a2744;}
+.post-label{font-size:11px;font-weight:900;letter-spacing:2px;color:#e63030;margin-bottom:8px;font-style:normal;}
+
+.jennifer{background:#e8f5e9;border-left:4px solid #66bb6a;border-radius:8px;padding:14px 18px;margin:20px 0;font-size:14px;color:#2e7d32;font-weight:700;}
+
+.ask{font-size:17px;font-weight:900;color:#1a2744;margin:24px 0 8px;}
+
+.sign{margin-top:32px;padding-top:20px;border-top:2px solid #ffe0eb;}
+.love{font-weight:700;font-size:16px;color:#6b7a99;}
+.name{font-family:'Fredoka One',sans-serif;font-size:28px;color:#e63030;margin-top:4px;}
+
+.footer{display:flex;justify-content:space-between;align-items:center;margin-top:24px;padding-top:16px;border-top:2px solid #ffe0eb;font-size:11px;color:#6b7a99;font-weight:700;letter-spacing:1px;}
+.qr img{display:block;}
+.qr-label{font-size:10px;font-weight:800;letter-spacing:1px;color:#6b7a99;text-align:center;margin-top:4px;}
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">🖨️ PRINT THIS LETTER</button>
+
+<div class="page">
+
+  <div class="top">
+    <div>
+      <div class="logo-text">Joy Box <span>Company</span></div>
+      <div class="logo-sub">SURPRISE JOY BOXES FOR DISABLED KIDS</div>
+    </div>
+    <div class="qr">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://joyboxcompany.com" width="80" height="80">
+      <div class="qr-label">SCAN THE SITE</div>
+    </div>
+  </div>
+
+  <div class="hearts">💛 ❤️ 💛 ❤️ 💛</div>
+
+  <div class="dear">Dear Mom,</div>
+
+  <div class="big">I made something and I think you might really love it. 💛</div>
+
+  <p>I started <strong>Joy Box Company</strong> because I wanted disabled kids to feel like someone was thinking about them. I pack every single box by hand and write every note myself. It makes me really happy.</p>
+
+  <p>Dad already shared it and people from all over are visiting — even your friend Jennifer joined the crew! It is completely your choice but I thought maybe you might want to share it too. 💛</p>
+
+  <div class="jennifer">💛 Jennifer already joined the Joy Box Crew — she found it through Dad's post!</div>
+
+  <div class="proof-box">
+    <h3>📊 What's happened so far:</h3>
+    <div class="proof-row">
+      <div class="proof-stat"><span class="proof-num">33</span><div class="proof-label">VISITORS</div></div>
+      <div class="proof-stat"><span class="proof-num">3</span><div class="proof-label">MEMBERS</div></div>
+      <div class="proof-stat"><span class="proof-num">2</span><div class="proof-label">COUNTRIES</div></div>
+      <div class="proof-stat"><span class="proof-num">$1</span><div class="proof-label">STARTS AT</div></div>
+    </div>
+  </div>
+
+  <div class="ask">If you want to help, you could share this post:</div>
+
+  <div class="post-box">
+    <div class="post-label">📱 COPY & PASTE THIS:</div>
+    "My kid built a company called Joy Box Company that packs surprise boxes full of toys for disabled kids — by hand, with a handwritten note inside every box. Boxes start at just $1. He built the whole website himself and I couldn't be more proud. Please share 🎁💛 joyboxcompany.com"
+  </div>
+
+  <p>No pressure at all Mom. I love you more than anything and you are the best mom in the whole world no matter what. 💛</p>
+
+  <div class="sign">
+    <div class="love">With all my love,</div>
+    <div class="name">Oliver Vo 💛</div>
+  </div>
+
+  <div class="footer">
+    <span>joyboxcompany.com</span>
+    <span>SURPRISE JOY BOXES FOR DISABLED KIDS 💛</span>
+    <span>truongnvo@gmail.com</span>
+  </div>
+
+</div>
+
+</body>
+</html>
