@@ -209,7 +209,12 @@ function googleTranslateElementInit() {
 
 
 <!-- TRANSLATE -->
-<div id="google_translate_element" style="background:var(--navy);padding:8px 48px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.1);"></div>
+<div id="translate-banner" style="display:none;background:#1a2744;padding:12px 24px;text-align:center;border-bottom:2px solid #e63030;">
+  <span id="translate-msg" style="color:#fff;font-weight:800;font-size:14px;margin-right:16px;"></span>
+  <button onclick="document.getElementById('google_translate_element').style.display='block';document.getElementById('translate-banner').style.display='none';" style="background:#e63030;color:#fff;border:none;padding:8px 20px;border-radius:100px;font-family:'Nunito',sans-serif;font-weight:900;font-size:13px;cursor:pointer;" id="translate-btn"></button>
+  <button onclick="document.getElementById('translate-banner').style.display='none'" style="background:transparent;color:rgba(255,255,255,0.4);border:none;padding:8px 12px;font-size:18px;cursor:pointer;margin-left:8px;">×</button>
+</div>
+<div id="google_translate_element" style="display:none;background:var(--navy);padding:8px 48px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.1);"></div>
 
 <!-- NAV -->
 <nav>
@@ -567,5 +572,29 @@ async function loadMemberCount() {
 
 loadMemberCount();
 </script>
+
+<script>
+const langs = {
+  'fr': ['🇫🇷 Ce site est en anglais. Voulez-vous le traduire ?', 'Traduire'],
+  'pl': ['🇵🇱 Ta strona jest po angielsku. Chcesz ją przetłumaczyć?', 'Przetłumacz'],
+  'hi': ['🇮🇳 यह साइट अंग्रेज़ी में है। क्या आप इसे अनुवाद करना चाहते हैं?', 'अनुवाद करें'],
+  'es': ['🇪🇸 Este sitio está en inglés. ¿Quieres traducirlo?', 'Traducir'],
+  'de': ['🇩🇪 Diese Seite ist auf Englisch. Möchten Sie sie übersetzen?', 'Übersetzen'],
+  'pt': ['🇧🇷 Este site está em inglês. Deseja traduzi-lo?', 'Traduzir'],
+  'zh': ['🇨🇳 本网站为英文版。您想翻译吗？', '翻译'],
+  'ja': ['🇯🇵 このサイトは英語です。翻訳しますか？', '翻訳する'],
+};
+const lang = (navigator.language || navigator.userLanguage || '').slice(0,2).toLowerCase();
+if (lang !== 'en' && langs[lang]) {
+  document.getElementById('translate-msg').textContent = langs[lang][0];
+  document.getElementById('translate-btn').textContent = langs[lang][1];
+  document.getElementById('translate-banner').style.display = 'block';
+} else if (lang !== 'en') {
+  document.getElementById('translate-msg').textContent = '🌍 This site is in English. Want to translate it?';
+  document.getElementById('translate-btn').textContent = 'Translate';
+  document.getElementById('translate-banner').style.display = 'block';
+}
+</script>
+
 </body>
 </html>
