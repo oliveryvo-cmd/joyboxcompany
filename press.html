@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Press — Joy Box Company</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--red:#e63030;--navy:#1a2744;--lightblue:#d6e4f7;--white:#fff;--offwhite:#f7f9fc;--silver:#6b7a99;}
+body{background:var(--white);font-family:'Nunito',sans-serif;color:var(--navy);}
+
+nav{background:var(--white);border-bottom:3px solid var(--lightblue);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:80px;box-shadow:0 2px 20px rgba(26,39,68,0.08);}
+.nav-logo{font-family:'Fredoka One',sans-serif;font-size:22px;color:var(--navy);}
+.nav-logo span{color:var(--red);}
+nav a{color:var(--navy);text-decoration:none;font-weight:800;font-size:14px;}
+nav a:hover{color:var(--red);}
+
+.hero{background:var(--navy);padding:80px 48px;text-align:center;}
+.badge{display:inline-block;background:rgba(230,48,48,0.2);color:var(--red);font-size:11px;font-weight:900;letter-spacing:3px;padding:6px 20px;border-radius:100px;margin-bottom:20px;}
+h1{font-family:'Fredoka One',sans-serif;font-size:clamp(40px,6vw,72px);color:#fff;margin-bottom:16px;}
+h1 span{color:var(--red);}
+.hero p{color:rgba(255,255,255,0.5);font-size:17px;font-weight:700;max-width:500px;margin:0 auto;}
+
+.section{padding:80px 48px;max-width:1000px;margin:0 auto;}
+
+.coverage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;}
+.coverage-card{border:2px solid var(--lightblue);border-radius:16px;padding:28px;transition:.2s;}
+.coverage-card:hover{border-color:var(--red);transform:translateY(-4px);}
+.coverage-outlet{font-size:11px;font-weight:900;letter-spacing:3px;color:var(--red);margin-bottom:8px;}
+.coverage-title{font-family:'Fredoka One',sans-serif;font-size:18px;color:var(--navy);margin-bottom:8px;line-height:1.3;}
+.coverage-date{font-size:12px;color:var(--silver);font-weight:700;}
+.coverage-link{display:inline-block;margin-top:16px;color:var(--red);font-weight:900;font-size:13px;text-decoration:none;letter-spacing:1px;}
+.coverage-link:hover{text-decoration:underline;}
+
+.coming-soon{grid-column:span 3;background:var(--offwhite);border-radius:16px;padding:48px;text-align:center;border:2px dashed var(--lightblue);}
+.coming-soon p{font-size:17px;color:var(--silver);font-weight:700;margin-bottom:8px;}
+.coming-soon .big{font-family:'Fredoka One',sans-serif;font-size:32px;color:var(--navy);margin-bottom:16px;}
+
+.kit{background:var(--navy);border-radius:20px;padding:40px;margin-top:48px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+.kit h2{font-family:'Fredoka One',sans-serif;font-size:32px;color:#fff;margin-bottom:12px;}
+.kit h2 span{color:var(--red);}
+.kit p{color:rgba(255,255,255,0.5);font-weight:700;line-height:1.8;margin-bottom:20px;}
+.kit-facts{display:flex;flex-direction:column;gap:10px;}
+.kit-fact{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:700;color:rgba(255,255,255,0.7);}
+.kit-fact::before{content:'▶';color:var(--red);font-size:10px;}
+.kit-btn{background:var(--red);color:#fff;padding:14px 32px;border-radius:100px;font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;text-decoration:none;display:inline-block;letter-spacing:1px;}
+
+.contact{text-align:center;padding:60px 48px;background:var(--offwhite);}
+.contact h2{font-family:'Fredoka One',sans-serif;font-size:36px;color:var(--navy);margin-bottom:12px;}
+.contact h2 span{color:var(--red);}
+.contact p{color:var(--silver);font-weight:700;margin-bottom:8px;}
+.contact .email{font-size:20px;font-weight:900;color:var(--red);}
+
+@media(max-width:700px){
+  .coverage-grid{grid-template-columns:1fr;}
+  .coming-soon{grid-column:span 1;}
+  .kit{grid-template-columns:1fr;}
+  nav{padding:0 20px;}
+  .section{padding:60px 20px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span>Joy Box</span> Company</div>
+  <a href="index.html">← Back to Home</a>
+</nav>
+
+<div class="hero">
+  <div class="badge">📰 PRESS & MEDIA</div>
+  <h1>In the <span>News.</span></h1>
+  <p>Coverage of Joy Box Company and our mission to bring joy to disabled kids worldwide.</p>
+</div>
+
+<div class="section">
+
+  <div class="coverage-grid">
+    <div class="coming-soon">
+      <div class="big">Coverage Coming Soon. 🐆</div>
+      <p>Joy Box Company has reached families in 5 countries without any press coverage yet.</p>
+      <p>Are you a journalist? We'd love to talk.</p>
+    </div>
+  </div>
+
+  <div class="kit">
+    <div>
+      <h2>Press <span>Kit.</span></h2>
+      <p>Everything you need to write about Joy Box Company — stats, story, photos, and quotes.</p>
+      <a href="mailto:truongnvo@gmail.com?subject=Press%20Kit%20Request%20-%20Joy%20Box%20Company" class="kit-btn">📧 Request Press Kit</a>
+    </div>
+    <div class="kit-facts">
+      <div class="kit-fact">Founded 2026 by Oliver Vo, age 10</div>
+      <div class="kit-fact">Based in Mission Viejo, California</div>
+      <div class="kit-fact">Ships surprise joy boxes to disabled kids</div>
+      <div class="kit-fact">Reached 5 countries without marketing</div>
+      <div class="kit-fact">Every box packed by hand, note handwritten</div>
+      <div class="kit-fact">Local delivery by bike, free of charge</div>
+      <div class="kit-fact">Boxes start at just $1</div>
+      <div class="kit-fact">Mascot: Jim Jaguar 🐆</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="contact">
+  <h2>Media <span>Contact.</span></h2>
+  <p>For interviews, press inquiries, and media requests:</p>
+  <div class="email">truongnvo@gmail.com</div>
+  <p style="margin-top:8px;font-size:13px;">We respond within 24 hours.</p>
+</div>
+
+</body>
+</html>
