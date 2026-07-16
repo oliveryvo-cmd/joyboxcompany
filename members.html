@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Crew — Joy Box Company</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--red:#e63030;--navy:#1a2744;--white:#fff;}
+body{background:var(--navy);min-height:100vh;font-family:'Nunito',sans-serif;padding:40px 20px;}
+
+nav{max-width:900px;margin:0 auto 40px;display:flex;align-items:center;justify-content:space-between;}
+nav a{color:rgba(255,255,255,0.4);text-decoration:none;font-weight:800;font-size:13px;letter-spacing:1px;}
+nav a:hover{color:#fff;}
+.nav-join{background:var(--red);color:#fff!important;padding:10px 24px;border-radius:100px;font-weight:900;}
+
+.top{text-align:center;margin-bottom:60px;}
+.badge{display:inline-block;background:rgba(230,48,48,0.2);color:var(--red);font-size:11px;font-weight:900;letter-spacing:3px;padding:6px 20px;border-radius:100px;margin-bottom:16px;}
+h1{font-family:'Fredoka One',sans-serif;font-size:clamp(48px,8vw,80px);color:#fff;line-height:1;}
+h1 span{color:var(--red);}
+.sub{color:rgba(255,255,255,0.4);font-size:15px;font-weight:700;margin-top:12px;}
+
+.count-box{max-width:400px;margin:0 auto 60px;background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.08);border-radius:24px;padding:40px;text-align:center;}
+.count-num{font-family:'Fredoka One',sans-serif;font-size:96px;color:var(--red);line-height:1;display:block;}
+.count-label{font-size:13px;font-weight:900;letter-spacing:3px;color:rgba(255,255,255,0.3);margin-top:8px;}
+.live-dot{display:inline-block;width:8px;height:8px;background:#4caf50;border-radius:50%;margin-right:6px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+.wall{max-width:900px;margin:0 auto 60px;}
+.wall h2{font-family:'Fredoka One',sans-serif;font-size:28px;color:#fff;margin-bottom:24px;text-align:center;}
+.members-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;}
+.member-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;transition:.2s;}
+.member-card:hover{border-color:var(--red);background:rgba(230,48,48,0.05);}
+.member-num{font-family:'Fredoka One',sans-serif;font-size:13px;color:var(--red);flex-shrink:0;}
+.member-name{font-size:13px;font-weight:800;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+.join-cta{max-width:600px;margin:0 auto;text-align:center;background:var(--red);border-radius:24px;padding:40px;}
+.join-cta h2{font-family:'Fredoka One',sans-serif;font-size:36px;color:#fff;margin-bottom:12px;}
+.join-cta p{color:rgba(255,255,255,0.8);font-weight:700;margin-bottom:24px;}
+.join-cta a{display:inline-block;background:#fff;color:var(--red);font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;padding:16px 40px;border-radius:100px;text-decoration:none;letter-spacing:1px;}
+
+.loading{text-align:center;color:rgba(255,255,255,0.3);font-weight:700;padding:40px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html">← Joy Box Company</a>
+  <a href="join.html" class="nav-join">🚲 JOIN THE CREW</a>
+</nav>
+
+<div class="top">
+  <div class="badge">🚲 THE CREW</div>
+  <h1>Joy Box <span>Crew.</span></h1>
+  <p class="sub"><span class="live-dot"></span>Live count — updates in real time</p>
+</div>
+
+<div class="count-box">
+  <span class="count-num" id="count">...</span>
+  <div class="count-label">CREW MEMBERS WORLDWIDE</div>
+</div>
+
+<div class="wall">
+  <h2>🌍 Meet the Crew</h2>
+  <div class="members-grid" id="members-grid">
+    <div class="loading">Loading crew members...</div>
+  </div>
+</div>
+
+<div class="join-cta">
+  <h2>Join the Crew!</h2>
+  <p>Become a member and get your number. Help us reach every disabled kid in the world.</p>
+  <a href="join.html">🚲 JOIN FOR FREE</a>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://qbzpyhsbrjagyqsruzcb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs';
+
+async function loadMembers() {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/members?order=created_at.asc&select=name,created_at`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+  });
+  const members = await res.json();
+
+  document.getElementById('count').textContent = members.length;
+
+  const grid = document.getElementById('members-grid');
+  if (!members.length) {
+    grid.innerHTML = '<div class="loading">No members yet — be the first!</div>';
+    return;
+  }
+
+  grid.innerHTML = members.map((m, i) => `
+    <div class="member-card">
+      <div class="member-num">#${String(i + 1).padStart(4, '0')}</div>
+      <div class="member-name">${m.name || 'Anonymous'}</div>
+    </div>
+  `).join('');
+}
+
+loadMembers();
+</script>
+</body>
+</html>
