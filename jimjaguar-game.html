@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jim Jaguar — Deliver the Joy Box!</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #08051a; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Arial Black', Arial, sans-serif; overflow: hidden; }
+canvas { border: 3px solid #e63030; box-shadow: 0 0 40px rgba(230,48,48,0.4); border-radius: 8px; }
+#ui { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+#start-screen, #win-screen, #lose-screen {
+  position: fixed; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: rgba(8,5,26,0.95); color: #fff; text-align: center; padding: 20px;
+  pointer-events: all;
+}
+#win-screen, #lose-screen { display: none; }
+h1 { font-size: 48px; color: #e63030; text-shadow: 0 0 20px rgba(230,48,48,0.8); margin-bottom: 8px; }
+h2 { font-size: 28px; color: #ffd700; margin-bottom: 16px; }
+.tagline { font-size: 16px; color: rgba(255,255,255,0.6); margin-bottom: 32px; letter-spacing: 2px; }
+.start-btn {
+  background: #e63030; color: #fff; border: none; padding: 18px 56px;
+  font-size: 20px; font-weight: 900; border-radius: 100px; cursor: pointer;
+  letter-spacing: 2px; box-shadow: 0 0 30px rgba(230,48,48,0.5);
+  pointer-events: all; transition: transform 0.1s;
+}
+.start-btn:hover { transform: scale(1.05); }
+.controls { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 20px; line-height: 2; }
+.url { font-size: 14px; color: #e63030; font-weight: 900; margin-top: 16px; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+<div id="start-screen">
+  <h1>🐆 JIM JAGUAR</h1>
+  <h2>Deliver the Joy Box!</h2>
+  <div class="tagline">BLIND · DEAF · ONE HAND · UNSTOPPABLE</div>
+  <button class="start-btn" onclick="startGame()">▶ PLAY NOW</button>
+  <div class="controls">
+    ← → Arrow Keys or A/D to move &nbsp;|&nbsp; SPACE or ↑ to jump<br>
+    Z or Enter to attack &nbsp;|&nbsp; Collect 📦 Joy Boxes &nbsp;|&nbsp; Defeat Lord Grimsby!
+  </div>
+  <div class="url">joyboxcompany.com</div>
+</div>
+
+<div id="win-screen">
+  <h1>🐆 YOU DID IT!</h1>
+  <h2>Lord Grimsby is defeated!</h2>
+  <div class="tagline">All Joy Boxes delivered to disabled kids 💛</div>
+  <button class="start-btn" onclick="restartGame()">▶ PLAY AGAIN</button>
+  <div class="url">Send a REAL Joy Box → joyboxcompany.com</div>
+</div>
+
+<div id="lose-screen">
+  <h1>💀 JIM FELL</h1>
+  <h2>But Jim always gets back up.</h2>
+  <div class="tagline">BLIND · DEAF · ONE HAND · UNSTOPPABLE</div>
+  <button class="start-btn" onclick="restartGame()">▶ TRY AGAIN</button>
+  <div class="url">joyboxcompany.com</div>
+</div>
+
+<canvas id="game" width="900" height="500"></canvas>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+// GAME STATE
+let keys = {};
+let gameRunning = false;
+let frameCount = 0;
+let score = 0;
+let level = 1;
+
+// COLORS
+const C = {
+  sky1: '#08051a', sky2: '#1a0a2e',
+  platform: '#1a2744', platformTop: '#2a3a6a',
+  red: '#e63030', gold: '#ffd700',
+  green: '#00ff88', white: '#ffffff',
+  boss: '#4a0a0a', bossAccent: '#8b0000'
+};
+
+// PLAYER
+let player;
+function makePlayer() {
+  return {
+    x: 80, y: 300, w: 40, h: 50,
+    vx: 0, vy: 0, onGround: false,
+    hp: 100, maxHp: 100,
+    attackTimer: 0, attackCooldown: 0,
+    invincible: 0, facing: 1,
+    jumpCount: 0, maxJumps: 2,
+    animFrame: 0, animTimer: 0,
+    attacking: false
+  };
+}
+
+// PLATFORMS
+let platforms;
+function makePlatforms() {
+  return [
+    { x: 0, y: 460, w: 900, h: 40 }, // ground
+    { x: 150, y: 370, w: 120, h: 15 },
+    { x: 320, y: 310, w: 100, h: 15 },
+    { x: 460, y: 250, w: 120, h: 15 },
+    { x: 600, y: 310, w: 100, h: 15 },
+    { x: 720, y: 370, w: 120, h: 15 },
+    { x: 50, y: 280, w: 80, h: 15 },
+    { x: 220, y: 210, w: 80, h: 15 },
+    { x: 380, y: 170, w: 80, h: 15 },
+    { x: 560, y: 190, w: 80, h: 15 },
+    { x: 750, y: 240, w: 80, h: 15 },
+  ];
+}
+
+// ENEMIES
+let enemies;
+function makeEnemies() {
+  return [
+    { x: 300, y: 420, w: 36, h: 44, hp: 30, maxHp: 30, vx: -1.2, type: 'grunt', animFrame: 0, animTimer: 0 },
+    { x: 500, y: 420, w: 36, h: 44, hp: 30, maxHp: 30, vx: 1.2, type: 'grunt', animFrame: 0, animTimer: 0 },
+    { x: 650, y: 420, w: 36, h: 44, hp: 50, maxHp: 50, vx: -1.5, type: 'thug', animFrame: 0, animTimer: 0 },
+    { x: 200, y: 240, w: 36, h: 44, hp: 40, maxHp: 40, vx: 1, type: 'grunt', animFrame: 0, animTimer: 0 },
+  ];
+}
+
+// BOSS
+let boss;
+function makeBoss() {
+  return {
+    x: 750, y: 390, w: 60, h: 70,
+    hp: 200, maxHp: 200,
+    vx: -2, phase: 1,
+    attackTimer: 0, animFrame: 0, animTimer: 0,
+    projectiles: [], spawned: false, defeated: false
+  };
+}
+
+// JOY BOXES
+let joyBoxes;
+function makeJoyBoxes() {
+  return [
+    { x: 160, y: 340, collected: false },
+    { x: 330, y: 278, collected: false },
+    { x: 470, y: 218, collected: false },
+    { x: 610, y: 278, collected: false },
+    { x: 730, y: 338, collected: false },
+    { x: 60, y: 248, collected: false },
+    { x: 230, y: 178, collected: false },
+    { x: 390, y: 138, collected: false },
+    { x: 570, y: 158, collected: false },
+  ];
+}
+
+// PARTICLES
+let particles = [];
+function spawnParticles(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x, y, vx: (Math.random()-0.5)*6, vy: (Math.random()-0.5)*6 - 2,
+      life: 1, color, size: Math.random()*6+2
+    });
+  }
+}
+
+// FLOATING TEXT
+let floatingTexts = [];
+function floatText(x, y, text, color) {
+  floatingTexts.push({ x, y, text, color, life: 1, vy: -2 });
+}
+
+let attackHitboxes = [];
+
+function startGame() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('win-screen').style.display = 'none';
+  document.getElementById('lose-screen').style.display = 'none';
+  player = makePlayer();
+  platforms = makePlatforms();
+  enemies = makeEnemies();
+  boss = makeBoss();
+  joyBoxes = makeJoyBoxes();
+  particles = [];
+  floatingTexts = [];
+  attackHitboxes = [];
+  score = 0;
+  frameCount = 0;
+  gameRunning = true;
+  requestAnimationFrame(loop);
+}
+
+function restartGame() { startGame(); }
+
+// INPUT
+document.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if ((e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') && gameRunning) {
+    e.preventDefault();
+    if (player.jumpCount < player.maxJumps) {
+      player.vy = -14;
+      player.jumpCount++;
+      spawnParticles(player.x + player.w/2, player.y + player.h, C.gold, 5);
+    }
+  }
+  if ((e.code === 'KeyZ' || e.code === 'Enter') && gameRunning && player.attackCooldown <= 0) {
+    player.attacking = true;
+    player.attackTimer = 15;
+    player.attackCooldown = 25;
+    // attack hitbox
+    const hx = player.facing > 0 ? player.x + player.w : player.x - 50;
+    attackHitboxes.push({ x: hx, y: player.y, w: 50, h: player.h, life: 10 });
+    spawnParticles(player.x + (player.facing > 0 ? player.w + 20 : -20), player.y + player.h/2, C.gold, 8);
+  }
+});
+document.addEventListener('keyup', e => { keys[e.code] = false; });
+
+function loop() {
+  if (!gameRunning) return;
+  frameCount++;
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+function rectOverlap(a, b) {
+  return a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y;
+}
+
+function update() {
+  // Player movement
+  const spd = 5;
+  if (keys['ArrowLeft'] || keys['KeyA']) { player.vx = -spd; player.facing = -1; }
+  else if (keys['ArrowRight'] || keys['KeyD']) { player.vx = spd; player.facing = 1; }
+  else player.vx *= 0.8;
+
+  player.vy += 0.6; // gravity
+  player.x += player.vx;
+  player.y += player.vy;
+
+  // Timers
+  if (player.attackTimer > 0) player.attackTimer--;
+  else player.attacking = false;
+  if (player.attackCooldown > 0) player.attackCooldown--;
+  if (player.invincible > 0) player.invincible--;
+
+  // Attack hitbox life
+  attackHitboxes = attackHitboxes.filter(h => --h.life > 0);
+
+  // Platform collision
+  player.onGround = false;
+  for (const p of platforms) {
+    if (player.x + player.w > p.x && player.x < p.x + p.w &&
+        player.y + player.h > p.y && player.y + player.h < p.y + p.h + player.vy + 2 &&
+        player.vy >= 0) {
+      player.y = p.y - player.h;
+      player.vy = 0;
+      player.onGround = true;
+      player.jumpCount = 0;
+    }
+  }
+
+  // Boundary
+  if (player.x < 0) player.x = 0;
+  if (player.x + player.w > canvas.width) player.x = canvas.width - player.w;
+  if (player.y > canvas.height + 100) {
+    player.hp -= 30;
+    player.x = 80; player.y = 300; player.vy = 0;
+    floatText(player.x, player.y - 30, '-30 HP!', C.red);
+    if (player.hp <= 0) { gameOver(); return; }
+  }
+
+  // Player anim
+  player.animTimer++;
+  if (player.animTimer > 8) { player.animFrame = (player.animFrame + 1) % 4; player.animTimer = 0; }
+
+  // Joy Box collection
+  for (const box of joyBoxes) {
+    if (!box.collected && rectOverlap(player, { x: box.x, y: box.y, w: 24, h: 24 })) {
+      box.collected = true;
+      score += 10;
+      player.hp = Math.min(player.maxHp, player.hp + 10);
+      spawnParticles(box.x + 12, box.y + 12, C.gold, 12);
+      floatText(box.x, box.y - 10, '+10 HP! 📦', C.gold);
+    }
+  }
+
+  // Enemies
+  for (let i = enemies.length - 1; i >= 0; i--) {
+    const e = enemies[i];
+    e.x += e.vx;
+    if (e.x < 0 || e.x + e.w > canvas.width) e.vx *= -1;
+    // keep on ground
+    e.y = 416;
+    e.animTimer++;
+    if (e.animTimer > 10) { e.animFrame = (e.animFrame+1)%2; e.animTimer = 0; }
+
+    // Attack hitbox hits enemy
+    for (const h of attackHitboxes) {
+      if (rectOverlap(e, h)) {
+        e.hp -= 20;
+        spawnParticles(e.x + e.w/2, e.y, C.red, 8);
+        floatText(e.x, e.y - 20, '-20', C.red);
+        h.life = 0;
+      }
+    }
+    if (e.hp <= 0) {
+      spawnParticles(e.x + e.w/2, e.y, C.red, 20);
+      floatText(e.x, e.y - 30, 'DEFEATED! +20', C.green);
+      score += 20;
+      enemies.splice(i, 1);
+      continue;
+    }
+
+    // Enemy hits player
+    if (player.invincible <= 0 && rectOverlap(player, e)) {
+      player.hp -= 8;
+      player.invincible = 60;
+      player.vy = -8;
+      floatText(player.x, player.y - 30, '-8 HP', C.red);
+      if (player.hp <= 0) { gameOver(); return; }
+    }
+  }
+
+  // Boss
+  if (enemies.length === 0 && !boss.defeated) {
+    if (!boss.spawned) {
+      boss.spawned = true;
+      floatText(400, 200, '👿 LORD GRIMSBY APPEARS!', C.red);
+    }
+    boss.x += boss.vx;
+    if (boss.x < 50 || boss.x + boss.w > canvas.width - 50) boss.vx *= -1;
+    boss.y = 390;
+
+    // Phase 2
+    if (boss.hp < boss.maxHp / 2 && boss.phase === 1) {
+      boss.phase = 2;
+      boss.vx *= 1.8;
+      floatText(boss.x, boss.y - 40, '😡 PHASE 2!', C.red);
+    }
+
+    // Boss attack
+    boss.attackTimer++;
+    if (boss.attackTimer > (boss.phase === 2 ? 60 : 90)) {
+      boss.attackTimer = 0;
+      boss.projectiles.push({ x: boss.x + boss.w/2, y: boss.y, vx: (player.x - boss.x) > 0 ? 5 : -5, vy: -3, life: 120 });
+    }
+
+    // Projectiles
+    for (let i = boss.projectiles.length - 1; i >= 0; i--) {
+      const proj = boss.projectiles[i];
+      proj.x += proj.vx; proj.y += proj.vy; proj.vy += 0.15; proj.life--;
+      if (proj.life <= 0 || proj.y > canvas.height) { boss.projectiles.splice(i, 1); continue; }
+      if (player.invincible <= 0 && rectOverlap(player, { x: proj.x-8, y: proj.y-8, w: 16, h: 16 })) {
+        player.hp -= 12;
+        player.invincible = 45;
+        floatText(player.x, player.y - 30, '-12 HP', C.red);
+        boss.projectiles.splice(i, 1);
+        if (player.hp <= 0) { gameOver(); return; }
+      }
+    }
+
+    // Attack hits boss
+    for (const h of attackHitboxes) {
+      if (rectOverlap(boss, h)) {
+        boss.hp -= 15;
+        spawnParticles(boss.x + boss.w/2, boss.y, C.red, 10);
+        floatText(boss.x, boss.y - 30, '-15', C.gold);
+        h.life = 0;
+        score += 5;
+      }
+    }
+
+    // Boss touches player
+    if (player.invincible <= 0 && rectOverlap(player, boss)) {
+      player.hp -= 15;
+      player.invincible = 60;
+      player.vy = -10;
+      floatText(player.x, player.y - 30, '-15 HP', C.red);
+      if (player.hp <= 0) { gameOver(); return; }
+    }
+
+    if (boss.hp <= 0) {
+      boss.defeated = true;
+      spawnParticles(boss.x + boss.w/2, boss.y, C.gold, 50);
+      score += 200;
+      setTimeout(() => winGame(), 2000);
+    }
+
+    boss.animTimer++;
+    if (boss.animTimer > 8) { boss.animFrame = (boss.animFrame+1)%2; boss.animTimer = 0; }
+  }
+
+  // Particles
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.life -= 0.03;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+
+  // Floating texts
+  for (let i = floatingTexts.length - 1; i >= 0; i--) {
+    const t = floatingTexts[i];
+    t.y += t.vy; t.life -= 0.025;
+    if (t.life <= 0) floatingTexts.splice(i, 1);
+  }
+}
+
+function gameOver() {
+  gameRunning = false;
+  document.getElementById('lose-screen').style.display = 'flex';
+}
+
+function winGame() {
+  gameRunning = false;
+  document.getElementById('win-screen').style.display = 'flex';
+}
+
+function draw() {
+  // Background gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  grad.addColorStop(0, C.sky1);
+  grad.addColorStop(1, C.sky2);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Stars
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  for (let i = 0; i < 60; i++) {
+    const sx = (i * 137 + frameCount * 0.1) % canvas.width;
+    const sy = (i * 89) % 300;
+    ctx.fillRect(sx, sy, 1.5, 1.5);
+  }
+
+  // Platforms
+  for (const p of platforms) {
+    ctx.fillStyle = C.platform;
+    ctx.fillRect(p.x, p.y, p.w, p.h);
+    ctx.fillStyle = C.platformTop;
+    ctx.fillRect(p.x, p.y, p.w, 4);
+    // neon edge
+    ctx.strokeStyle = 'rgba(230,48,48,0.3)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(p.x, p.y, p.w, p.h);
+  }
+
+  // Joy Boxes
+  for (const box of joyBoxes) {
+    if (box.collected) continue;
+    const bob = Math.sin(frameCount * 0.05 + box.x) * 3;
+    ctx.save();
+    ctx.translate(box.x + 12, box.y + 12 + bob);
+    // box body
+    ctx.fillStyle = C.red;
+    ctx.fillRect(-12, -12, 24, 24);
+    ctx.fillStyle = C.gold;
+    ctx.fillRect(-12, -2, 24, 4);
+    ctx.fillRect(-2, -12, 4, 24);
+    // glow
+    ctx.shadowColor = C.gold;
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = C.gold;
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('📦', 0, 5);
+    ctx.restore();
+  }
+
+  // Particles
+  for (const p of particles) {
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Enemies
+  for (const e of enemies) {
+    drawEnemy(e);
+  }
+
+  // Boss
+  if (boss.spawned && !boss.defeated) {
+    drawBoss();
+  }
+
+  // Boss projectiles
+  for (const proj of boss.projectiles) {
+    ctx.fillStyle = '#ff4444';
+    ctx.shadowColor = '#ff0000';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(proj.x, proj.y, 8, 0, Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // Player
+  drawPlayer();
+
+  // Floating texts
+  for (const t of floatingTexts) {
+    ctx.globalAlpha = t.life;
+    ctx.fillStyle = t.color;
+    ctx.font = 'bold 16px Arial Black';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = 'rgba(0,0,0,0.8)';
+    ctx.shadowBlur = 4;
+    ctx.fillText(t.text, t.x + 20, t.y);
+    ctx.shadowBlur = 0;
+  }
+  ctx.globalAlpha = 1;
+
+  // HUD
+  drawHUD();
+}
+
+function drawPlayer() {
+  const p = player;
+  ctx.save();
+  ctx.translate(p.x + p.w/2, p.y + p.h/2);
+  if (p.facing < 0) ctx.scale(-1, 1);
+
+  // Invincible flash
+  if (p.invincible > 0 && Math.floor(p.invincible / 5) % 2 === 0) {
+    ctx.globalAlpha = 0.4;
+  }
+
+  // Body
+  ctx.fillStyle = '#f5a623';
+  ctx.beginPath();
+  ctx.ellipse(0, 5, 16, 20, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Head
+  ctx.fillStyle = '#f5a623';
+  ctx.beginPath();
+  ctx.arc(0, -18, 16, 0, Math.PI*2);
+  ctx.fill();
+
+  // Ears
+  ctx.fillStyle = '#e8901a';
+  ctx.beginPath(); ctx.moveTo(-14, -28); ctx.lineTo(-8, -20); ctx.lineTo(-18, -20); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(14, -28); ctx.lineTo(8, -20); ctx.lineTo(18, -20); ctx.fill();
+
+  // Face markings
+  ctx.fillStyle = '#fff8e7';
+  ctx.beginPath(); ctx.ellipse(0, -16, 10, 8, 0, 0, Math.PI*2); ctx.fill();
+
+  // Eyes
+  ctx.fillStyle = '#1a1a2a';
+  ctx.beginPath(); ctx.arc(-5, -20, 4, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(7, -20, 4, 0, Math.PI*2); ctx.fill();
+  // One eye closed (deaf/blind ref)
+  ctx.strokeStyle = '#f5a623';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(4, -20); ctx.lineTo(10, -20); ctx.stroke();
+
+  // Spots
+  ctx.fillStyle = 'rgba(100,60,0,0.3)';
+  ctx.beginPath(); ctx.arc(-8, 0, 4, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(8, 5, 3, 0, Math.PI*2); ctx.fill();
+
+  // One arm (one hand)
+  ctx.fillStyle = '#f5a623';
+  const armSwing = Math.sin(p.animFrame * Math.PI/2) * 15;
+  ctx.save();
+  ctx.translate(14, -2);
+  ctx.rotate((armSwing) * Math.PI/180);
+  ctx.fillRect(0, -5, 20, 10);
+  // fist
+  ctx.fillStyle = '#e8901a';
+  ctx.beginPath(); ctx.arc(22, 0, 8, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+
+  // Attack effect
+  if (p.attacking) {
+    ctx.strokeStyle = C.gold;
+    ctx.lineWidth = 3;
+    ctx.shadowColor = C.gold;
+    ctx.shadowBlur = 15;
+    ctx.beginPath();
+    ctx.arc(28, -2, 20, -Math.PI/3, Math.PI/3);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  // Legs
+  const legSwing = Math.sin(p.animFrame * Math.PI/2) * 20;
+  ctx.fillStyle = '#1a2744';
+  ctx.save(); ctx.translate(-8, 22); ctx.rotate(legSwing * Math.PI/180);
+  ctx.fillRect(-5, 0, 10, 18); ctx.restore();
+  ctx.save(); ctx.translate(8, 22); ctx.rotate(-legSwing * Math.PI/180);
+  ctx.fillRect(-5, 0, 10, 18); ctx.restore();
+
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+function drawEnemy(e) {
+  ctx.save();
+  ctx.translate(e.x + e.w/2, e.y + e.h/2);
+  if (e.vx > 0) ctx.scale(-1, 1);
+
+  // Body
+  ctx.fillStyle = e.type === 'thug' ? '#3a1a4a' : '#2a2a3a';
+  ctx.fillRect(-14, -10, 28, 28);
+
+  // Head
+  ctx.fillStyle = e.type === 'thug' ? '#4a2a5a' : '#3a3a4a';
+  ctx.beginPath(); ctx.arc(0, -20, 14, 0, Math.PI*2); ctx.fill();
+
+  // Eyes (evil red)
+  ctx.fillStyle = '#ff2222';
+  ctx.beginPath(); ctx.arc(-5, -22, 4, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(6, -22, 4, 0, Math.PI*2); ctx.fill();
+
+  // HP bar
+  const bw = 36; const bh = 4;
+  ctx.fillStyle = '#333';
+  ctx.fillRect(-bw/2, -38, bw, bh);
+  ctx.fillStyle = e.hp > e.maxHp/2 ? C.green : C.red;
+  ctx.fillRect(-bw/2, -38, bw * (e.hp/e.maxHp), bh);
+
+  ctx.restore();
+}
+
+function drawBoss() {
+  const b = boss;
+  ctx.save();
+  ctx.translate(b.x + b.w/2, b.y + b.h/2);
+  if (b.vx > 0) ctx.scale(-1, 1);
+
+  // Shadow/glow
+  ctx.shadowColor = '#ff0000';
+  ctx.shadowBlur = 20 + Math.sin(frameCount*0.1)*10;
+
+  // Body
+  ctx.fillStyle = '#2a0a0a';
+  ctx.fillRect(-24, -10, 48, 45);
+
+  // Cape
+  ctx.fillStyle = '#1a0a0a';
+  ctx.beginPath();
+  ctx.moveTo(-24, -10);
+  ctx.lineTo(-35, 35);
+  ctx.lineTo(35, 35);
+  ctx.lineTo(24, -10);
+  ctx.fill();
+
+  // Head
+  ctx.fillStyle = '#3a0a0a';
+  ctx.beginPath(); ctx.arc(0, -26, 24, 0, Math.PI*2); ctx.fill();
+
+  // Top hat
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(-16, -56, 32, 30);
+  ctx.fillRect(-22, -28, 44, 6);
+
+  // Eyes (glowing)
+  ctx.fillStyle = '#ff0000';
+  ctx.shadowColor = '#ff0000';
+  ctx.shadowBlur = 15;
+  ctx.beginPath(); ctx.arc(-8, -28, 6, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(8, -28, 6, 0, Math.PI*2); ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Mustache
+  ctx.fillStyle = '#888';
+  ctx.fillRect(-14, -18, 12, 4);
+  ctx.fillRect(2, -18, 12, 4);
+
+  // Phase 2 crown effect
+  if (boss.phase === 2) {
+    ctx.strokeStyle = '#ff4444';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = '#ff4444';
+    ctx.shadowBlur = 20;
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2 + frameCount * 0.05;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(angle)*20, Math.sin(angle)*20 - 26);
+      ctx.lineTo(Math.cos(angle)*32, Math.sin(angle)*32 - 26);
+      ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+  }
+
+  ctx.restore();
+  ctx.shadowBlur = 0;
+
+  // Boss HP bar
+  const bx = 150, by = 20, bw = 600, bh = 18;
+  ctx.fillStyle = 'rgba(0,0,0,0.7)';
+  ctx.fillRect(bx-4, by-4, bw+8, bh+8);
+  ctx.fillStyle = '#333';
+  ctx.fillRect(bx, by, bw, bh);
+  const hpRatio = boss.hp / boss.maxHp;
+  const hpColor = hpRatio > 0.5 ? C.red : '#ff8800';
+  ctx.fillStyle = hpColor;
+  ctx.shadowColor = hpColor;
+  ctx.shadowBlur = 8;
+  ctx.fillRect(bx, by, bw * hpRatio, bh);
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 12px Arial Black';
+  ctx.textAlign = 'center';
+  ctx.fillText(`👿 LORD GRIMSBY — ${boss.hp}/${boss.maxHp} HP`, bx + bw/2, by + 13);
+}
+
+function drawHUD() {
+  // Player HP bar
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(10, 10, 204, 24);
+  ctx.fillStyle = player.hp > 50 ? C.green : player.hp > 25 ? '#ffaa00' : C.red;
+  ctx.shadowColor = ctx.fillStyle;
+  ctx.shadowBlur = 8;
+  ctx.fillRect(12, 12, 200 * (player.hp/player.maxHp), 20);
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 12px Arial Black';
+  ctx.textAlign = 'left';
+  ctx.fillText(`🐆 HP: ${player.hp}/${player.maxHp}`, 16, 26);
+
+  // Score
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(canvas.width - 160, 10, 150, 30);
+  ctx.fillStyle = C.gold;
+  ctx.font = 'bold 14px Arial Black';
+  ctx.textAlign = 'right';
+  ctx.fillText(`📦 ${score} pts`, canvas.width - 16, 30);
+
+  // Enemy count
+  if (!boss.spawned) {
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Defeat all enemies to summon Lord Grimsby! (${enemies.length} left)`, canvas.width/2, 25);
+  }
+
+  // Controls reminder
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.font = '11px Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText('← → Move  |  SPACE Jump  |  Z Attack', 12, canvas.height - 10);
+}
+
+// Touch controls for mobile
+let touchStartX = 0;
+canvas.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  const tx = e.touches[0].clientX;
+  const ty = e.touches[0].clientY;
+  // right half = attack, tap anywhere = jump if moving
+  if (tx > canvas.width * 0.6) {
+    if (player.attackCooldown <= 0) {
+      player.attacking = true;
+      player.attackTimer = 15;
+      player.attackCooldown = 25;
+      const hx = player.facing > 0 ? player.x + player.w : player.x - 50;
+      attackHitboxes.push({ x: hx, y: player.y, w: 50, h: player.h, life: 10 });
+    }
+  } else {
+    if (player.jumpCount < player.maxJumps) {
+      player.vy = -14; player.jumpCount++;
+    }
+  }
+}, { passive: true });
+</script>
+</body>
+</html>
