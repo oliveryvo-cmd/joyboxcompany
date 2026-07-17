@@ -600,5 +600,197 @@ if (lang !== 'en' && langs[lang]) {
 }
 </script>
 
+<!-- ANNOUNCEMENT BANNER -->
+<style>
+#announcement-bar {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
+  background: #e63030; color: #fff;
+  padding: 12px 50px 12px 20px;
+  font-size: 15px; font-weight: 700; text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  animation: slideDown 0.3s ease;
+}
+@keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+#announcement-close {
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: #fff; font-size: 20px; cursor: pointer;
+}
+</style>
+
+<div id="announcement-bar">
+  <span id="announcement-text"></span>
+  <button id="announcement-close" onclick="document.getElementById('announcement-bar').style.display='none'">✕</button>
+</div>
+
+<script>
+(async function() {
+  const res = await fetch('https://qbzpyhsbrjagyqsruzcb.supabase.co/rest/v1/announcements?active=eq.true&order=created_at.desc&limit=1', {
+    headers: { 'apikey': 'sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs', 'Authorization': 'Bearer sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs' }
+  });
+  if (!res.ok) return;
+  const data = await res.json();
+  if (data.length > 0) {
+    document.getElementById('announcement-text').textContent = '📢 ' + data[0].message;
+    document.getElementById('announcement-bar').style.display = 'block';
+  }
+})();
+</script>
+
+<!-- CHAT BUBBLE -->
+<style>
+#chat-bubble {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+}
+#chat-toggle {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: #e63030; border: none; cursor: pointer;
+  font-size: 28px; box-shadow: 0 4px 20px rgba(230,48,48,0.5);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s;
+}
+#chat-toggle:hover { transform: scale(1.1); }
+#chat-box {
+  display: none;
+  position: absolute; bottom: 70px; right: 0;
+  width: 320px; background: #1a2744;
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  border: 2px solid #e63030;
+}
+#chat-box-header {
+  background: #e63030; padding: 14px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+#chat-box-header span { font-size: 22px; }
+#chat-box-header div { color: #fff; font-weight: 700; font-size: 14px; }
+#chat-box-header small { color: rgba(255,255,255,0.8); font-size: 11px; display: block; }
+#chat-msgs {
+  height: 220px; overflow-y: auto; padding: 14px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.cb-msg { padding: 8px 12px; border-radius: 12px; font-size: 13px; max-width: 85%; }
+.cb-msg.admin { background: #e63030; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px; }
+.cb-msg.visitor { background: #0a0a2a; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+#chat-name-row {
+  padding: 10px 14px 0;
+  display: flex; gap: 8px;
+}
+#chat-name-input {
+  flex: 1; background: #0a0a2a; border: 1px solid #333;
+  border-radius: 20px; padding: 8px 14px; color: #fff; font-size: 13px; outline: none;
+}
+#chat-input-row {
+  padding: 10px 14px 14px;
+  display: flex; gap: 8px;
+}
+#chat-input {
+  flex: 1; background: #0a0a2a; border: 1px solid #333;
+  border-radius: 20px; padding: 8px 14px; color: #fff; font-size: 13px; outline: none;
+}
+#chat-input:focus, #chat-name-input:focus { border-color: #e63030; }
+#chat-send {
+  background: #e63030; color: #fff; border: none;
+  border-radius: 20px; padding: 8px 16px; font-weight: 700; cursor: pointer; font-size: 13px;
+}
+</style>
+
+<div id="chat-bubble">
+  <div id="chat-box">
+    <div id="chat-box-header">
+      <span>🐆</span>
+      <div>Chat with Oliver!<small>Joy Box Company founder</small></div>
+    </div>
+    <div id="chat-msgs">
+      <div class="cb-msg admin">Hey! I'm Oliver 👋 Ask me anything about Joy Boxes!</div>
+    </div>
+    <div id="chat-name-row">
+      <input id="chat-name-input" placeholder="Your name..." maxlength="40">
+    </div>
+    <div id="chat-input-row">
+      <input id="chat-input" placeholder="Type a message..." maxlength="300" onkeydown="if(event.key==='Enter')cbSend()">
+      <button id="chat-send" onclick="cbSend()">Send</button>
+    </div>
+  </div>
+  <button id="chat-toggle" onclick="cbToggle()">💬</button>
+</div>
+
+<script>
+const CB_URL = 'https://qbzpyhsbrjagyqsruzcb.supabase.co';
+const CB_KEY = 'sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs';
+let cbSession = localStorage.getItem('jbc_session') || (Math.random().toString(36).slice(2));
+localStorage.setItem('jbc_session', cbSession);
+let cbOpen = false;
+let cbLastCount = 1;
+
+function cbToggle() {
+  cbOpen = !cbOpen;
+  document.getElementById('chat-box').style.display = cbOpen ? 'block' : 'none';
+  document.getElementById('chat-toggle').textContent = cbOpen ? '✕' : '💬';
+  if (cbOpen) cbLoad();
+}
+
+async function cbLoad() {
+  const res = await fetch(`${CB_URL}/rest/v1/chat_messages?session_id=eq.${cbSession}&order=created_at.asc`, {
+    headers: { 'apikey': CB_KEY, 'Authorization': `Bearer ${CB_KEY}` }
+  });
+  if (!res.ok) return;
+  const msgs = await res.json();
+  const box = document.getElementById('chat-msgs');
+  if (msgs.length === 0) return;
+  box.innerHTML = '<div class="cb-msg admin">Hey! I\'m Oliver 👋 Ask me anything about Joy Boxes!</div>';
+  msgs.forEach(m => {
+    const d = document.createElement('div');
+    d.className = 'cb-msg ' + m.sender;
+    d.textContent = m.message;
+    box.appendChild(d);
+  });
+  box.scrollTop = box.scrollHeight;
+  cbLastCount = msgs.length;
+}
+
+async function cbSend() {
+  const nameEl = document.getElementById('chat-name-input');
+  const inputEl = document.getElementById('chat-input');
+  const name = nameEl.value.trim() || 'Visitor';
+  const msg = inputEl.value.trim();
+  if (!msg) return;
+  inputEl.value = '';
+
+  const box = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className = 'cb-msg visitor';
+  d.textContent = msg;
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+
+  await fetch(`${CB_URL}/rest/v1/chat_messages`, {
+    method: 'POST',
+    headers: { 'apikey': CB_KEY, 'Authorization': `Bearer ${CB_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ session_id: cbSession, sender: 'visitor', name: name, message: msg })
+  });
+}
+
+setInterval(async () => {
+  if (!cbOpen) return;
+  const res = await fetch(`${CB_URL}/rest/v1/chat_messages?session_id=eq.${cbSession}&order=created_at.asc`, {
+    headers: { 'apikey': CB_KEY, 'Authorization': `Bearer ${CB_KEY}` }
+  });
+  if (!res.ok) return;
+  const msgs = await res.json();
+  if (msgs.length > cbLastCount) {
+    const box = document.getElementById('chat-msgs');
+    for (let i = cbLastCount; i < msgs.length; i++) {
+      const d = document.createElement('div');
+      d.className = 'cb-msg ' + msgs[i].sender;
+      d.textContent = msgs[i].message;
+      box.appendChild(d);
+    }
+    box.scrollTop = box.scrollHeight;
+    cbLastCount = msgs.length;
+  }
+}, 3000);
+</script>
+
 </body>
 </html>
