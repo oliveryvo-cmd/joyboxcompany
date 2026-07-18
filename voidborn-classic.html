@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOIDBORN Classic — Base Set</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Orbitron:wght@700;900&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1008; min-height: 100vh; font-family: 'Libre Baskerville', serif; color: #fff; }
+
+.header { text-align: center; padding: 40px 20px 24px; }
+.logo { font-family: 'Orbitron', sans-serif; font-size: 48px; font-weight: 900; color: #ffd700; text-shadow: 2px 2px 0 #8B6914, 4px 4px 0 #5a4200; letter-spacing: 6px; }
+.logo-sub { font-size: 11px; letter-spacing: 8px; color: #a08030; margin-top: 4px; text-transform: uppercase; }
+.set-badge { display: inline-block; background: #2a1a00; border: 2px solid #8B6914; border-radius: 4px; padding: 4px 16px; font-size: 11px; letter-spacing: 3px; color: #ffd700; margin-top: 12px; font-family: 'Orbitron', sans-serif; }
+
+.filters { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; padding: 20px; }
+.filter-btn { background: #2a1a00; border: 2px solid #8B6914; color: #a08030; padding: 6px 16px; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: 2px; cursor: pointer; font-family: 'Orbitron', sans-serif; transition: all 0.15s; }
+.filter-btn:hover, .filter-btn.active { background: #8B6914; color: #fff; }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 28px; padding: 0 40px 80px; max-width: 1300px; margin: 0 auto; }
+
+/* BASE SET CARD */
+.card-wrap { cursor: pointer; }
+.card {
+  width: 100%;
+  aspect-ratio: 0.714;
+  border-radius: 8px;
+  position: relative;
+  transition: transform 0.15s;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.7));
+}
+.card:hover { transform: scale(1.04) translateY(-4px); }
+.card-outer {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  padding: 6px;
+  position: relative;
+}
+
+/* FACTION BORDER COLORS */
+.faction-void .card-outer { background: linear-gradient(135deg, #6a0dad, #3a006a, #6a0dad); }
+.faction-solar .card-outer { background: linear-gradient(135deg, #ff8c00, #cc5500, #ff8c00); }
+.faction-iron .card-outer { background: linear-gradient(135deg, #888, #444, #888); }
+.faction-wild .card-outer { background: linear-gradient(135deg, #2d8a2d, #0a4a0a, #2d8a2d); }
+.faction-storm .card-outer { background: linear-gradient(135deg, #0088cc, #004488, #0088cc); }
+.faction-ancient .card-outer { background: linear-gradient(135deg, #cc4400, #661100, #cc4400); }
+
+/* HOLO BORDERS */
+.rarity-legendary .card-outer { background: linear-gradient(135deg, #ffd700, #ffaa00, #fff8aa, #ffaa00, #ffd700) !important; animation: goldPulse 2s infinite; }
+.rarity-secret .card-outer { background: linear-gradient(135deg, #00ff88, #00aaff, #aa00ff, #ff0088, #00ff88) !important; animation: rainbowBorder 3s linear infinite; background-size: 200% !important; }
+@keyframes goldPulse { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.3)} }
+@keyframes rainbowBorder { 0%{background-position:0%} 100%{background-position:200%} }
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  background: #f5e8c8;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+}
+
+/* CARD TEXTURE */
+.card-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='4' height='4' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1' height='1' fill='rgba(0,0,0,0.04)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* HOLO SHIMMER ON RARE+ */
+.rarity-rare .card-inner::after,
+.rarity-ultra .card-inner::after,
+.rarity-secret .card-inner::after,
+.rarity-legendary .card-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+  pointer-events: none;
+  z-index: 20;
+  animation: holoShimmer 3s ease-in-out infinite;
+}
+@keyframes holoShimmer { 0%,100%{opacity:0;transform:translateX(-100%)} 50%{opacity:1;transform:translateX(100%)} }
+
+/* TOP ROW */
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3px;
+  position: relative;
+  z-index: 1;
+}
+.card-name-top {
+  font-size: clamp(9px,1.8vw,12px);
+  font-weight: 700;
+  color: #1a0a00;
+  font-family: 'Libre Baskerville', serif;
+  line-height: 1;
+}
+.card-hp {
+  font-size: clamp(10px,1.8vw,13px);
+  font-weight: 700;
+  color: #cc0000;
+  font-family: 'Orbitron', sans-serif;
+  white-space: nowrap;
+}
+
+/* ART BOX */
+.art-box {
+  background: #fff;
+  border: 2px solid #8B6914;
+  border-radius: 3px;
+  height: 36%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.art-box-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+}
+
+/* TYPE LINE */
+.type-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 3px 0;
+  position: relative;
+  z-index: 1;
+}
+.type-badge {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+.faction-void .type-badge { background: #6a0dad; }
+.faction-solar .type-badge { background: #cc5500; }
+.faction-iron .type-badge { background: #666; }
+.faction-wild .type-badge { background: #2d8a2d; }
+.faction-storm .type-badge { background: #0077bb; }
+.faction-ancient .type-badge { background: #993300; }
+.rarity-badge { font-size: 7px; color: #8B6914; font-weight: 700; letter-spacing: 1px; }
+
+/* FLAVOR TEXT */
+.flavor {
+  font-style: italic;
+  font-size: 7px;
+  color: #4a3a20;
+  text-align: center;
+  padding: 2px 2px;
+  border-top: 1px solid #c8a84a;
+  border-bottom: 1px solid #c8a84a;
+  margin: 2px 0;
+  line-height: 1.4;
+  position: relative;
+  z-index: 1;
+}
+
+/* ABILITY BOX */
+.ability-box {
+  background: rgba(255,255,255,0.6);
+  border: 1px solid #c8a84a;
+  border-radius: 3px;
+  padding: 4px 5px;
+  margin: 2px 0;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+}
+.ability-name {
+  font-size: 8px;
+  font-weight: 700;
+  color: #1a0a00;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+.ability-text {
+  font-size: 7px;
+  color: #3a2a10;
+  line-height: 1.4;
+}
+
+/* STATS ROW */
+.stats-row {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #c8a84a;
+  padding-top: 3px;
+  margin-top: 2px;
+  position: relative;
+  z-index: 1;
+}
+.stat { text-align: center; }
+.stat-val { font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; color: #1a0a00; line-height: 1; }
+.stat-lbl { font-size: 6px; color: #8B6914; letter-spacing: 1px; text-transform: uppercase; }
+
+/* BOTTOM ROW */
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2px;
+  position: relative;
+  z-index: 1;
+}
+.card-num { font-size: 6px; color: #8B6914; letter-spacing: 1px; font-family: 'Orbitron', sans-serif; }
+.weakness { font-size: 6px; color: #cc0000; font-weight: 700; }
+.set-symbol { font-size: 10px; }
+
+.rarity-label { text-align: center; margin-top: 6px; font-size: 9px; letter-spacing: 2px; font-weight: 700; font-family: 'Orbitron', sans-serif; }
+.rarity-common .rarity-label { color: #888; }
+.rarity-uncommon .rarity-label { color: #4da6ff; }
+.rarity-rare .rarity-label { color: #9d4edd; }
+.rarity-ultra .rarity-label { color: #ff4466; }
+.rarity-secret .rarity-label { color: #00ff88; }
+.rarity-legendary .rarity-label { color: #ffd700; }
+
+/* CARD BG BY FACTION */
+.faction-void .card-inner { background: linear-gradient(170deg, #e8d5f5, #d4b8f0, #f0e0ff); }
+.faction-solar .card-inner { background: linear-gradient(170deg, #fff5cc, #ffe8a0, #fff8e0); }
+.faction-iron .card-inner { background: linear-gradient(170deg, #e0e0e0, #c8c8c8, #e8e8e8); }
+.faction-wild .card-inner { background: linear-gradient(170deg, #d4f5d4, #b8e8b8, #e0ffe0); }
+.faction-storm .card-inner { background: linear-gradient(170deg, #c8e8ff, #a0d0ff, #d8f0ff); }
+.faction-ancient .card-inner { background: linear-gradient(170deg, #f5dcc8, #e8c4a0, #fff0e0); }
+.rarity-legendary .card-inner { background: linear-gradient(170deg, #fffbe0, #fff0a0, #ffffe8) !important; }
+.rarity-secret .card-inner { background: linear-gradient(170deg, #e0fff0, #c0ffe0, #f0ffff) !important; }
+
+.footer { text-align: center; padding: 32px; border-top: 1px solid #3a2a00; color: #8B6914; font-size: 11px; letter-spacing: 2px; }
+.footer a { color: #ffd700; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">VOIDBORN</div>
+  <div class="logo-sub">Trading Card Game</div>
+  <div class="set-badge">⬡ BASE SET — ZERO ⬡</div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterCards('all',this)">ALL</button>
+  <button class="filter-btn" onclick="filterCards('void',this)">VOID</button>
+  <button class="filter-btn" onclick="filterCards('solar',this)">SOLAR</button>
+  <button class="filter-btn" onclick="filterCards('iron',this)">IRON</button>
+  <button class="filter-btn" onclick="filterCards('wild',this)">WILD</button>
+  <button class="filter-btn" onclick="filterCards('storm',this)">STORM</button>
+  <button class="filter-btn" onclick="filterCards('ancient',this)">ANCIENT</button>
+  <button class="filter-btn" onclick="filterCards('legendary',this)">👑 LEGENDARY</button>
+</div>
+
+<div class="card-grid" id="card-grid"></div>
+
+<div class="footer">
+  VOIDBORN TCG · BASE SET ZERO · ERA I · ©2026 OLIVER VO<br>
+  <a href="https://joyboxcompany.com">joyboxcompany.com</a>
+</div>
+
+<script>
+const RARITY_ICONS = { common:"●", uncommon:"◆", rare:"★", ultra:"★★", secret:"✦", legendary:"♛" };
+const RARITY_LABELS = { common:"Common", uncommon:"Uncommon", rare:"Rare Holo", ultra:"Ultra Rare", secret:"Secret Rare", legendary:"Legendary" };
+const WEAKNESS = { void:"Solar", solar:"Storm", iron:"Wild", wild:"Fire", storm:"Iron", ancient:"Void" };
+const SET_SYMBOLS = { void:"🌑", solar:"☀️", iron:"⚙️", wild:"🌿", storm:"⚡", ancient:"🔮" };
+
+const CARDS = [
+  { id:"001", name:"GRIMSHADE", faction:"void", type:"Shadow Wraith", rarity:"secret", emoji:"👻", hp:200, atk:180, def:120, spd:200, desc:'"Where I walk, light dies."', ability:"VOID DRAIN", abilityText:"Steals 40 HP from opponent each turn. Cannot be blocked." },
+  { id:"002", name:"VEXAR", faction:"void", type:"Void Wolf", rarity:"rare", emoji:"🐺", hp:160, atk:140, def:80, spd:160, desc:'"It hunts between dimensions."', ability:"SHADOW LEAP", abilityText:"Teleports behind opponent, ignores all defense bonuses." },
+  { id:"003", name:"NULLSHADE", faction:"void", type:"Void Specter", rarity:"uncommon", emoji:"🕷️", hp:100, atk:80, def:60, spd:120, desc:'"A fragment of the void given form."', ability:"PHASE", abilityText:"30% chance to dodge any attack this turn." },
+  { id:"004", name:"VOIDLING", faction:"void", type:"Void Creature", rarity:"common", emoji:"👁️", hp:60, atk:40, def:30, spd:60, desc:'"The smallest pieces of darkness."', ability:"SWARM", abilityText:"+10 ATK for each Voidling on the field." },
+  { id:"005", name:"SOLARIUS", faction:"solar", type:"Sun God", rarity:"legendary", emoji:"☀️", hp:250, atk:220, def:180, spd:150, desc:'"Born from the first light."', ability:"SOLAR BURST", abilityText:"Deals 200 damage to ALL Void cards on the field at once." },
+  { id:"006", name:"BLAZEWING", faction:"solar", type:"Fire Phoenix", rarity:"ultra", emoji:"🦅", hp:190, atk:170, def:90, spd:190, desc:'"It rises from every defeat."', ability:"REBIRTH", abilityText:"Once per game, revive with 50% HP when defeated." },
+  { id:"007", name:"LUMINOS", faction:"solar", type:"Light Warrior", rarity:"rare", emoji:"⚡", hp:150, atk:130, def:100, spd:140, desc:'"Forged in the heart of a dying star."', ability:"LIGHT SHIELD", abilityText:"Blocks 50% of all Void damage dealt to this card." },
+  { id:"008", name:"SUNPUP", faction:"solar", type:"Solar Beast", rarity:"common", emoji:"🐕", hp:70, atk:50, def:40, spd:80, desc:'"Even the smallest flame can light the dark."', ability:"WARM HEART", abilityText:"Heals one ally for 20 HP at the start of each turn." },
+  { id:"009", name:"NULLBOT-X", faction:"iron", type:"War Machine", rarity:"ultra", emoji:"🤖", hp:220, atk:190, def:220, spd:60, desc:'"Built to win. Never lost."', ability:"ARMOR LOCK", abilityText:"Reduces all incoming damage by 60 for 3 turns." },
+  { id:"010", name:"IRONCLAD", faction:"iron", type:"Steel Guardian", rarity:"rare", emoji:"🛡️", hp:200, atk:100, def:200, spd:40, desc:'"Immovable. Unbreakable. Eternal."', ability:"FORTRESS", abilityText:"Cannot be moved or swapped by opponent's abilities." },
+  { id:"011", name:"SPARKY", faction:"iron", type:"Mini Bot", rarity:"common", emoji:"⚡", hp:60, atk:30, def:50, spd:100, desc:'"Small but never underestimated."', ability:"OVERCLOCK", abilityText:"Doubles this card's SPD stat for 2 turns." },
+  { id:"012", name:"THORNCLAW", faction:"wild", type:"Forest Titan", rarity:"rare", emoji:"🐻", hp:170, atk:150, def:110, spd:90, desc:'"The forest obeys. The forest destroys."', ability:"WILD RAGE", abilityText:"ATK doubles when HP falls below 50%." },
+  { id:"013", name:"FERALIS", faction:"wild", type:"Shadow Beast", rarity:"ultra", emoji:"🐆", hp:200, atk:180, def:130, spd:170, desc:'"Half beast. Half void. Unstoppable."', ability:"PREDATOR SENSE", abilityText:"Cannot be surprised. Always attacks first each turn." },
+  { id:"014", name:"LEAFKIT", faction:"wild", type:"Nature Sprite", rarity:"common", emoji:"🦊", hp:55, atk:35, def:35, spd:90, desc:'"Tiny. Fast. Everywhere at once."', ability:"REGROWTH", abilityText:"Heals 15 HP at the start of each of your turns." },
+  { id:"015", name:"STORMRAGE", faction:"storm", type:"Thunder God", rarity:"legendary", emoji:"⚡", hp:240, atk:210, def:140, spd:240, desc:'"The last thing you hear is thunder."', ability:"CHAIN LIGHTNING", abilityText:"Hits all opponent cards for 80 damage each simultaneously." },
+  { id:"016", name:"CYCLONIS", faction:"storm", type:"Wind Elemental", rarity:"rare", emoji:"🌀", hp:140, atk:120, def:70, spd:210, desc:'"Move like the wind. Strike like the storm."', ability:"TORNADO", abilityText:"Forces opponent to shuffle and discard 2 cards." },
+  { id:"017", name:"ZAPPER", faction:"storm", type:"Storm Sprite", rarity:"uncommon", emoji:"🌩️", hp:110, atk:90, def:50, spd:180, desc:'"Always charged. Always ready."', ability:"STATIC FIELD", abilityText:"All opponent cards lose 20 SPD each turn while active." },
+  { id:"018", name:"LORD GRIMSBY", faction:"ancient", type:"Ancient Villain", rarity:"legendary", emoji:"👿", hp:300, atk:250, def:200, spd:100, desc:'"He existed before the first light."', ability:"DARK EMPIRE", abilityText:"All opponent cards lose 50 ATK and 50 DEF permanently." },
+  { id:"019", name:"DRAKODRIRD", faction:"ancient", type:"Ancient Dragon", rarity:"secret", emoji:"🐉", hp:280, atk:230, def:190, spd:130, desc:'"The oldest creature. Even Grimsby fears it."', ability:"ANCIENT BREATH", abilityText:"Destroys any card with less than 100 DEF instantly." },
+  { id:"020", name:"STONEGUARD", faction:"ancient", type:"Ancient Golem", rarity:"rare", emoji:"🗿", hp:210, atk:90, def:240, spd:20, desc:'"It has stood ten thousand years."', ability:"ANCIENT WALL", abilityText:"Protects ALL allies from damage for 1 full turn." },
+  { id:"S01", name:"JIM JAGUAR", faction:"wild", type:"Hero · Legendary", rarity:"legendary", emoji:"🐆", hp:300, atk:200, def:150, spd:220, desc:'"Blind. Deaf. One hand. Unstoppable."', ability:"JOY BOX THROW", abilityText:"Heals all allies for 100 HP. Deals 150 damage. Evil cards cannot use this." },
+  { id:"Z01", name:"ZERO", faction:"void", type:"Void Absolute", rarity:"legendary", emoji:"💀", hp:999, atk:999, def:999, spd:999, desc:'"Before the void there was Zero. After everything ends, there is only Zero."', ability:"ABSOLUTE END", abilityText:"This card instantly wins the game when played. Can only exist as #001/001." },
+];
+
+function makeCard(card) {
+  const weak = WEAKNESS[card.faction] || '—';
+  const sym = SET_SYMBOLS[card.faction] || '⬡';
+  return `
+  <div class="card-wrap rarity-${card.rarity} faction-${card.faction}" onclick="void(0)">
+    <div class="card" onmousemove="tilt(event,this)" onmouseleave="untilt(this)">
+      <div class="card-outer">
+        <div class="card-inner">
+          <div class="top-row">
+            <div class="card-name-top">${card.name}</div>
+            <div class="card-hp">${card.hp} HP</div>
+          </div>
+          <div class="art-box">
+            <span>${card.emoji}</span>
+          </div>
+          <div class="type-line">
+            <span class="type-badge">${card.faction.toUpperCase()} · ${card.type.toUpperCase()}</span>
+            <span class="rarity-badge">${RARITY_ICONS[card.rarity]}</span>
+          </div>
+          <div class="flavor">${card.desc}</div>
+          <div class="ability-box">
+            <div class="ability-name">${card.ability}</div>
+            <div class="ability-text">${card.abilityText}</div>
+          </div>
+          <div class="stats-row">
+            <div class="stat"><div class="stat-val">${card.atk}</div><div class="stat-lbl">ATK</div></div>
+            <div class="stat"><div class="stat-val">${card.def}</div><div class="stat-lbl">DEF</div></div>
+            <div class="stat"><div class="stat-val">${card.spd}</div><div class="stat-lbl">SPD</div></div>
+          </div>
+          <div class="bottom-row">
+            <div class="card-num">${card.id}/022</div>
+            <div class="weakness">Weak: ${weak}</div>
+            <div class="set-symbol">${sym}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="rarity-label">${RARITY_LABELS[card.rarity]}</div>
+  </div>`;
+}
+
+function tilt(e, card) {
+  const r = card.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width - 0.5;
+  const y = (e.clientY - r.top) / r.height - 0.5;
+  card.style.transform = `rotateY(${x*18}deg) rotateX(${-y*18}deg) scale(1.06)`;
+}
+function untilt(card) { card.style.transform = ''; }
+
+function filterCards(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = f === 'all' ? CARDS : f === 'legendary' ? CARDS.filter(c=>c.rarity==='legendary') : CARDS.filter(c=>c.faction===f);
+  document.getElementById('card-grid').innerHTML = filtered.map(makeCard).join('');
+}
+
+filterCards('all', document.querySelector('.filter-btn'));
+</script>
+</body>
+</html>

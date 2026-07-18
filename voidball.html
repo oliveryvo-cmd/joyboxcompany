@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOIDBALL — The Official Sport</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --purple: #7b00ff;
+  --purple-light: #a855f7;
+  --purple-dark: #3d0080;
+  --glow: 0 0 20px rgba(123,0,255,0.6);
+}
+
+body { background: #0a000f; color: #fff; font-family: 'Inter', sans-serif; }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: radial-gradient(ellipse at center, #1a0030 0%, #0a000f 70%);
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(123,0,255,0.2)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.logo {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(60px, 12vw, 120px);
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 40px var(--purple), 0 0 80px var(--purple-light);
+  letter-spacing: 8px;
+  line-height: 1;
+}
+.logo span { color: var(--purple-light); }
+
+.tagline {
+  font-size: clamp(14px, 2.5vw, 22px);
+  color: #a855f7;
+  letter-spacing: 4px;
+  margin: 16px 0 40px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.badge {
+  display: inline-flex;
+  gap: 32px;
+  background: rgba(123,0,255,0.15);
+  border: 1px solid rgba(123,0,255,0.4);
+  border-radius: 50px;
+  padding: 12px 32px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #c084fc;
+  margin-bottom: 48px;
+}
+
+.cta {
+  display: inline-block;
+  background: var(--purple);
+  color: #fff;
+  padding: 16px 48px;
+  border-radius: 4px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-decoration: none;
+  box-shadow: var(--glow);
+  transition: all 0.2s;
+}
+.cta:hover { background: var(--purple-light); transform: translateY(-2px); }
+
+/* FIELD DIAGRAM */
+.field-section {
+  padding: 80px 40px;
+  text-align: center;
+  background: #080010;
+}
+.section-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(24px, 4vw, 42px);
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.section-title span { color: var(--purple-light); }
+.section-sub { color: #888; font-size: 15px; margin-bottom: 48px; letter-spacing: 1px; }
+
+.field-diagram {
+  max-width: 480px;
+  margin: 0 auto 40px;
+}
+.field-diagram svg { width: 100%; height: auto; }
+
+/* RULES */
+.rules-section {
+  padding: 80px 40px;
+  background: radial-gradient(ellipse at top, #0f0020 0%, #0a000f 60%);
+}
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.rule-card {
+  background: rgba(123,0,255,0.08);
+  border: 1px solid rgba(123,0,255,0.25);
+  border-radius: 8px;
+  padding: 28px;
+  transition: all 0.2s;
+}
+.rule-card:hover { border-color: var(--purple); box-shadow: var(--glow); }
+.rule-num {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 36px;
+  font-weight: 900;
+  color: rgba(123,0,255,0.3);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.rule-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #c084fc;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+.rule-text { font-size: 14px; color: #aaa; line-height: 1.7; }
+
+/* POSITIONS */
+.positions-section {
+  padding: 80px 40px;
+  background: #080010;
+  text-align: center;
+}
+.positions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.position-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 24px 16px;
+  text-align: center;
+}
+.position-emoji { font-size: 40px; margin-bottom: 12px; }
+.position-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--purple-light);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.position-desc { font-size: 12px; color: #888; line-height: 1.6; }
+
+/* SCORING */
+.scoring-section {
+  padding: 80px 40px;
+  background: radial-gradient(ellipse at bottom, #0f0020 0%, #0a000f 60%);
+  text-align: center;
+}
+.score-cards {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.score-card {
+  background: rgba(123,0,255,0.12);
+  border: 2px solid var(--purple);
+  border-radius: 8px;
+  padding: 32px 40px;
+  min-width: 220px;
+  box-shadow: var(--glow);
+}
+.score-pts {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 64px;
+  font-weight: 900;
+  color: var(--purple-light);
+  line-height: 1;
+}
+.score-label { font-size: 14px; color: #aaa; margin-top: 8px; line-height: 1.5; }
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 40px;
+  border-top: 1px solid rgba(123,0,255,0.2);
+  color: #555;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+footer a { color: var(--purple-light); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="logo">VOID<span>BALL</span></div>
+  <div class="tagline">The Sport of the Future · Est. 2026</div>
+  <div class="badge">
+    <span>5 vs 5</span>
+    <span>·</span>
+    <span>Outdoor</span>
+    <span>·</span>
+    <span>First to 10</span>
+  </div>
+  <a class="cta" href="#rules">READ THE RULES</a>
+</section>
+
+<!-- FIELD -->
+<section class="field-section">
+  <div class="section-title">THE <span>FIELD</span></div>
+  <div class="section-sub">Three zones. One Orb. Infinite strategy.</div>
+  <div class="field-diagram">
+    <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <!-- Outer ring -->
+      <circle cx="200" cy="200" r="190" fill="none" stroke="#7b00ff" stroke-width="3"/>
+      <circle cx="200" cy="200" r="190" fill="rgba(123,0,255,0.05)"/>
+      <!-- Middle ring -->
+      <circle cx="200" cy="200" r="120" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="8,4"/>
+      <circle cx="200" cy="200" r="120" fill="rgba(168,85,247,0.07)"/>
+      <!-- The Void center -->
+      <circle cx="200" cy="200" r="50" fill="rgba(123,0,255,0.3)" stroke="#c084fc" stroke-width="3"/>
+      <text x="200" y="196" text-anchor="middle" fill="#c084fc" font-family="Orbitron,sans-serif" font-size="11" font-weight="700">THE</text>
+      <text x="200" y="212" text-anchor="middle" fill="#c084fc" font-family="Orbitron,sans-serif" font-size="11" font-weight="700">VOID</text>
+      <!-- Labels -->
+      <text x="200" y="30" text-anchor="middle" fill="#7b00ff" font-family="Orbitron,sans-serif" font-size="12" font-weight="700">OUTER RING</text>
+      <text x="200" y="100" text-anchor="middle" fill="#a855f7" font-family="Orbitron,sans-serif" font-size="11">MIDDLE RING</text>
+      <!-- Team sides -->
+      <text x="60" y="210" text-anchor="middle" fill="#555" font-family="Orbitron,sans-serif" font-size="10">TEAM A</text>
+      <text x="340" y="210" text-anchor="middle" fill="#555" font-family="Orbitron,sans-serif" font-size="10">TEAM B</text>
+    </svg>
+  </div>
+</section>
+
+<!-- RULES -->
+<section class="rules-section" id="rules">
+  <div style="text-align:center; margin-bottom:48px;">
+    <div class="section-title">OFFICIAL <span>RULES</span></div>
+    <div class="section-sub">Simple enough to learn in 5 minutes. Deep enough to master in a lifetime.</div>
+  </div>
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-num">01</div>
+      <div class="rule-title">THE ORB</div>
+      <div class="rule-text">One ball — called the Orb — is used per match. You cannot run while holding the Orb. You must pass it to move it across the field.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">02</div>
+      <div class="rule-title">SCORING</div>
+      <div class="rule-text">Throw the Orb into The Void (center circle) = 1 point. If a teammate is STANDING in The Void when it lands = 3 points.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">03</div>
+      <div class="rule-title">THE GUARDIAN</div>
+      <div class="rule-text">Each team has one Void Guardian who defends The Void. The Guardian cannot leave the center zone. Every 2 minutes, a new player rotates into the Guardian role.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">04</div>
+      <div class="rule-title">DEFENSE</div>
+      <div class="rule-text">Defenders can intercept passes and block throws. No physical contact with the Orb carrier. Stealing only from the air — no grabbing from hands.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">05</div>
+      <div class="rule-title">WINNING</div>
+      <div class="rule-text">First team to reach 10 points wins the match. If tied at 10, play sudden death — next score wins.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-num">06</div>
+      <div class="rule-title">RESET</div>
+      <div class="rule-text">After each score, both teams reset to their side of the Outer Ring. The team that was scored on starts with the Orb.</div>
+    </div>
+  </div>
+</section>
+
+<!-- POSITIONS -->
+<section class="positions-section">
+  <div class="section-title">THE <span>POSITIONS</span></div>
+  <div class="section-sub">5 players. 5 roles. One team.</div>
+  <div class="positions-grid">
+    <div class="position-card">
+      <div class="position-emoji">👁️</div>
+      <div class="position-name">VOID GUARDIAN</div>
+      <div class="position-desc">Defends the center Void zone. Rotates every 2 minutes. The most important position.</div>
+    </div>
+    <div class="position-card">
+      <div class="position-emoji">⚡</div>
+      <div class="position-name">STRIKER</div>
+      <div class="position-desc">The main scorer. Stays near The Void to catch 3-point passes from teammates.</div>
+    </div>
+    <div class="position-card">
+      <div class="position-emoji">🌀</div>
+      <div class="position-name">RUNNER</div>
+      <div class="position-desc">Passes the Orb fast across the field. Never holds it more than 2 seconds.</div>
+    </div>
+    <div class="position-card">
+      <div class="position-emoji">🛡️</div>
+      <div class="position-name">BLOCKER</div>
+      <div class="position-desc">Guards the outer ring, intercepts enemy passes, protects the Runner.</div>
+    </div>
+    <div class="position-card">
+      <div class="position-emoji">🎯</div>
+      <div class="position-name">ANCHOR</div>
+      <div class="position-desc">The all-around player. Switches between attack and defense as needed.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SCORING -->
+<section class="scoring-section">
+  <div class="section-title">HOW TO <span>SCORE</span></div>
+  <div class="section-sub">Two ways to score. One is legendary.</div>
+  <div class="score-cards">
+    <div class="score-card">
+      <div class="score-pts">1</div>
+      <div class="score-label">Orb lands in The Void<br>Standard throw</div>
+    </div>
+    <div class="score-card" style="border-color:#c084fc; background:rgba(192,132,252,0.15);">
+      <div class="score-pts" style="color:#fff;">3</div>
+      <div class="score-label">Teammate standing in The Void<br>catches the Orb<br><strong style="color:#c084fc;">THE VOID STRIKE</strong></div>
+    </div>
+    <div class="score-card">
+      <div class="score-pts">10</div>
+      <div class="score-label">Points needed to win<br>Sudden death if tied</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  VOIDBALL · OFFICIAL SPORT · INVENTED 2026 BY OLIVER VO · MISSION VIEJO, CA<br><br>
+  <a href="https://joyboxcompany.com">joyboxcompany.com</a>
+</footer>
+
+</body>
+</html>
