@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Jim Jaguar 3D Shooter</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; overflow: hidden; font-family: 'Arial Black', Arial, sans-serif; }
+canvas { display: block; }
+#hud {
+  position: fixed; top: 0; left: 0; right: 0; pointer-events: none;
+  padding: 16px;
+}
+#hp-bar-bg { background: rgba(0,0,0,0.6); border-radius: 20px; width: 220px; height: 22px; border: 2px solid #e63030; }
+#hp-bar { background: #e63030; border-radius: 20px; height: 100%; width: 100%; transition: width 0.2s; box-shadow: 0 0 10px #e63030; }
+#hp-label { color: #fff; font-size: 13px; font-weight: 900; margin-top: 4px; }
+#score-display { position: fixed; top: 16px; right: 16px; color: #ffd700; font-size: 18px; font-weight: 900; text-shadow: 0 0 10px #ffd700; }
+#ammo-display { position: fixed; bottom: 60px; right: 24px; color: #fff; font-size: 20px; font-weight: 900; }
+#crosshair { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); color: #fff; font-size: 24px; pointer-events: none; text-shadow: 0 0 8px #e63030; }
+#wave-display { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); color: #ffd700; font-size: 48px; font-weight: 900; text-shadow: 0 0 20px #ffd700; display: none; text-align: center; }
+#start-screen, #gameover-screen {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #fff; text-align: center; z-index: 100;
+}
+#gameover-screen { display: none; }
+h1 { font-size: 52px; color: #e63030; text-shadow: 0 0 30px #e63030; margin-bottom: 8px; }
+h2 { font-size: 22px; color: #ffd700; margin-bottom: 20px; }
+.sub { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 30px; letter-spacing: 2px; }
+.btn { background: #e63030; color: #fff; border: none; padding: 18px 56px; font-size: 20px; font-weight: 900; border-radius: 100px; cursor: pointer; letter-spacing: 2px; box-shadow: 0 0 30px rgba(230,48,48,0.6); }
+.btn:hover { background: #ff4444; transform: scale(1.05); }
+.controls { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 20px; line-height: 2.2; }
+.url { font-size: 14px; color: #e63030; font-weight: 900; margin-top: 16px; }
+#kill-feed { position: fixed; top: 80px; right: 16px; display: flex; flex-direction: column; gap: 4px; }
+.kill-entry { background: rgba(0,0,0,0.7); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; border-left: 3px solid #e63030; animation: fadeKill 2s forwards; }
+@keyframes fadeKill { 0%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
+#boss-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 500px; display: none; }
+#boss-bar-bg { background: rgba(0,0,0,0.7); border-radius: 20px; height: 24px; border: 2px solid #ff0000; }
+#boss-bar-fill { background: linear-gradient(90deg,#ff0000,#ff6600); border-radius: 20px; height: 100%; width: 100%; transition: width 0.3s; box-shadow: 0 0 15px #ff0000; }
+#boss-label { color: #ff0000; font-size: 13px; font-weight: 900; text-align: center; margin-top: 4px; text-shadow: 0 0 8px #ff0000; }
+</style>
+</head>
+<body>
+
+<div id="start-screen">
+  <h1>🐆 JIM JAGUAR</h1>
+  <h2>3D SHOOTER</h2>
+  <div class="sub">BLIND · DEAF · ONE HAND · UNSTOPPABLE</div>
+  <button class="btn" onclick="startGame()">▶ PLAY NOW</button>
+  <div class="controls">
+    WASD — Move &nbsp;|&nbsp; Mouse — Aim &nbsp;|&nbsp; Click — Shoot<br>
+    SPACE — Jump &nbsp;|&nbsp; R — Reload<br>
+    Shoot Joy Boxes at enemies. Defeat Lord Grimsby!
+  </div>
+  <div class="url">joyboxcompany.com</div>
+</div>
+
+<div id="gameover-screen">
+  <h1>💀 GAME OVER</h1>
+  <h2 id="final-score">Score: 0</h2>
+  <div class="sub">Jim always gets back up.</div>
+  <button class="btn" onclick="restartGame()">▶ TRY AGAIN</button>
+  <div class="url">joyboxcompany.com</div>
+</div>
+
+<div id="hud">
+  <div id="hp-bar-bg"><div id="hp-bar"></div></div>
+  <div id="hp-label">🐆 HP: 100/100</div>
+</div>
+<div id="score-display">📦 0 pts</div>
+<div id="ammo-display">📦 10/10</div>
+<div id="crosshair">+</div>
+<div id="wave-display"></div>
+<div id="kill-feed"></div>
+<div id="boss-bar">
+  <div id="boss-bar-bg"><div id="boss-bar-fill"></div></div>
+  <div id="boss-label">👿 LORD GRIMSBY</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// =====================
+// SCENE SETUP
+// =====================
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x08051a);
+scene.fog = new THREE.Fog(0x08051a, 20, 80);
+
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 200);
+camera.position.set(0, 1.7, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// LIGHTING
+const ambient = new THREE.AmbientLight(0x334466, 0.8);
+scene.add(ambient);
+
+const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+sun.position.set(10, 20, 10);
+sun.castShadow = true;
+sun.shadow.mapSize.width = 2048;
+sun.shadow.mapSize.height = 2048;
+scene.add(sun);
+
+const redLight = new THREE.PointLight(0xe63030, 2, 15);
+redLight.position.set(0, 5, 0);
+scene.add(redLight);
+
+// =====================
+// MATERIALS
+// =====================
+const MAT = {
+  ground: new THREE.MeshLambertMaterial({ color: 0x1a2744 }),
+  wall: new THREE.MeshLambertMaterial({ color: 0x0d1a33 }),
+  enemy: new THREE.MeshLambertMaterial({ color: 0x2a0a3a }),
+  enemyHead: new THREE.MeshLambertMaterial({ color: 0x3a1a4a }),
+  boss: new THREE.MeshLambertMaterial({ color: 0x0a0005 }),
+  bossEye: new THREE.MeshBasicMaterial({ color: 0xff0000 }),
+  box: new THREE.MeshLambertMaterial({ color: 0xe63030 }),
+  boxRibbon: new THREE.MeshBasicMaterial({ color: 0xffd700 }),
+  platform: new THREE.MeshLambertMaterial({ color: 0x1a2744 }),
+  neon: new THREE.MeshBasicMaterial({ color: 0xe63030 }),
+  gold: new THREE.MeshBasicMaterial({ color: 0xffd700 }),
+  jaguar: new THREE.MeshLambertMaterial({ color: 0xf5a623 }),
+  jaguarDark: new THREE.MeshLambertMaterial({ color: 0xd4861a }),
+};
+
+// =====================
+// GEOMETRY HELPERS
+// =====================
+function makeBox(w,h,d,mat,x,y,z,rx,ry,rz) {
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  mesh.position.set(x||0,y||0,z||0);
+  if(rx) mesh.rotation.x = rx;
+  if(ry) mesh.rotation.y = ry;
+  if(rz) mesh.rotation.z = rz;
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  scene.add(mesh);
+  return mesh;
+}
+
+function makeSphere(r,mat,x,y,z) {
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(r,12,12), mat);
+  mesh.position.set(x||0,y||0,z||0);
+  mesh.castShadow = true;
+  scene.add(mesh);
+  return mesh;
+}
+
+function makeCylinder(rt,rb,h,mat,x,y,z) {
+  const mesh = new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,12), mat);
+  mesh.position.set(x||0,y||0,z||0);
+  mesh.castShadow = true;
+  scene.add(mesh);
+  return mesh;
+}
+
+// =====================
+// BUILD ARENA
+// =====================
+function buildArena() {
+  // Ground
+  const ground = makeBox(80,0.5,80,MAT.ground,0,-0.25,0);
+  ground.receiveShadow = true;
+
+  // Grid lines on ground
+  const gridHelper = new THREE.GridHelper(80,20,0x1a3a6a,0x0d1a33);
+  gridHelper.position.y = 0.01;
+  scene.add(gridHelper);
+
+  // Walls
+  const wallMat = new THREE.MeshLambertMaterial({ color: 0x0a1020 });
+  makeBox(80,8,1,wallMat,0,4,-40);
+  makeBox(80,8,1,wallMat,0,4,40);
+  makeBox(1,8,80,wallMat,-40,4,0);
+  makeBox(1,8,80,wallMat,40,4,0);
+
+  // Neon trim on walls
+  const neonMat = new THREE.MeshBasicMaterial({ color: 0xe63030 });
+  makeBox(80,0.3,0.3,neonMat,0,0.1,-40);
+  makeBox(80,0.3,0.3,neonMat,0,0.1,40);
+  makeBox(0.3,0.1,80,neonMat,-40,0.1,0);
+  makeBox(0.3,0.1,80,neonMat,40,0.1,0);
+
+  // Cover objects (pillars and crates)
+  const coverPositions = [
+    [-10,0,-10],[10,0,-10],[-10,0,10],[10,0,10],
+    [-20,0,0],[20,0,0],[0,0,-20],[0,0,20],
+    [-15,0,-20],[15,0,-20],[-15,0,20],[15,0,20],
+  ];
+  for(const [x,y,z] of coverPositions) {
+    if(Math.random()>0.5) {
+      makeBox(2,3,2,MAT.wall,x,1.5,z);
+    } else {
+      makeBox(3,1.5,3,MAT.wall,x,0.75,z);
+      makeBox(3,1.5,3,MAT.wall,x,2.25,z);
+    }
+  }
+
+  // Platforms
+  makeBox(8,0.5,8,MAT.platform,-15,3,-15);
+  makeBox(8,0.5,8,MAT.platform,15,3,15);
+  makeBox(8,0.5,8,MAT.platform,15,3,-15);
+  makeBox(8,0.5,8,MAT.platform,-15,3,15);
+  // Platform poles
+  for(const [x,z] of [[-15,-15],[15,15],[15,-15],[-15,15]]) {
+    makeBox(0.5,6,0.5,MAT.wall,x,1.5,z);
+  }
+
+  // Stars/particles in sky
+  const starGeo = new THREE.BufferGeometry();
+  const starVerts = [];
+  for(let i=0;i<300;i++) {
+    starVerts.push((Math.random()-0.5)*160, Math.random()*30+5, (Math.random()-0.5)*160);
+  }
+  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starVerts,3));
+  const starMat = new THREE.PointsMaterial({ color:0xffffff, size:0.15 });
+  scene.add(new THREE.Points(starGeo, starMat));
+
+  // Jim Jaguar sign
+  addSign(0, 5, -39, "JIM JAGUAR ARENA");
+}
+
+function addSign(x,y,z,text) {
+  const signGeo = new THREE.BoxGeometry(10,3,0.3);
+  const signMat = new THREE.MeshLambertMaterial({ color: 0x1a2744 });
+  const sign = new THREE.Mesh(signGeo, signMat);
+  sign.position.set(x,y,z);
+  scene.add(sign);
+  // Red neon border
+  const borderGeo = new THREE.BoxGeometry(10.5,3.5,0.2);
+  const borderMat = new THREE.MeshBasicMaterial({ color: 0xe63030 });
+  const border = new THREE.Mesh(borderGeo, borderMat);
+  border.position.set(x,y,z+0.1);
+  scene.add(border);
+  sign.add(new THREE.Mesh(signGeo, signMat));
+}
+
+// =====================
+// ENEMY SYSTEM
+// =====================
+let enemies = [];
+let enemyBullets = [];
+
+function makeEnemyModel(x,z,isBoss) {
+  const group = new THREE.Group();
+
+  if(isBoss) {
+    // Lord Grimsby
+    const body = new THREE.Mesh(new THREE.BoxGeometry(2,3,2), MAT.boss);
+    body.position.y = 1.5;
+    group.add(body);
+    const head = new THREE.Mesh(new THREE.BoxGeometry(2,2,2), MAT.boss);
+    head.position.y = 3.8;
+    group.add(head);
+    // Hat
+    const brim = new THREE.Mesh(new THREE.BoxGeometry(3,0.3,3), MAT.boss);
+    brim.position.y = 5;
+    group.add(brim);
+    const topHat = new THREE.Mesh(new THREE.BoxGeometry(1.8,2,1.8), MAT.boss);
+    topHat.position.y = 6.2;
+    group.add(topHat);
+    // Glowing eyes
+    const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.25,8,8), MAT.bossEye);
+    eyeL.position.set(-0.5,4,1.1);
+    group.add(eyeL);
+    const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.25,8,8), MAT.bossEye);
+    eyeR.position.set(0.5,4,1.1);
+    group.add(eyeR);
+    // Cape
+    const cape = new THREE.Mesh(new THREE.BoxGeometry(2.5,3,0.3), MAT.boss);
+    cape.position.set(0,1.5,-1.1);
+    group.add(cape);
+    // Red glow light
+    const bossGlow = new THREE.PointLight(0xff0000, 3, 10);
+    group.add(bossGlow);
+  } else {
+    // Regular enemy
+    const body = new THREE.Mesh(new THREE.BoxGeometry(1,1.5,0.7), MAT.enemy);
+    body.position.y = 0.75;
+    group.add(body);
+    const head = new THREE.Mesh(new THREE.BoxGeometry(0.9,0.9,0.9), MAT.enemyHead);
+    head.position.y = 1.8;
+    group.add(head);
+    // Red eyes
+    const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff2222 });
+    const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.1,6,6), eyeMat);
+    eyeL.position.set(-0.2,1.85,0.46);
+    group.add(eyeL);
+    const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.1,6,6), eyeMat);
+    eyeR.position.set(0.2,1.85,0.46);
+    group.add(eyeR);
+    // Arms
+    const armMat = new THREE.MeshLambertMaterial({ color: 0x3a1a4a });
+    const armL = new THREE.Mesh(new THREE.BoxGeometry(0.25,1,0.25), armMat);
+    armL.position.set(-0.7,0.8,0);
+    group.add(armL);
+    const armR = new THREE.Mesh(new THREE.BoxGeometry(0.25,1,0.25), armMat);
+    armR.position.set(0.7,0.8,0);
+    group.add(armR);
+    // Legs
+    const legL = new THREE.Mesh(new THREE.BoxGeometry(0.3,0.8,0.3), armMat);
+    legL.position.set(-0.3,0,0);
+    group.add(legL);
+    const legR = new THREE.Mesh(new THREE.BoxGeometry(0.3,0.8,0.3), armMat);
+    legR.position.set(0.3,0,0);
+    group.add(legR);
+  }
+
+  group.position.set(x, 0, z);
+  scene.add(group);
+  return group;
+}
+
+function spawnEnemy(isBoss) {
+  const angle = Math.random() * Math.PI * 2;
+  const dist = isBoss ? 15 : 10 + Math.random()*15;
+  const x = Math.cos(angle)*dist;
+  const z = Math.sin(angle)*dist;
+  const model = makeEnemyModel(x,z,isBoss);
+  const hp = isBoss ? 500 : 30 + wave*10;
+  enemies.push({
+    model, hp, maxHp: hp, isBoss,
+    speed: isBoss ? 1.5 : 2+wave*0.3,
+    shootTimer: Math.random()*2,
+    shootInterval: isBoss ? 1.2 : 2.5,
+    animTimer: 0,
+    reward: isBoss ? 500 : 20+wave*5
+  });
+  if(isBoss) {
+    document.getElementById('boss-bar').style.display = 'block';
+    document.getElementById('boss-bar-fill').style.width = '100%';
+    document.getElementById('boss-label').textContent = '👿 LORD GRIMSBY — ' + hp + '/' + hp + ' HP';
+  }
+}
+
+function spawnEnemyBullet(enemy) {
+  const dir = new THREE.Vector3();
+  dir.subVectors(camera.position, enemy.model.position).normalize();
+  const bullet = new THREE.Mesh(
+    new THREE.SphereGeometry(0.15,6,6),
+    new THREE.MeshBasicMaterial({ color: enemy.isBoss ? 0xff0000 : 0xff4444 })
+  );
+  bullet.position.copy(enemy.model.position).add(new THREE.Vector3(0,1.5,0));
+  scene.add(bullet);
+  enemyBullets.push({ mesh: bullet, vel: dir.multiplyScalar(enemy.isBoss ? 12 : 8) });
+}
+
+// =====================
+// PLAYER BULLETS (Joy Boxes)
+// =====================
+let bullets = [];
+let ammo = 10;
+let maxAmmo = 10;
+let reloading = false;
+
+function shoot() {
+  if(ammo <= 0 || reloading) return;
+  ammo--;
+  updateAmmoHUD();
+
+  const dir = new THREE.Vector3();
+  camera.getWorldDirection(dir);
+
+  const bullet = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.3,0.3,0.3), MAT.box);
+  bullet.add(body);
+  const rx = new THREE.Mesh(new THREE.BoxGeometry(0.32,0.05,0.05), MAT.boxRibbon);
+  bullet.add(rx);
+  const ry = new THREE.Mesh(new THREE.BoxGeometry(0.05,0.32,0.05), MAT.boxRibbon);
+  bullet.add(ry);
+
+  bullet.position.copy(camera.position).add(dir.clone().multiplyScalar(1));
+  scene.add(bullet);
+  bullets.push({ mesh: bullet, vel: dir.clone().multiplyScalar(40), life: 60 });
+
+  if(ammo === 0) {
+    reloading = true;
+    document.getElementById('ammo-display').textContent = '🔄 Reloading...';
+    setTimeout(() => {
+      ammo = maxAmmo;
+      reloading = false;
+      updateAmmoHUD();
+    }, 2000);
+  }
+}
+
+function updateAmmoHUD() {
+  document.getElementById('ammo-display').textContent = '📦 ' + ammo + '/' + maxAmmo;
+}
+
+// =====================
+// PLAYER STATE
+// =====================
+let playerHp = 100;
+let playerMaxHp = 100;
+let score = 0;
+let wave = 1;
+let waveEnemyCount = 0;
+let waveComplete = false;
+let gameActive = false;
+let invincible = 0;
+
+let velY = 0;
+let onGround = true;
+const GRAVITY = -20;
+const JUMP_FORCE = 8;
+
+// =====================
+// CONTROLS
+// =====================
+const keys = {};
+let yaw = 0, pitch = 0;
+let pointerLocked = false;
+
+document.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if(e.code === 'Space' && onGround && gameActive) {
+    velY = JUMP_FORCE;
+    onGround = false;
+  }
+  if(e.code === 'KeyR' && gameActive) {
+    reloading = true;
+    document.getElementById('ammo-display').textContent = '🔄 Reloading...';
+    setTimeout(() => {
+      ammo = maxAmmo;
+      reloading = false;
+      updateAmmoHUD();
+    }, 1500);
+  }
+});
+document.addEventListener('keyup', e => keys[e.code] = false);
+
+document.addEventListener('mousemove', e => {
+  if(!pointerLocked || !gameActive) return;
+  yaw -= e.movementX * 0.002;
+  pitch -= e.movementY * 0.002;
+  pitch = Math.max(-Math.PI/3, Math.min(Math.PI/3, pitch));
+});
+
+document.addEventListener('click', e => {
+  if(!gameActive) return;
+  if(!pointerLocked) {
+    renderer.domElement.requestPointerLock();
+  } else {
+    shoot();
+  }
+});
+
+document.addEventListener('pointerlockchange', () => {
+  pointerLocked = document.pointerLockElement === renderer.domElement;
+});
+
+// =====================
+// HIT DETECTION
+// =====================
+function checkBulletHits() {
+  for(let bi = bullets.length-1; bi>=0; bi--) {
+    const b = bullets[bi];
+    for(let ei = enemies.length-1; ei>=0; ei--) {
+      const e = enemies[ei];
+      const dist = b.mesh.position.distanceTo(e.model.position);
+      const hitDist = e.isBoss ? 2.5 : 1.2;
+      if(dist < hitDist) {
+        const dmg = e.isBoss ? 25 : 30;
+        e.hp -= dmg;
+        b.mesh.parent && scene.remove(b.mesh);
+        bullets.splice(bi,1);
+
+        if(e.isBoss) {
+          const ratio = e.hp/e.maxHp;
+          document.getElementById('boss-bar-fill').style.width = Math.max(0,ratio*100)+'%';
+          document.getElementById('boss-label').textContent = '👿 LORD GRIMSBY — ' + Math.max(0,e.hp) + '/' + e.maxHp + ' HP';
+        }
+
+        if(e.hp <= 0) {
+          scene.remove(e.model);
+          score += e.reward;
+          addKillFeed(e.isBoss ? '👿 LORD GRIMSBY DEFEATED! +500' : '💀 Enemy down! +' + e.reward);
+          if(e.isBoss) document.getElementById('boss-bar').style.display = 'none';
+          enemies.splice(ei,1);
+          waveEnemyCount--;
+          document.getElementById('score-display').textContent = '📦 ' + score + ' pts';
+          // Heal on kill
+          playerHp = Math.min(playerMaxHp, playerHp + 10);
+          updateHpHUD();
+        }
+        break;
+      }
+    }
+  }
+}
+
+function checkEnemyBulletHits() {
+  for(let i = enemyBullets.length-1; i>=0; i--) {
+    const b = enemyBullets[i];
+    if(b.mesh.position.distanceTo(camera.position) < 0.8) {
+      scene.remove(b.mesh);
+      enemyBullets.splice(i,1);
+      if(invincible <= 0) {
+        playerHp -= 10;
+        invincible = 60;
+        updateHpHUD();
+        if(playerHp <= 0) gameOver();
+      }
+    }
+  }
+}
+
+// =====================
+// HUD
+// =====================
+function updateHpHUD() {
+  const pct = Math.max(0, playerHp/playerMaxHp*100);
+  document.getElementById('hp-bar').style.width = pct + '%';
+  document.getElementById('hp-bar').style.background = pct > 50 ? '#00ff88' : pct > 25 ? '#ffaa00' : '#e63030';
+  document.getElementById('hp-label').textContent = '🐆 HP: ' + Math.max(0,playerHp) + '/' + playerMaxHp;
+}
+
+function addKillFeed(text) {
+  const feed = document.getElementById('kill-feed');
+  const div = document.createElement('div');
+  div.className = 'kill-entry';
+  div.textContent = text;
+  feed.appendChild(div);
+  setTimeout(() => div.remove(), 2500);
+}
+
+function showWaveText(text) {
+  const el = document.getElementById('wave-display');
+  el.innerHTML = text;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 2500);
+}
+
+// =====================
+// WAVE SYSTEM
+// =====================
+function startWave() {
+  waveComplete = false;
+  const count = 3 + wave * 2;
+  waveEnemyCount = count;
+  showWaveText('🌊 WAVE ' + wave + '<br><span style="font-size:24px">Defeat all enemies!</span>');
+
+  for(let i=0; i<count; i++) {
+    setTimeout(() => spawnEnemy(false), i*800);
+  }
+
+  // Boss every 3 waves
+  if(wave % 3 === 0) {
+    setTimeout(() => {
+      waveEnemyCount++;
+      spawnEnemy(true);
+      showWaveText('👿 LORD GRIMSBY APPEARS!');
+    }, count*800 + 1000);
+  }
+}
+
+// =====================
+// GAME LOOP
+// =====================
+const clock = new THREE.Clock();
+let animId;
+
+function gameLoop() {
+  if(!gameActive) return;
+  animId = requestAnimationFrame(gameLoop);
+  const dt = clock.getDelta();
+
+  // Camera rotation
+  camera.rotation.order = 'YXZ';
+  camera.rotation.y = yaw;
+  camera.rotation.x = pitch;
+
+  // Player movement
+  const moveDir = new THREE.Vector3();
+  const forward = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw));
+  const right = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw));
+  const spd = 8;
+  if(keys['KeyW']||keys['ArrowUp']) moveDir.add(forward);
+  if(keys['KeyS']||keys['ArrowDown']) moveDir.sub(forward);
+  if(keys['KeyA']||keys['ArrowLeft']) moveDir.sub(right);
+  if(keys['KeyD']||keys['ArrowRight']) moveDir.add(right);
+  if(moveDir.length()>0) moveDir.normalize().multiplyScalar(spd*dt);
+  camera.position.add(moveDir);
+
+  // Boundary clamp
+  camera.position.x = Math.max(-38, Math.min(38, camera.position.x));
+  camera.position.z = Math.max(-38, Math.min(38, camera.position.z));
+
+  // Gravity + jump
+  velY += GRAVITY * dt;
+  camera.position.y += velY * dt;
+  if(camera.position.y < 1.7) { camera.position.y = 1.7; velY = 0; onGround = true; }
+
+  if(invincible > 0) invincible--;
+
+  // Update bullets
+  for(let i = bullets.length-1; i>=0; i--) {
+    const b = bullets[i];
+    b.mesh.position.add(b.vel.clone().multiplyScalar(dt));
+    b.mesh.rotation.x += 3*dt;
+    b.mesh.rotation.y += 3*dt;
+    b.life--;
+    if(b.life<=0 || b.mesh.position.y<0) { scene.remove(b.mesh); bullets.splice(i,1); }
+  }
+
+  // Update enemy bullets
+  for(let i = enemyBullets.length-1; i>=0; i--) {
+    const b = enemyBullets[i];
+    b.mesh.position.add(b.vel.clone().multiplyScalar(dt));
+    if(b.mesh.position.distanceTo(camera.position) > 60 || b.mesh.position.y < 0) {
+      scene.remove(b.mesh); enemyBullets.splice(i,1);
+    }
+  }
+
+  // Update enemies
+  for(const e of enemies) {
+    // Move toward player
+    const toPlayer = new THREE.Vector3();
+    toPlayer.subVectors(camera.position, e.model.position).setY(0).normalize();
+    const dist = e.model.position.distanceTo(camera.position);
+
+    if(dist > (e.isBoss ? 4 : 2)) {
+      e.model.position.add(toPlayer.multiplyScalar(e.speed*dt));
+    }
+    e.model.lookAt(camera.position.x, e.model.position.y, camera.position.z);
+
+    // Animate legs
+    e.animTimer += dt;
+    if(e.model.children[5]) e.model.children[5].rotation.x = Math.sin(e.animTimer*8)*0.5;
+    if(e.model.children[6]) e.model.children[6].rotation.x = -Math.sin(e.animTimer*8)*0.5;
+
+    // Enemy shooting
+    e.shootTimer -= dt;
+    if(e.shootTimer <= 0 && dist < 20) {
+      e.shootTimer = e.shootInterval;
+      spawnEnemyBullet(e);
+    }
+
+    // Melee damage
+    if(dist < (e.isBoss ? 3 : 1.5) && invincible <= 0) {
+      playerHp -= e.isBoss ? 20 : 8;
+      invincible = 90;
+      updateHpHUD();
+      if(playerHp <= 0) gameOver();
+    }
+  }
+
+  // Pulse red light
+  redLight.intensity = 1.5 + Math.sin(clock.getElapsedTime()*2)*0.5;
+  redLight.position.set(Math.sin(clock.getElapsedTime()*0.5)*5, 5, Math.cos(clock.getElapsedTime()*0.5)*5);
+
+  checkBulletHits();
+  checkEnemyBulletHits();
+
+  // Next wave
+  if(waveEnemyCount <= 0 && !waveComplete && enemies.length === 0) {
+    waveComplete = true;
+    playerHp = Math.min(playerMaxHp, playerHp + 30);
+    updateHpHUD();
+    ammo = maxAmmo;
+    updateAmmoHUD();
+    showWaveText('✅ WAVE ' + wave + ' COMPLETE!<br><span style="font-size:20px">+30 HP restored!</span>');
+    wave++;
+    setTimeout(startWave, 3000);
+  }
+
+  renderer.render(scene, camera);
+}
+
+function startGame() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('gameover-screen').style.display = 'none';
+  playerHp = 100; score = 0; wave = 1;
+  enemies = []; bullets = []; enemyBullets = [];
+  ammo = maxAmmo; reloading = false;
+  camera.position.set(0,1.7,0);
+  yaw = 0; pitch = 0; velY = 0; onGround = true;
+  updateHpHUD(); updateAmmoHUD();
+  document.getElementById('score-display').textContent = '📦 0 pts';
+  gameActive = true;
+  clock.start();
+  startWave();
+  renderer.domElement.requestPointerLock();
+  gameLoop();
+}
+
+function gameOver() {
+  gameActive = false;
+  document.exitPointerLock();
+  document.getElementById('final-score').textContent = 'Score: ' + score + ' | Wave: ' + wave;
+  document.getElementById('gameover-screen').style.display = 'flex';
+}
+
+function restartGame() {
+  cancelAnimationFrame(animId);
+  startGame();
+}
+
+// Build the arena on load
+buildArena();
+renderer.render(scene, camera);
+</script>
+</body>
+</html>
