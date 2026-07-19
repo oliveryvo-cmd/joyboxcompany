@@ -842,8 +842,98 @@ footer{background:#000;padding:60px 48px 40px;text-align:center;border-top:3px s
 <footer>
   <div class="footer-logo">JoyDrop</div>
   <p class="footer-mission">💚 EVERY PURCHASE SENDS A JOY BOX TO A DISABLED KID</p>
-  <p class="footer-sub">THE STORE THAT GIVES BACK · EST. 2026 · MISSION VIEJO, CA · <a href="https://joyboxcompany.com" style="color:#00ff88;text-decoration:none;">JOYBOXCOMPANY.COM</a></p>
+  <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin:20px 0;">
+    <a href="order.html" style="color:#ff0080;font-weight:900;text-decoration:none;font-size:14px;letter-spacing:1px;">📦 ORDER A JOY BOX</a>
+    <a href="track.html" style="color:#00ccff;font-weight:900;text-decoration:none;font-size:14px;letter-spacing:1px;">🔍 TRACK MY BOX</a>
+    <a href="join.html" style="color:#00ff88;font-weight:900;text-decoration:none;font-size:14px;letter-spacing:1px;">🚲 JOIN THE CREW</a>
+    <a href="press.html" style="color:#ffff00;font-weight:900;text-decoration:none;font-size:14px;letter-spacing:1px;">📰 PRESS</a>
+    <a href="admin.html" style="color:rgba(255,255,255,0.05);font-size:10px;text-decoration:none;">·</a>
+  </div>
+  <p class="footer-sub">THE STORE THAT GIVES BACK · EST. 2026 · MISSION VIEJO, CA</p>
 </footer>
+
+<!-- TRANSLATE BANNER -->
+<div id="translate-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99998;background:#1a1a1a;border-top:2px solid #333;padding:12px 20px;display:none;align-items:center;justify-content:center;gap:12px;">
+  <span id="translate-msg" style="font-size:14px;font-weight:700;color:#aaa;"></span>
+  <a id="translate-btn" href="#" onclick="document.getElementById('google_translate_element').querySelector('select').value='auto';return false;" style="background:#00ff88;color:#000;padding:6px 16px;border-radius:100px;font-weight:900;font-size:13px;text-decoration:none;"></a>
+  <button onclick="document.getElementById('translate-banner').style.display='none'" style="background:none;border:none;color:#555;font-size:18px;cursor:pointer;">✕</button>
+</div>
+<div id="google_translate_element" style="display:none"></div>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'en'},'google_translate_element');}
+const langs={'fr':['🇫🇷 Ce site est en anglais. Voulez-vous le traduire ?','Traduire'],'pl':['🇵🇱 Ta strona jest po angielsku.','Przetłumacz'],'hi':['🇮🇳 यह साइट अंग्रेज़ी में है।','अनुवाद करें'],'es':['🇪🇸 Este sitio está en inglés. ¿Traducir?','Traducir'],'de':['🇩🇪 Diese Seite ist auf Englisch.','Übersetzen'],'pt':['🇧🇷 Este site está em inglês.','Traduzir'],'zh':['🇨🇳 本网站为英文版。','翻译'],'ja':['🇯🇵 このサイトは英語です。','翻訳する']};
+const lang=(navigator.language||'').slice(0,2).toLowerCase();
+if(lang!=='en'){const b=document.getElementById('translate-banner');const m=langs[lang];document.getElementById('translate-msg').textContent=m?m[0]:'🌍 This site is in English. Want to translate it?';document.getElementById('translate-btn').textContent=m?m[1]:'Translate';b.style.display='flex';}
+</script>
+
+<!-- ANNOUNCEMENT BANNER -->
+<style>
+#announcement-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(90deg,#ff0080,#aa00ff);color:#fff;padding:12px 50px 12px 20px;font-size:15px;font-weight:700;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.4);}
+#announcement-close{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:20px;cursor:pointer;}
+</style>
+<div id="announcement-bar">
+  <span id="announcement-text"></span>
+  <button id="announcement-close" onclick="document.getElementById('announcement-bar').style.display='none'">✕</button>
+</div>
+<script>
+(async function(){
+  const res=await fetch('https://qbzpyhsbrjagyqsruzcb.supabase.co/rest/v1/announcements?active=eq.true&order=created_at.desc&limit=1',{headers:{'apikey':'sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs','Authorization':'Bearer sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs'}});
+  if(!res.ok)return;
+  const data=await res.json();
+  if(data.length>0){document.getElementById('announcement-text').textContent='📢 '+data[0].message;document.getElementById('announcement-bar').style.display='block';}
+})();
+</script>
+
+<!-- CHAT BUBBLE -->
+<style>
+#chat-bubble{position:fixed;bottom:24px;right:24px;z-index:9999;}
+#chat-toggle{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#ff0080,#aa00ff);border:none;cursor:pointer;font-size:28px;box-shadow:0 4px 20px rgba(255,0,128,0.5);display:flex;align-items:center;justify-content:center;transition:transform 0.2s;}
+#chat-toggle:hover{transform:scale(1.1);}
+#chat-box{display:none;position:absolute;bottom:70px;right:0;width:320px;background:#1a1a1a;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6);border:2px solid #ff0080;}
+#chat-box-header{background:linear-gradient(135deg,#ff0080,#aa00ff);padding:14px 16px;display:flex;align-items:center;gap:10px;}
+#chat-box-header div{color:#fff;font-weight:700;font-size:14px;}
+#chat-box-header small{color:rgba(255,255,255,0.8);font-size:11px;display:block;}
+#chat-msgs{height:220px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;}
+.cb-msg{padding:8px 12px;border-radius:12px;font-size:13px;max-width:85%;}
+.cb-msg.admin{background:#ff0080;color:#fff;align-self:flex-start;border-bottom-left-radius:4px;}
+.cb-msg.visitor{background:#222;color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+#chat-name-row{padding:10px 14px 0;display:flex;gap:8px;}
+#chat-name-input{flex:1;background:#111;border:1px solid #333;border-radius:20px;padding:8px 14px;color:#fff;font-size:13px;outline:none;}
+#chat-input-row{padding:10px 14px 14px;display:flex;gap:8px;}
+#chat-input{flex:1;background:#111;border:1px solid #333;border-radius:20px;padding:8px 14px;color:#fff;font-size:13px;outline:none;}
+#chat-input:focus,#chat-name-input:focus{border-color:#ff0080;}
+#chat-send{background:linear-gradient(135deg,#ff0080,#aa00ff);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-weight:700;cursor:pointer;font-size:13px;}
+</style>
+<div id="chat-bubble">
+  <div id="chat-box">
+    <div id="chat-box-header">
+      <span style="font-size:22px;">🎁</span>
+      <div>Chat with Oliver!<small>JoyDrop founder</small></div>
+    </div>
+    <div id="chat-msgs">
+      <div class="cb-msg admin">Hey! I'm Oliver 👋 Ask me anything about JoyDrop!</div>
+    </div>
+    <div id="chat-name-row"><input id="chat-name-input" placeholder="Your name..." maxlength="40"></div>
+    <div id="chat-input-row">
+      <input id="chat-input" placeholder="Type a message..." maxlength="300" onkeydown="if(event.key==='Enter')cbSend()">
+      <button id="chat-send" onclick="cbSend()">Send</button>
+    </div>
+  </div>
+  <button id="chat-toggle" onclick="cbToggle()">💬</button>
+</div>
+<script>
+const CB_URL='https://qbzpyhsbrjagyqsruzcb.supabase.co';
+const CB_KEY='sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs';
+let cbSession=localStorage.getItem('jbc_session')||(Math.random().toString(36).slice(2));
+localStorage.setItem('jbc_session',cbSession);
+let cbOpen=false,cbLastCount=1;
+function cbToggle(){cbOpen=!cbOpen;document.getElementById('chat-box').style.display=cbOpen?'block':'none';document.getElementById('chat-toggle').textContent=cbOpen?'✕':'💬';if(cbOpen)cbLoad();}
+async function cbLoad(){const res=await fetch(`${CB_URL}/rest/v1/chat_messages?session_id=eq.${cbSession}&order=created_at.asc`,{headers:{'apikey':CB_KEY,'Authorization':`Bearer ${CB_KEY}`}});if(!res.ok)return;const msgs=await res.json();const box=document.getElementById('chat-msgs');if(msgs.length===0)return;box.innerHTML='<div class="cb-msg admin">Hey! I\'m Oliver 👋 Ask me anything about JoyDrop!</div>';msgs.forEach(m=>{const d=document.createElement('div');d.className='cb-msg '+m.sender;d.textContent=m.message;box.appendChild(d);});box.scrollTop=box.scrollHeight;cbLastCount=msgs.length;}
+async function cbSend(){const nameEl=document.getElementById('chat-name-input');const inputEl=document.getElementById('chat-input');const name=nameEl.value.trim()||'Visitor';const msg=inputEl.value.trim();if(!msg)return;inputEl.value='';const box=document.getElementById('chat-msgs');const d=document.createElement('div');d.className='cb-msg visitor';d.textContent=msg;box.appendChild(d);box.scrollTop=box.scrollHeight;await fetch(`${CB_URL}/rest/v1/chat_messages`,{method:'POST',headers:{'apikey':CB_KEY,'Authorization':`Bearer ${CB_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({session_id:cbSession,sender:'visitor',name:name,message:msg})});}
+setInterval(async()=>{if(!cbOpen)return;const res=await fetch(`${CB_URL}/rest/v1/chat_messages?session_id=eq.${cbSession}&order=created_at.asc`,{headers:{'apikey':CB_KEY,'Authorization':`Bearer ${CB_KEY}`}});if(!res.ok)return;const msgs=await res.json();if(msgs.length>cbLastCount){const box=document.getElementById('chat-msgs');for(let i=cbLastCount;i<msgs.length;i++){const d=document.createElement('div');d.className='cb-msg '+msgs[i].sender;d.textContent=msgs[i].message;box.appendChild(d);}box.scrollTop=box.scrollHeight;cbLastCount=msgs.length;}},3000);
+</script>
+</body>
 
 </body>
 </html>
