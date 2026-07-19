@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order a Mystery Bear Box — JoyDrop</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a0a; min-height: 100vh; font-family: 'Nunito', sans-serif; padding: 40px 20px; color: #fff; }
+
+nav { max-width: 640px; margin: 0 auto 48px; display: flex; align-items: center; gap: 16px; }
+nav a { font-weight: 900; color: #aaa; text-decoration: none; font-size: 14px; letter-spacing: 1px; transition: color 0.2s; }
+nav a:hover { color: #ff0080; }
+
+.card { background: #1a1a1a; border-radius: 24px; padding: 48px; max-width: 640px; margin: 0 auto; border: 2px solid #222; }
+.card-top { text-align: center; margin-bottom: 40px; }
+.card-top img { width: 160px; margin-bottom: 16px; filter: drop-shadow(0 0 20px rgba(255,0,128,0.4)); }
+h1 { font-family: 'Fredoka One', sans-serif; font-size: 36px; margin-bottom: 8px; }
+.sub { color: #555; font-size: 15px; line-height: 1.7; }
+
+.box-picker { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
+.box-opt { border: 2px solid #222; border-radius: 14px; padding: 16px 12px; text-align: center; cursor: pointer; transition: all 0.2s; background: #111; }
+.box-opt:hover { border-color: #444; transform: translateY(-3px); }
+.box-opt.selected { border-color: #ff0080; background: rgba(255,0,128,0.08); }
+.box-opt-icon { font-size: 28px; margin-bottom: 6px; }
+.box-opt-name { font-weight: 900; font-size: 13px; margin-bottom: 4px; }
+.box-opt-odds { font-size: 10px; color: #444; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; }
+.box-opt-price { font-family: 'Fredoka One', sans-serif; font-size: 20px; }
+
+.box-opt:nth-child(1) .box-opt-name { color: #aaa; }
+.box-opt:nth-child(1) .box-opt-price { color: #aaa; }
+.box-opt:nth-child(2) .box-opt-name { color: #00aaff; }
+.box-opt:nth-child(2) .box-opt-price { color: #00aaff; }
+.box-opt:nth-child(3) .box-opt-name { color: #aa00ff; }
+.box-opt:nth-child(3) .box-opt-price { color: #aa00ff; }
+.box-opt:nth-child(4) .box-opt-name { color: #ff6600; }
+.box-opt:nth-child(4) .box-opt-price { color: #ff6600; }
+.box-opt:nth-child(5) .box-opt-name { color: gold; }
+.box-opt:nth-child(5) .box-opt-price { color: gold; }
+.box-opt:nth-child(6) .box-opt-name { background: linear-gradient(90deg,#ff0080,#ffff00,#00ff88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.box-opt:nth-child(6) .box-opt-price { background: linear-gradient(90deg,#ff0080,#aa00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.box-opt:nth-child(6) { border-color: #ff0080; }
+
+label { display: block; font-weight: 900; font-size: 12px; letter-spacing: 2px; color: #aaa; margin-bottom: 6px; margin-top: 20px; text-transform: uppercase; }
+input, textarea, select { width: 100%; padding: 14px 18px; border: 2px solid #222; border-radius: 12px; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; color: #fff; outline: none; transition: border 0.2s; background: #111; }
+input:focus, textarea:focus, select:focus { border-color: #ff0080; }
+input::placeholder, textarea::placeholder { color: #333; font-weight: 600; }
+textarea { resize: vertical; min-height: 80px; }
+
+.btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #ff0080, #aa00ff); color: #fff; border: none; border-radius: 12px; font-family: 'Fredoka One', sans-serif; font-size: 20px; cursor: pointer; transition: all 0.2s; margin-top: 28px; box-shadow: 0 0 30px rgba(255,0,128,0.4); }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(255,0,128,0.6); }
+
+.success { display: none; background: rgba(0,255,136,0.1); border: 2px solid #00ff88; border-radius: 16px; padding: 28px; margin-top: 24px; text-align: center; }
+.success h2 { color: #00ff88; font-family: 'Fredoka One', sans-serif; font-size: 28px; margin-bottom: 8px; }
+.success p { color: #555; font-size: 15px; line-height: 1.7; }
+
+.joy-note { font-size: 13px; color: #00ff88; text-align: center; margin-top: 16px; font-weight: 900; }
+
+@media(max-width:500px) { .box-picker { grid-template-columns: 1fr; } .card { padding: 28px 20px; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html">← Back to JoyDrop</a>
+</nav>
+
+<div class="card">
+  <div class="card-top">
+    <img src="joydrop-bear.png" alt="JoyDrop Bear">
+    <h1>🎲 Mystery <span style="background:linear-gradient(90deg,#ff0080,#aa00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Bear Box</span></h1>
+    <p class="sub">Pick your box tier. Get a random rarity bear.<br>Higher tier = better odds at rare bears.</p>
+  </div>
+
+  <div class="box-picker">
+    <div class="box-opt" onclick="selectBox(this, 'Common Box', '$9.99')">
+      <div class="box-opt-icon">📦</div>
+      <div class="box-opt-name">Common Box</div>
+      <div class="box-opt-odds">COMMON 80% · UNCOMMON 15% · RARE 5%</div>
+      <div class="box-opt-price">$9.99</div>
+    </div>
+    <div class="box-opt" onclick="selectBox(this, 'Uncommon Box', '$14.99')">
+      <div class="box-opt-icon">📦</div>
+      <div class="box-opt-name">Uncommon Box</div>
+      <div class="box-opt-odds">UNCOMMON 65% · RARE 25% · EPIC 10%</div>
+      <div class="box-opt-price">$14.99</div>
+    </div>
+    <div class="box-opt" onclick="selectBox(this, 'Rare Box', '$19.99')">
+      <div class="box-opt-icon">📦</div>
+      <div class="box-opt-name">Rare Box</div>
+      <div class="box-opt-odds">RARE 60% · EPIC 30% · LEGENDARY 10%</div>
+      <div class="box-opt-price">$19.99</div>
+    </div>
+    <div class="box-opt" onclick="selectBox(this, 'Epic Box', '$29.99')">
+      <div class="box-opt-icon">📦</div>
+      <div class="box-opt-name">Epic Box</div>
+      <div class="box-opt-odds">EPIC 55% · LEGENDARY 35% · SECRET 10%</div>
+      <div class="box-opt-price">$29.99</div>
+    </div>
+    <div class="box-opt" onclick="selectBox(this, 'Legendary Box', '$49.99')">
+      <div class="box-opt-icon">📦</div>
+      <div class="box-opt-name">Legendary Box</div>
+      <div class="box-opt-odds">LEGENDARY 60% · SECRET 40%</div>
+      <div class="box-opt-price">$49.99</div>
+    </div>
+    <div class="box-opt" onclick="selectBox(this, 'Secret Box', '$99.99')">
+      <div class="box-opt-icon">🔮</div>
+      <div class="box-opt-name">Secret Box</div>
+      <div class="box-opt-odds">SECRET 100% · 1-OF-1 BEAR</div>
+      <div class="box-opt-price">$99.99</div>
+    </div>
+  </div>
+
+  <form id="bear-form" onsubmit="submitOrder(event)">
+    <input type="hidden" id="selected-box" value="">
+    <input type="hidden" id="selected-price" value="">
+
+    <label>Your Name</label>
+    <input type="text" id="name" placeholder="First and last name" required>
+
+    <label>Email</label>
+    <input type="email" id="email" placeholder="your@email.com" required>
+
+    <label>Shipping Address</label>
+    <textarea id="address" placeholder="Street, City, State, ZIP" required></textarea>
+
+    <label>Message (optional)</label>
+    <textarea id="message" placeholder="Any special notes..."></textarea>
+
+    <button type="submit" class="btn">Order My Mystery Bear Box 🐻</button>
+  </form>
+
+  <div class="success" id="success">
+    <h2>🎉 Order Received!</h2>
+    <p>We got your Mystery Bear Box order!<br>Oliver will reach out to you soon with payment details.<br><br>💚 Your purchase also sends a Joy Box to a disabled kid.</p>
+  </div>
+
+  <p class="joy-note">💚 Every bear box sends a Joy Box to a disabled kid</p>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://qbzpyhsbrjagyqsruzcb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs';
+
+function selectBox(el, name, price) {
+  document.querySelectorAll('.box-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('selected-box').value = name;
+  document.getElementById('selected-price').value = price;
+}
+
+async function submitOrder(e) {
+  e.preventDefault();
+  const box = document.getElementById('selected-box').value;
+  if (!box) { alert('Please select a box tier first!'); return; }
+
+  const data = {
+    box_type: 'Bear - ' + box,
+    price: document.getElementById('selected-price').value,
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    address: document.getElementById('address').value,
+    message: document.getElementById('message').value,
+    created_at: new Date().toISOString()
+  };
+
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify(data)
+    });
+  } catch(err) {}
+
+  document.getElementById('bear-form').style.display = 'none';
+  document.getElementById('success').style.display = 'block';
+}
+</script>
+</body>
+</html>
