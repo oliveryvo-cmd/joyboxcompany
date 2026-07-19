@@ -1418,6 +1418,7 @@ function runIntro(){
   // JINGLE — fast & hype
   try {
     const ac = new (window.AudioContext || window.webkitAudioContext)();
+    ac.resume();
 
     // Punchy kick drum
     function kick(t) {
