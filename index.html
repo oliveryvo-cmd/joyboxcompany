@@ -1029,7 +1029,145 @@ async function cbLoad(){const res=await fetch(`${CB_URL}/rest/v1/chat_messages?s
 async function cbSend(){const nameEl=document.getElementById('chat-name-input');const inputEl=document.getElementById('chat-input');const name=nameEl.value.trim()||'Visitor';const msg=inputEl.value.trim();if(!msg)return;inputEl.value='';const box=document.getElementById('chat-msgs');const d=document.createElement('div');d.className='cb-msg visitor';d.textContent=msg;box.appendChild(d);box.scrollTop=box.scrollHeight;await fetch(`${CB_URL}/rest/v1/chat_messages`,{method:'POST',headers:{'apikey':CB_KEY,'Authorization':`Bearer ${CB_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({session_id:cbSession,sender:'visitor',name:name,message:msg})});}
 setInterval(async()=>{if(!cbOpen)return;const res=await fetch(`${CB_URL}/rest/v1/chat_messages?session_id=eq.${cbSession}&order=created_at.asc`,{headers:{'apikey':CB_KEY,'Authorization':`Bearer ${CB_KEY}`}});if(!res.ok)return;const msgs=await res.json();if(msgs.length>cbLastCount){const box=document.getElementById('chat-msgs');for(let i=cbLastCount;i<msgs.length;i++){const d=document.createElement('div');d.className='cb-msg '+msgs[i].sender;d.textContent=msgs[i].message;box.appendChild(d);}box.scrollTop=box.scrollHeight;cbLastCount=msgs.length;}},3000);
 </script>
-</body>
 
+<!-- INTRO OVERLAY -->
+<style>
+#intro-overlay {
+  position: fixed; inset: 0; z-index: 99999;
+  background: #0a0a0a;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 0.8s ease;
+}
+#intro-overlay.fade-out { opacity: 0; pointer-events: none; }
+.intro-logo { width: min(320px, 80vw); margin-bottom: 28px; filter: drop-shadow(0 0 40px rgba(255,0,128,0.6)); animation: introPulse 1s ease-in-out infinite; }
+@keyframes introPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+.intro-welcome {
+  font-family: 'Fredoka One', sans-serif;
+  font-size: clamp(28px, 6vw, 56px);
+  background: linear-gradient(90deg,#ff0080,#ff6600,#ffff00,#00ff88,#00ccff,#aa00ff,#ff0080);
+  background-size: 400% 100%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: rainbowShift 2s linear infinite;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.intro-sub { color: #444; font-size: 14px; font-weight: 900; letter-spacing: 3px; margin-bottom: 40px; text-transform: uppercase; text-align: center; }
+.intro-bar-wrap { width: min(320px, 70vw); height: 6px; background: #1a1a1a; border-radius: 100px; overflow: hidden; margin-bottom: 28px; }
+.intro-bar { height: 100%; width: 0%; background: linear-gradient(90deg,#ff0080,#aa00ff); border-radius: 100px; transition: width 0.1s linear; }
+.intro-skip { background: transparent; border: 2px solid #222; color: #333; padding: 10px 28px; border-radius: 100px; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 13px; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+.intro-skip:hover { border-color: #555; color: #aaa; }
+.intro-emojis { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.intro-fe { position: absolute; font-size: 32px; animation: floatUp 6s ease-in-out infinite; opacity: 0; }
+.intro-fe:nth-child(1){left:5%;animation-delay:0s;}
+.intro-fe:nth-child(2){left:15%;animation-delay:1s;}
+.intro-fe:nth-child(3){left:28%;animation-delay:2s;}
+.intro-fe:nth-child(4){left:42%;animation-delay:0.5s;}
+.intro-fe:nth-child(5){left:55%;animation-delay:3s;}
+.intro-fe:nth-child(6){left:68%;animation-delay:1.5s;}
+.intro-fe:nth-child(7){left:80%;animation-delay:2.5s;}
+.intro-fe:nth-child(8){left:92%;animation-delay:4s;}
+</style>
+
+<div id="intro-overlay">
+  <div class="intro-emojis">
+    <div class="intro-fe">🎁</div><div class="intro-fe">✨</div><div class="intro-fe">🐻</div>
+    <div class="intro-fe">🌈</div><div class="intro-fe">💜</div><div class="intro-fe">🎮</div>
+    <div class="intro-fe">⭐</div><div class="intro-fe">🎉</div>
+  </div>
+  <img src="joydrop-logo.png" alt="JoyDrop" class="intro-logo">
+  <div class="intro-welcome" id="intro-welcome">Welcome!</div>
+  <div class="intro-sub" id="intro-sub">joydrop</div>
+  <div class="intro-bar-wrap"><div class="intro-bar" id="intro-bar"></div></div>
+  <button class="intro-skip" onclick="closeIntro()">Skip ›</button>
+</div>
+
+<script>
+(function(){
+  const DURATION = 10000;
+  const welcomes = {
+    en: ['Welcome!', 'to JoyDrop'],
+    es: ['¡Bienvenido!', 'a JoyDrop'],
+    fr: ['Bienvenue!', 'chez JoyDrop'],
+    de: ['Willkommen!', 'bei JoyDrop'],
+    pt: ['Bem-vindo!', 'ao JoyDrop'],
+    it: ['Benvenuto!', 'su JoyDrop'],
+    ja: ['ようこそ！', 'JoyDropへ'],
+    ko: ['어서오세요!', 'JoyDrop'],
+    zh: ['欢迎！', 'JoyDrop'],
+    ar: ['أهلاً وسهلاً!', 'جوي دروب'],
+    hi: ['स्वागत है!', 'JoyDrop में'],
+    ru: ['Добро пожаловать!', 'в JoyDrop'],
+    nl: ['Welkom!', 'bij JoyDrop'],
+    sv: ['Välkommen!', 'till JoyDrop'],
+    pl: ['Witamy!', 'w JoyDrop'],
+    tr: ['Hoş geldiniz!', 'JoyDrop\'a'],
+    id: ['Selamat datang!', 'di JoyDrop'],
+    th: ['ยินดีต้อนรับ!', 'JoyDrop'],
+    vi: ['Chào mừng!', 'đến JoyDrop'],
+  };
+  const lang = (navigator.language || 'en').split('-')[0].toLowerCase();
+  const w = welcomes[lang] || welcomes['en'];
+  document.getElementById('intro-welcome').textContent = w[0];
+  document.getElementById('intro-sub').textContent = w[1];
+
+  // Play jingle with Web Audio API
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const notes = [
+      [523.25,0,0.18],[659.25,0.2,0.18],[783.99,0.4,0.18],[1046.5,0.6,0.32],
+      [880,1.0,0.18],[783.99,1.2,0.18],[1046.5,1.45,0.4],
+      [659.25,2.0,0.18],[783.99,2.2,0.18],[1046.5,2.4,0.18],[880,2.65,0.5],
+      [523.25,3.3,0.15],[659.25,3.48,0.15],[783.99,3.66,0.15],[880,3.84,0.15],[1046.5,4.05,0.6],
+      [880,4.8,0.18],[783.99,5.0,0.18],[659.25,5.2,0.18],[523.25,5.45,0.6],
+      [659.25,6.2,0.18],[783.99,6.4,0.18],[1046.5,6.6,0.18],[1174.66,6.82,0.18],[1318.5,7.05,0.8],
+      [1046.5,8.0,0.18],[880,8.2,0.18],[783.99,8.4,0.18],[659.25,8.65,1.2],
+    ];
+    notes.forEach(([freq, start, dur]) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const t = ctx.currentTime + start;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.18, t + 0.02);
+      gain.gain.linearRampToValueAtTime(0, t + dur);
+      osc.start(t); osc.stop(t + dur + 0.05);
+    });
+    // Soft bass pad underneath
+    [130.81, 164.81, 196, 261.63].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      const t = ctx.currentTime + i * 2.5;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.06, t + 0.2);
+      gain.gain.linearRampToValueAtTime(0, t + 2.2);
+      osc.start(t); osc.stop(t + 2.5);
+    });
+  } catch(e) {}
+
+  // Progress bar
+  const bar = document.getElementById('intro-bar');
+  const start = Date.now();
+  let raf;
+  function tick() {
+    const pct = Math.min(100, ((Date.now() - start) / DURATION) * 100);
+    bar.style.width = pct + '%';
+    if (pct < 100) raf = requestAnimationFrame(tick);
+    else closeIntro();
+  }
+  raf = requestAnimationFrame(tick);
+
+  window.closeIntro = function() {
+    cancelAnimationFrame(raf);
+    const overlay = document.getElementById('intro-overlay');
+    overlay.classList.add('fade-out');
+    setTimeout(() => overlay.remove(), 800);
+  };
+})();
+</script>
 </body>
 </html>
