@@ -1051,6 +1051,127 @@ async function cbSend(){const nameEl=document.getElementById('chat-name-input');
 setInterval(async()=>{if(!cbOpen)return;const res=await fetch(`${CB_URL}/rest/v1/chat_messages?session_id=eq.${cbSession}&order=created_at.asc`,{headers:{'apikey':CB_KEY,'Authorization':`Bearer ${CB_KEY}`}});if(!res.ok)return;const msgs=await res.json();if(msgs.length>cbLastCount){const box=document.getElementById('chat-msgs');for(let i=cbLastCount;i<msgs.length;i++){const d=document.createElement('div');d.className='cb-msg '+msgs[i].sender;d.textContent=msgs[i].message;box.appendChild(d);}box.scrollTop=box.scrollHeight;cbLastCount=msgs.length;}},3000);
 </script>
 
+<!-- CRAZY SITE EFFECTS -->
+<style>
+/* Faster ticker */
+.ticker-inner { animation: tick 8s linear infinite !important; }
+.ticker { animation: rainbowShift 0.8s linear infinite !important; }
+
+/* Nav glows and pulses */
+nav { animation: navGlow 2s ease-in-out infinite; border-bottom: 3px solid transparent !important; }
+@keyframes navGlow { 0%,100%{border-bottom-color:#ff0080;box-shadow:0 2px 30px rgba(255,0,128,0.3)} 33%{border-bottom-color:#ffff00;box-shadow:0 2px 30px rgba(255,255,0,0.3)} 66%{border-bottom-color:#00ff88;box-shadow:0 2px 30px rgba(0,255,136,0.3)} }
+
+/* Hero background pulses */
+.hero-bg { animation: heroBgPulse 3s ease-in-out infinite !important; }
+@keyframes heroBgPulse {
+  0%,100%{background:radial-gradient(circle at 20% 20%,rgba(255,0,128,0.22) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(0,204,255,0.22) 0%,transparent 50%),radial-gradient(circle at 50% 50%,rgba(170,0,255,0.18) 0%,transparent 60%)}
+  50%{background:radial-gradient(circle at 80% 20%,rgba(0,255,136,0.22) 0%,transparent 50%),radial-gradient(circle at 20% 80%,rgba(255,255,0,0.22) 0%,transparent 50%),radial-gradient(circle at 50% 50%,rgba(255,0,128,0.18) 0%,transparent 60%)}
+}
+
+/* Faster emojis */
+.fe { animation-duration: 3.5s !important; font-size: 44px !important; }
+
+/* Hero title extra glow */
+.hero-title { filter: drop-shadow(0 0 40px rgba(255,0,128,0.5)); }
+
+/* Faster rainbow on joy word */
+.joy { animation: rainbowShift 0.5s linear infinite !important; }
+
+/* Buttons more intense */
+.btn-main {
+  animation: btnCrazy 0.8s ease-in-out infinite !important;
+  font-size: 22px !important;
+}
+@keyframes btnCrazy {
+  0%,100%{transform:scale(1);box-shadow:0 0 30px rgba(255,0,128,0.7)}
+  25%{transform:scale(1.06) rotate(-1deg);box-shadow:0 0 50px rgba(255,102,0,0.8)}
+  50%{transform:scale(1.04) rotate(1deg);box-shadow:0 0 60px rgba(255,0,128,1)}
+  75%{transform:scale(1.07) rotate(-0.5deg);box-shadow:0 0 40px rgba(170,0,255,0.8)}
+}
+
+/* Cards pop on scroll */
+.how-card, .product-card, .tier, .impact-stat {
+  opacity: 0; transform: translateY(40px) scale(0.95);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(.36,.07,.19,.97) !important;
+}
+.how-card.visible, .product-card.visible, .tier.visible, .impact-stat.visible {
+  opacity: 1 !important; transform: translateY(0) scale(1) !important;
+}
+.how-card:hover { transform: translateY(-12px) scale(1.04) rotate(-1deg) !important; box-shadow: 0 20px 60px rgba(255,0,128,0.3) !important; }
+.product-card:hover { transform: translateY(-14px) scale(1.06) rotate(1deg) !important; box-shadow: 0 20px 80px rgba(0,204,255,0.4) !important; }
+.tier:hover { transform: translateY(-12px) scale(1.08) rotate(-0.5deg) !important; }
+
+/* Impact numbers bigger glow */
+.impact-num { animation: impactPop 1.2s ease-in-out infinite; }
+@keyframes impactPop { 0%,100%{filter:drop-shadow(0 0 10px currentColor)} 50%{filter:drop-shadow(0 0 40px currentColor) drop-shadow(0 0 80px currentColor)} }
+
+/* Scrolling strip faster */
+.strip-inner { animation: tick 4s linear infinite !important; }
+
+/* Cursor trail canvas */
+#cursor-canvas { position:fixed; inset:0; pointer-events:none; z-index:99998; }
+
+/* Click burst */
+.click-burst { position:fixed; pointer-events:none; z-index:99997; font-size:24px; animation: burstOut 0.6s ease-out forwards; }
+@keyframes burstOut { 0%{transform:scale(0) translate(-50%,-50%);opacity:1} 100%{transform:scale(2.5) translate(-50%,-50%);opacity:0} }
+
+/* Section headings shake on hover */
+h2:hover { animation: headingShake 0.3s ease-in-out; cursor: default; }
+@keyframes headingShake { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-2deg) scale(1.05)} 75%{transform:rotate(2deg) scale(1.05)} }
+</style>
+
+<canvas id="cursor-canvas"></canvas>
+
+<script>
+// CURSOR TRAIL
+(function(){
+  const canvas = document.getElementById('cursor-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  window.addEventListener('resize', ()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
+  const COLORS = ['#ff0080','#ff6600','#ffff00','#00ff88','#00ccff','#aa00ff'];
+  const trail = [];
+  let mouse = {x:-999,y:-999};
+  window.addEventListener('mousemove', e => { mouse.x=e.clientX; mouse.y=e.clientY; trail.push({x:e.clientX,y:e.clientY,r:8,color:COLORS[Math.floor(Math.random()*COLORS.length)],life:1}); });
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(let i=trail.length-1;i>=0;i--) {
+      const p = trail[i];
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);
+      ctx.fillStyle = p.color; ctx.globalAlpha = p.life*0.7; ctx.fill();
+      p.life -= 0.06; p.r *= 0.97;
+      if(p.life<=0) trail.splice(i,1);
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// CLICK EXPLOSIONS
+const BURST_EMOJIS = ['💥','✨','🌈','⭐','🎉','💜','🔥','🎁'];
+document.addEventListener('click', e => {
+  const el = document.createElement('div');
+  el.className = 'click-burst';
+  el.textContent = BURST_EMOJIS[Math.floor(Math.random()*BURST_EMOJIS.length)];
+  el.style.left = e.clientX + 'px';
+  el.style.top = e.clientY + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 700);
+});
+
+// SCROLL-IN ANIMATIONS
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((entry, i) => {
+    if(entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.how-card, .product-card, .tier, .impact-stat').forEach(el => observer.observe(el));
+</script>
+
 <!-- INTRO OVERLAY -->
 <style>
 @keyframes introBgFlash { 0%{background:#0a0a0a} 8%{background:#1a0020} 16%{background:#001a00} 24%{background:#1a0000} 32%{background:#00001a} 40%{background:#1a0010} 48%{background:#0a0a0a} 100%{background:#0a0a0a} }
