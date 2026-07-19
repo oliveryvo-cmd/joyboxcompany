@@ -957,10 +957,31 @@ footer{background:#000;padding:60px 48px 40px;text-align:center;border-top:3px s
 <div id="google_translate_element" style="display:none"></div>
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script>
-function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'en'},'google_translate_element');}
-const langs={'fr':['🇫🇷 Ce site est en anglais. Voulez-vous le traduire ?','Traduire'],'pl':['🇵🇱 Ta strona jest po angielsku.','Przetłumacz'],'hi':['🇮🇳 यह साइट अंग्रेज़ी में है।','अनुवाद करें'],'es':['🇪🇸 Este sitio está en inglés. ¿Traducir?','Traducir'],'de':['🇩🇪 Diese Seite ist auf Englisch.','Übersetzen'],'pt':['🇧🇷 Este site está em inglês.','Traduzir'],'zh':['🇨🇳 本网站为英文版。','翻译'],'ja':['🇯🇵 このサイトは英語です。','翻訳する']};
-const lang=(navigator.language||'').slice(0,2).toLowerCase();
-if(lang!=='en'){const b=document.getElementById('translate-banner');const m=langs[lang];document.getElementById('translate-msg').textContent=m?m[0]:'🌍 This site is in English. Want to translate it?';document.getElementById('translate-btn').textContent=m?m[1]:'Translate';b.style.display='flex';}
+// Google Translate lang codes differ slightly from browser lang codes
+const GT_LANG_MAP = {
+  'zh': 'zh-CN', 'zh-tw': 'zh-TW', 'he': 'iw', 'jv': 'jw'
+};
+const _bl = (navigator.language || 'en').toLowerCase();
+const _bl2 = _bl.slice(0, 2);
+const _targetLang = GT_LANG_MAP[_bl] || GT_LANG_MAP[_bl2] || _bl;
+
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({ pageLanguage: 'en' }, 'google_translate_element');
+  // If visitor is not English, auto-set the translation language
+  if (_bl2 !== 'en') {
+    // Poll until the Google Translate select element is ready
+    let attempts = 0;
+    const tryTranslate = setInterval(() => {
+      const sel = document.querySelector('#google_translate_element select');
+      if (sel) {
+        clearInterval(tryTranslate);
+        sel.value = _targetLang;
+        sel.dispatchEvent(new Event('change'));
+      }
+      if (++attempts > 40) clearInterval(tryTranslate);
+    }, 250);
+  }
+}
 </script>
 
 <!-- ANNOUNCEMENT BANNER -->
