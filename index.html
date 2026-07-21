@@ -1,483 +1,394 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Joy Box Company — Surprise Joy Boxes for Disabled Kids</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Joy Box Company delivers surprise joy boxes to disabled kids. Founded by Oliver Vo, age 10, Ladera Ranch, CA.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joy Box Company — Buy Cool Stuff. Send Joy to Disabled Kids.</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a0a; color: #fff; font-family: 'Nunito', sans-serif; overflow-x: hidden; }
+@keyframes rainbowShift { 0%{background-position:0%} 100%{background-position:400%} }
+@keyframes tick { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+@keyframes floatUp { 0%{transform:translateY(100vh) rotate(0deg);opacity:0} 10%{opacity:0.7} 90%{opacity:0.7} 100%{transform:translateY(-200px) rotate(360deg);opacity:0} }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+@keyframes shake { 0%{transform:rotate(-4deg) scale(1)} 100%{transform:rotate(4deg) scale(1.08)} }
+@keyframes glow { 0%,100%{box-shadow:0 0 20px rgba(255,0,128,0.4)} 50%{box-shadow:0 0 60px rgba(255,0,128,0.9)} }
+@keyframes liveFlash { 0%,100%{opacity:1} 50%{opacity:0.3} }
+@keyframes navGlow { 0%,100%{border-bottom-color:#ff0080;box-shadow:0 2px 30px rgba(255,0,128,0.3)} 33%{border-bottom-color:#ffff00;box-shadow:0 2px 30px rgba(255,255,0,0.3)} 66%{border-bottom-color:#00ff88;box-shadow:0 2px 30px rgba(0,255,136,0.3)} }
+@keyframes heroBgPulse { 0%,100%{background:radial-gradient(circle at 20% 20%,rgba(255,0,128,0.22) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(0,204,255,0.22) 0%,transparent 50%)} 50%{background:radial-gradient(circle at 80% 20%,rgba(0,255,136,0.22) 0%,transparent 50%),radial-gradient(circle at 20% 80%,rgba(255,255,0,0.22) 0%,transparent 50%)} }
+@keyframes btnCrazy { 0%,100%{transform:scale(1);box-shadow:0 0 30px rgba(255,0,128,0.7)} 25%{transform:scale(1.06) rotate(-1deg);box-shadow:0 0 50px rgba(255,102,0,0.8)} 50%{transform:scale(1.04) rotate(1deg);box-shadow:0 0 60px rgba(255,0,128,1)} 75%{transform:scale(1.07) rotate(-0.5deg);box-shadow:0 0 40px rgba(170,0,255,0.8)} }
+@keyframes impactPop { 0%,100%{filter:drop-shadow(0 0 10px currentColor)} 50%{filter:drop-shadow(0 0 40px currentColor) drop-shadow(0 0 80px currentColor)} }
+@keyframes burstOut { 0%{transform:scale(0) translate(-50%,-50%);opacity:1} 100%{transform:scale(2.5) translate(-50%,-50%);opacity:0} }
+@keyframes introBgFlash { 0%{background:#0a0a0a} 8%{background:#1a0020} 16%{background:#001a00} 48%{background:#0a0a0a} 100%{background:#0a0a0a} }
+@keyframes logoBounce { 0%{transform:scale(0) rotate(-15deg);opacity:0} 40%{transform:scale(1.25) rotate(6deg);opacity:1} 55%{transform:scale(0.92) rotate(-3deg)} 100%{transform:scale(1) rotate(0deg)} }
+@keyframes introCrazy { 0%,100%{transform:scale(1) rotate(0deg)} 10%{transform:scale(1.12) rotate(-3deg)} 50%{transform:scale(1.15) rotate(2deg)} }
+@keyframes welcomeSlam { 0%{transform:scale(4) translateY(-40px);opacity:0;filter:blur(20px)} 30%{transform:scale(1.2);opacity:1;filter:blur(0)} 100%{transform:scale(1)} }
+@keyframes shakeScreen { 0%,100%{transform:translate(0,0)} 10%{transform:translate(-6px,4px)} 50%{transform:translate(-5px,5px)} 80%{transform:translate(5px,-6px)} }
+@keyframes barGlow { 0%,100%{box-shadow:0 0 8px #ff0080} 50%{box-shadow:0 0 24px #00ff88} }
+@keyframes crazyFloat { 0%{transform:translateY(110vh) rotate(0deg) scale(0.5);opacity:0} 5%{opacity:1} 50%{transform:translateY(40vh) rotate(720deg) scale(1.3)} 95%{opacity:1} 100%{transform:translateY(-20vh) rotate(1440deg) scale(0.5);opacity:0} }
+@keyframes colorFlash { 0%{color:#ff0080} 33%{color:#ffff00} 66%{color:#00ccff} 100%{color:#ff0080} }
+@keyframes subBounce { 0%,100%{transform:translateY(0)} 25%{transform:translateY(-8px)} 75%{transform:translateY(4px)} }
 
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --red:#e63030;
-  --red2:#ff4d4d;
-  --navy:#1a2744;
-  --blue:#3a6fd8;
-  --lightblue:#d6e4f7;
-  --white:#ffffff;
-  --offwhite:#f7f9fc;
-  --silver:#6b7a99;
-  --dark:#0d1220;
-}
-
-html{scroll-behavior:smooth;}
-body{background:var(--white);color:var(--navy);font-family:'Nunito',sans-serif;overflow-x:hidden;}
-::-webkit-scrollbar{width:6px;}
-::-webkit-scrollbar-thumb{background:var(--red);}
-
-/* TICKER */
-.ticker{background:var(--navy);padding:10px 0;overflow:hidden;}
-.ticker-inner{display:flex;white-space:nowrap;animation:tick 30s linear infinite;}
-.ticker-inner span{font-size:12px;color:var(--white);letter-spacing:2px;padding:0 48px;font-weight:800;}
-@keyframes tick{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-
-/* NAV */
-nav{background:var(--white);border-bottom:3px solid var(--lightblue);padding:0 48px;position:sticky;top:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;height:80px;box-shadow:0 2px 20px rgba(26,39,68,0.08);}
-.nav-logo{display:flex;align-items:center;gap:12px;}
-.nav-logo img{height:52px;width:auto;}
-.nav-logo-text{font-family:'Fredoka One',sans-serif;font-size:22px;color:var(--navy);letter-spacing:1px;line-height:1.1;}
-.nav-logo-text span{color:var(--red);}
+.ticker{background:linear-gradient(90deg,#ff0080,#ff6600,#ffff00,#00ff88,#00ccff,#aa00ff,#ff0080);background-size:400% 100%;animation:rainbowShift 3s linear infinite;padding:10px 0;overflow:hidden;}
+.ticker-inner{display:flex;white-space:nowrap;animation:tick 8s linear infinite;}
+.ticker-inner span{font-size:13px;font-weight:900;color:#000;letter-spacing:2px;padding:0 32px;}
+nav{background:#0a0a0a;padding:0 48px;height:80px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1000;animation:navGlow 2s ease-in-out infinite;border-bottom:3px solid transparent;}
+.nav-logo{font-family:'Fredoka One',sans-serif;font-size:26px;background:linear-gradient(90deg,#ff0080,#ff6600,#ffff00,#00ff88,#00ccff,#aa00ff);background-size:400% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:rainbowShift 3s linear infinite;text-decoration:none;}
 .nav-links{display:flex;gap:24px;align-items:center;}
-.nav-links a{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--navy);text-decoration:none;letter-spacing:1px;transition:color .2s;}
-.nav-links a:hover{color:var(--red);}
-.nav-cta{background:var(--red);color:var(--white)!important;padding:12px 28px;border-radius:100px;font-weight:800;transition:all .2s;box-shadow:0 4px 16px rgba(230,48,48,0.3);}
-.nav-cta:hover{background:var(--red2);transform:translateY(-2px);}
-
-/* HERO */
-.hero{min-height:100vh;background:linear-gradient(160deg,var(--lightblue) 0%,var(--white) 60%);display:flex;align-items:center;justify-content:center;padding:80px 48px;position:relative;overflow:hidden;}
-.hero::before{content:'🎁';font-size:300px;position:absolute;right:-60px;bottom:-60px;opacity:0.06;}
-.hero-content{max-width:1100px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
-.hero-text{}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(230,48,48,0.1);border:2px solid rgba(230,48,48,0.2);padding:8px 20px;border-radius:100px;font-size:12px;font-weight:800;letter-spacing:2px;color:var(--red);margin-bottom:24px;}
-.hero-title{font-family:'Fredoka One',sans-serif;font-size:clamp(48px,6vw,80px);line-height:1.05;color:var(--navy);margin-bottom:20px;}
-.hero-title span{color:var(--red);}
-.hero-sub{font-size:18px;color:var(--silver);line-height:1.8;margin-bottom:40px;max-width:480px;}
-.hero-sub strong{color:var(--navy);}
-.hero-btns{display:flex;gap:16px;flex-wrap:wrap;}
-.btn-main{background:var(--red);color:var(--white);padding:18px 48px;border-radius:100px;font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;text-decoration:none;transition:all .2s;display:inline-block;box-shadow:0 8px 32px rgba(230,48,48,0.4);}
-.btn-main:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(230,48,48,0.5);}
-.btn-ghost{background:transparent;color:var(--navy);padding:18px 48px;border-radius:100px;font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;text-decoration:none;border:3px solid var(--lightblue);transition:all .2s;display:inline-block;}
-.btn-ghost:hover{border-color:var(--navy);}
-.hero-img{display:flex;justify-content:center;align-items:center;}
-.hero-img img{width:100%;max-width:420px;filter:drop-shadow(0 20px 60px rgba(26,39,68,0.2));animation:float 3s ease-in-out infinite;}
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-16px);}}
-
-/* STATS */
-.stats{background:var(--navy);padding:48px;}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;max-width:1100px;margin:0 auto;text-align:center;}
-.stat-num{font-family:'Fredoka One',sans-serif;font-size:48px;color:var(--red);display:block;}
-.stat-label{font-size:12px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-top:4px;}
-
-/* SECTION COMMON */
-.section{padding:100px 48px;}
-.container{max-width:1100px;margin:0 auto;}
-.section-tag{font-size:11px;font-weight:800;letter-spacing:4px;color:var(--red);margin-bottom:12px;display:block;}
-.section-title{font-family:'Fredoka One',sans-serif;font-size:clamp(36px,5vw,60px);color:var(--navy);margin-bottom:16px;line-height:1.1;}
-.section-title span{color:var(--red);}
-.section-line{width:60px;height:4px;background:var(--red);border-radius:2px;margin-bottom:40px;}
-.section-desc{font-size:17px;color:var(--silver);line-height:1.8;max-width:600px;}
-
-/* BOXES */
-.boxes-section{background:var(--offwhite);}
-.boxes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px;}
-.box-card{background:var(--white);border-radius:24px;padding:36px 28px;border:2px solid var(--lightblue);transition:all .3s;display:flex;flex-direction:column;position:relative;}
-.box-card:hover{transform:translateY(-8px);border-color:var(--red);box-shadow:0 20px 60px rgba(230,48,48,0.1);}
-.box-popular-tag{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--red);color:var(--white);font-size:10px;font-weight:800;letter-spacing:2px;padding:4px 16px;border-radius:100px;white-space:nowrap;}
-.box-icon{font-size:56px;margin-bottom:16px;display:block;}
-.box-name{font-family:'Fredoka One',sans-serif;font-size:28px;color:var(--navy);margin-bottom:4px;}
-.box-price{font-family:'Fredoka One',sans-serif;font-size:44px;color:var(--red);margin-bottom:24px;}
-.box-divider{border:none;border-top:2px solid var(--lightblue);margin-bottom:20px;}
-.box-items{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1;margin-bottom:24px;}
-.box-items li{font-size:13px;color:var(--silver);display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
-.box-items li::before{content:'✓';color:var(--red);font-weight:900;flex-shrink:0;}
-.box-btn{background:var(--red);color:var(--white);padding:14px;border-radius:100px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;text-decoration:none;text-align:center;transition:all .2s;display:block;margin-top:auto;}
-.box-btn:hover{background:var(--red2);transform:translateY(-2px);}
-
-/* HOW IT WORKS */
-.how-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:60px;}
-.how-step{text-align:center;}
-.step-circle{width:80px;height:80px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',sans-serif;font-size:32px;color:var(--white);margin:0 auto 20px;}
-.step-icon{font-size:44px;display:block;margin-bottom:12px;}
-.how-step h4{font-family:'Fredoka One',sans-serif;font-size:22px;color:var(--navy);margin-bottom:10px;}
-.how-step p{font-size:14px;color:var(--silver);line-height:1.8;}
-
-/* MISSION */
-.mission{background:var(--navy);padding:100px 48px;text-align:center;}
-.mission-content{max-width:800px;margin:0 auto;}
-.mission-tag{font-size:11px;font-weight:800;letter-spacing:4px;color:rgba(255,255,255,0.4);margin-bottom:20px;display:block;}
-.mission-title{font-family:'Fredoka One',sans-serif;font-size:clamp(40px,6vw,72px);color:var(--white);line-height:1.05;margin-bottom:32px;}
-.mission-title span{color:var(--red);}
-.mission-body{font-size:18px;color:rgba(255,255,255,0.6);line-height:1.9;margin-bottom:48px;}
-.mission-body strong{color:var(--white);}
-.mission-cta{background:var(--red);color:var(--white);padding:20px 64px;border-radius:100px;font-family:'Nunito',sans-serif;font-size:20px;font-weight:800;text-decoration:none;display:inline-block;transition:all .2s;box-shadow:0 8px 32px rgba(230,48,48,0.5);}
-.mission-cta:hover{transform:translateY(-3px);}
-
-/* FOUNDER */
-.founder-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:60px;}
-.founder-img-wrap{background:var(--lightblue);border-radius:32px;padding:48px;text-align:center;position:relative;}
-.founder-emoji{font-size:120px;display:block;}
-.founder-tag-badge{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:var(--red);color:var(--white);font-size:11px;font-weight:800;letter-spacing:2px;padding:6px 20px;border-radius:100px;white-space:nowrap;}
-.founder-text h3{font-family:'Fredoka One',sans-serif;font-size:clamp(32px,4vw,52px);color:var(--navy);margin-bottom:8px;}
-.founder-text h3 span{color:var(--red);}
-.founder-sub{font-size:12px;font-weight:800;letter-spacing:3px;color:var(--red);margin-bottom:24px;display:block;}
-.founder-text p{font-size:16px;color:var(--silver);line-height:1.9;margin-bottom:16px;}
-.founder-text p strong{color:var(--navy);}
-.founder-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
-.founder-tag{font-size:11px;font-weight:800;letter-spacing:1px;padding:6px 16px;border-radius:100px;border:2px solid var(--lightblue);color:var(--navy);}
-
-/* INSIDE */
-.inside-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:60px;}
-.inside-items{display:flex;flex-direction:column;gap:16px;}
-.inside-item{display:flex;align-items:center;gap:16px;background:var(--offwhite);border-radius:16px;padding:16px 20px;border:2px solid var(--lightblue);transition:border-color .2s;}
-.inside-item:hover{border-color:var(--red);}
-.inside-item-icon{font-size:32px;flex-shrink:0;}
-.inside-item h5{font-family:'Fredoka One',sans-serif;font-size:16px;color:var(--navy);margin-bottom:2px;}
-.inside-item p{font-size:12px;color:var(--silver);}
-.inside-note{background:rgba(230,48,48,0.06);border-left:4px solid var(--red);border-radius:0 16px 16px 0;padding:20px 24px;font-size:15px;color:var(--silver);line-height:1.7;margin-top:24px;}
-.inside-note strong{color:var(--red);}
-
-/* DELIVERY */
-.delivery-section{background:var(--offwhite);}
-.delivery-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:60px;}
-.delivery-map{background:var(--navy);border-radius:32px;padding:48px;text-align:center;}
-.delivery-map .map-icon{font-size:80px;display:block;margin-bottom:20px;}
-.delivery-map h4{font-family:'Fredoka One',sans-serif;font-size:28px;color:var(--white);margin-bottom:8px;}
-.delivery-map p{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;}
-.delivery-map .area{display:inline-block;background:rgba(230,48,48,0.2);border:2px solid var(--red);border-radius:100px;padding:8px 24px;font-size:12px;font-weight:800;letter-spacing:2px;color:var(--red);margin-top:16px;}
-.delivery-tiers{display:flex;flex-direction:column;gap:16px;}
-.delivery-tier{display:flex;align-items:center;gap:16px;background:var(--white);border:2px solid var(--lightblue);border-radius:16px;padding:20px;}
-.tier-icon{font-size:32px;flex-shrink:0;}
-.tier-text h5{font-family:'Fredoka One',sans-serif;font-size:16px;color:var(--navy);margin-bottom:2px;}
-.tier-text p{font-size:12px;color:var(--silver);}
-
-/* FOOTER */
-footer{background:var(--dark);padding:60px 48px 40px;}
-.footer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:60px;margin-bottom:48px;}
-.footer-logo{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-.footer-logo img{height:44px;}
-.footer-logo-text{font-family:'Fredoka One',sans-serif;font-size:18px;color:var(--white);}
-.footer-logo-text span{color:var(--red);}
-.footer-brand p{font-size:13px;color:#444;line-height:1.7;}
-.footer-col h5{font-family:'Fredoka One',sans-serif;font-size:16px;color:var(--red);margin-bottom:16px;}
-.footer-col a{display:block;font-size:13px;color:#555;text-decoration:none;margin-bottom:10px;transition:color .2s;}
-.footer-col a:hover{color:var(--red);}
-.footer-bottom{border-top:1px solid #1a2030;padding-top:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
-.footer-bottom p{font-size:11px;letter-spacing:2px;color:#333;}
-.footer-bottom span{color:var(--red);}
-
-/* RESPONSIVE */
-@media(max-width:900px){
-  .hero-content,.founder-grid,.inside-grid,.delivery-grid{grid-template-columns:1fr;}
-  .boxes-grid,.how-steps{grid-template-columns:1fr 1fr;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-  .footer-grid{grid-template-columns:1fr;}
-  nav,.hero,.section,.mission,.founder,.delivery-section,.footer-bottom{padding-left:20px;padding-right:20px;}
-}
-@media(max-width:560px){
-  .boxes-grid,.how-steps{grid-template-columns:1fr;}
-  .stats-grid{grid-template-columns:1fr 1fr;}
-}
+.nav-links a{font-weight:900;font-size:14px;text-decoration:none;letter-spacing:1px;transition:all 0.2s;}
+.nav-links a:nth-child(1){color:#ff0080;}.nav-links a:nth-child(2){color:#ffff00;}.nav-links a:nth-child(3){color:#00ff88;}.nav-links a:nth-child(4){color:#00ccff;}
+.nav-links a:hover{transform:scale(1.15) rotate(-3deg);}
+.nav-cta{background:linear-gradient(135deg,#ff0080,#aa00ff);color:#fff!important;padding:12px 28px;border-radius:100px;font-weight:900!important;box-shadow:0 0 20px rgba(255,0,128,0.5);}
+.mission-banner{background:linear-gradient(135deg,#0d0020,#001a0d);border-bottom:2px solid #1a1a1a;padding:16px 48px;display:flex;align-items:center;justify-content:center;gap:16px;text-align:center;}
+.mission-banner p{font-size:15px;font-weight:900;color:#aaa;letter-spacing:1px;}.mission-banner p span{color:#00ff88;}.mission-banner .heart{font-size:24px;animation:pulse 1.5s ease-in-out infinite;}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 20px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;pointer-events:none;animation:heroBgPulse 3s ease-in-out infinite;}
+.floating-emojis{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.fe{position:absolute;font-size:44px;animation:floatUp 3.5s ease-in-out infinite;opacity:0;}
+.fe:nth-child(1){left:5%;animation-delay:0s;}.fe:nth-child(2){left:12%;animation-delay:1.5s;}.fe:nth-child(3){left:22%;animation-delay:3s;}.fe:nth-child(4){left:33%;animation-delay:0.8s;}.fe:nth-child(5){left:45%;animation-delay:2s;}.fe:nth-child(6){left:57%;animation-delay:4s;}.fe:nth-child(7){left:68%;animation-delay:1s;}.fe:nth-child(8){left:78%;animation-delay:2.5s;}.fe:nth-child(9){left:88%;animation-delay:3.5s;}.fe:nth-child(10){left:95%;animation-delay:0.5s;}
+.hero-eyebrow{font-size:12px;font-weight:900;letter-spacing:4px;color:#00ff88;margin-bottom:20px;text-transform:uppercase;}
+.hero-title{font-family:'Fredoka One',sans-serif;font-size:clamp(52px,12vw,120px);line-height:0.9;margin-bottom:32px;filter:drop-shadow(0 0 40px rgba(255,0,128,0.5));}
+.joy{background:linear-gradient(90deg,#ff0080,#ff6600,#ffff00);background-size:400% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:rainbowShift 0.5s linear infinite;}
+.drop-word{background:linear-gradient(90deg,#00ff88,#00ccff,#aa00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-tagline{font-size:clamp(16px,2.5vw,22px);font-weight:900;color:#fff;margin-bottom:12px;letter-spacing:1px;}
+.hero-sub{font-size:clamp(13px,2vw,17px);color:#666;font-weight:700;margin-bottom:48px;max-width:560px;line-height:1.8;}.hero-sub span{color:#00ff88;}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:64px;}
+.btn-main{background:linear-gradient(135deg,#ff0080,#ff6600);color:#fff;padding:18px 48px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:22px;text-decoration:none;animation:btnCrazy 0.8s ease-in-out infinite;}
+.btn-secondary{background:rgba(0,255,136,0.1);border:2px solid #00ff88;color:#00ff88;padding:18px 48px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:20px;text-decoration:none;transition:all 0.2s;}
+.btn-main:hover,.btn-secondary:hover{transform:translateY(-4px) scale(1.05);}
+.section-tag{font-size:11px;font-weight:900;letter-spacing:4px;display:block;margin-bottom:12px;text-transform:uppercase;}
+.section-title{font-family:'Fredoka One',sans-serif;font-size:clamp(32px,5vw,64px);margin-bottom:8px;line-height:1;color:#fff;}
+.section-sub{color:#555;font-size:15px;margin-bottom:48px;font-weight:700;}
+.how-section{padding:80px 48px;background:#0d0d0d;text-align:center;}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px;max-width:1100px;margin:48px auto 0;}
+.how-card{background:#1a1a1a;border-radius:24px;padding:40px 24px;transition:all 0.4s;opacity:0;transform:translateY(40px) scale(0.95);}
+.how-card.visible{opacity:1;transform:translateY(0) scale(1);}
+.how-card:nth-child(1){border-top:4px solid #ff0080;}.how-card:nth-child(2){border-top:4px solid #ffff00;}.how-card:nth-child(3){border-top:4px solid #00ff88;}.how-card:nth-child(4){border-top:4px solid #aa00ff;}
+.how-card:hover{transform:translateY(-12px) scale(1.04) rotate(-1deg)!important;box-shadow:0 20px 60px rgba(255,0,128,0.3)!important;}
+.how-num{font-family:'Fredoka One',sans-serif;font-size:64px;line-height:1;margin-bottom:16px;}
+.how-card:nth-child(1) .how-num{color:#ff0080;}.how-card:nth-child(2) .how-num{color:#ffff00;}.how-card:nth-child(3) .how-num{color:#00ff88;}.how-card:nth-child(4) .how-num{color:#aa00ff;}
+.how-title{font-family:'Fredoka One',sans-serif;font-size:22px;color:#fff;margin-bottom:10px;}.how-text{font-size:14px;color:#666;line-height:1.8;}
+.impact-section{padding:60px 48px;background:linear-gradient(135deg,#001a0d,#0a0020);text-align:center;border-top:2px solid #1a1a1a;border-bottom:2px solid #1a1a1a;}
+.impact-grid{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;max-width:900px;margin:0 auto;}
+.impact-stat{text-align:center;opacity:0;transform:translateY(40px);transition:all 0.4s;}.impact-stat.visible{opacity:1;transform:translateY(0);}
+.impact-num{font-family:'Fredoka One',sans-serif;font-size:clamp(48px,8vw,80px);line-height:1;margin-bottom:8px;animation:impactPop 1.2s ease-in-out infinite;}
+.impact-stat:nth-child(1) .impact-num{color:#ff0080;}.impact-stat:nth-child(2) .impact-num{color:#00ff88;}.impact-stat:nth-child(3) .impact-num{color:#00ccff;}
+.impact-label{font-size:12px;font-weight:900;letter-spacing:3px;color:#555;}
+.boxes-section{padding:80px 48px;background:#111;}
+.boxes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px;max-width:1200px;margin:0 auto;}
+.box-card{background:#1a1a1a;border-radius:20px;overflow:hidden;transition:all 0.4s;border:2px solid #222;opacity:0;transform:translateY(40px) scale(0.95);}
+.box-card.visible{opacity:1;transform:translateY(0) scale(1);}
+.box-card:hover{transform:translateY(-14px) scale(1.06) rotate(1deg)!important;box-shadow:0 20px 80px rgba(0,204,255,0.4)!important;}
+.box-img{height:160px;display:flex;align-items:center;justify-content:center;font-size:72px;}
+.box-info{padding:20px;}.box-name{font-family:'Fredoka One',sans-serif;font-size:22px;margin-bottom:6px;}.box-desc{font-size:13px;color:#555;margin-bottom:12px;line-height:1.6;}
+.box-footer{display:flex;align-items:center;justify-content:space-between;}.box-price{font-family:'Fredoka One',sans-serif;font-size:26px;}
+.order-btn{background:#222;color:#fff;border:none;padding:10px 20px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:14px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
+.order-btn:hover{background:#ff0080;transform:scale(1.1);}
+.strip{padding:20px 0;overflow:hidden;white-space:nowrap;border-top:2px solid #1a1a1a;border-bottom:2px solid #1a1a1a;}
+.strip-inner{display:inline-flex;gap:48px;animation:tick 4s linear infinite;}
+.strip-item{font-family:'Fredoka One',sans-serif;font-size:18px;display:flex;align-items:center;gap:12px;}
+.mystery-section{padding:80px 48px;text-align:center;background:#0a0a0a;position:relative;overflow:hidden;}
+.mystery-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(170,0,255,0.15) 0%,transparent 70%);}
+.mystery-box-visual{font-size:100px;display:block;margin:0 auto 32px;animation:shake 0.6s ease-in-out infinite alternate;}
+.mystery-title{font-family:'Fredoka One',sans-serif;font-size:clamp(40px,8vw,80px);background:linear-gradient(90deg,#aa00ff,#ff0080,#ff6600,#ffff00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;position:relative;}
+.tier{background:#1a1a1a;border-radius:20px;padding:24px;text-align:center;transition:all 0.2s;cursor:pointer;opacity:0;transform:translateY(40px);}
+.tier.visible{opacity:1;transform:translateY(0);}.tier:hover{transform:translateY(-12px) scale(1.08) rotate(-0.5deg)!important;}
+footer{background:#000;padding:60px 48px 40px;text-align:center;border-top:3px solid #1a1a1a;}
+.footer-logo{font-family:'Fredoka One',sans-serif;font-size:42px;background:linear-gradient(90deg,#ff0080,#ff6600,#ffff00,#00ff88,#00ccff,#aa00ff);background-size:400% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:rainbowShift 3s linear infinite;margin-bottom:16px;}
+.footer-mission{color:#00ff88;font-size:14px;font-weight:900;letter-spacing:2px;margin-bottom:8px;}.footer-sub{color:#333;font-size:12px;letter-spacing:2px;font-weight:700;}
+#cursor-canvas{position:fixed;inset:0;pointer-events:none;z-index:99998;}
+.click-burst{position:fixed;pointer-events:none;z-index:99997;font-size:24px;animation:burstOut 0.6s ease-out forwards;}
+#intro-overlay{position:fixed;inset:0;z-index:99999;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:opacity 0.5s ease;animation:introBgFlash 0.8s ease-out forwards;}
+#intro-overlay.fade-out{opacity:0;pointer-events:none;}#intro-overlay.shake{animation:shakeScreen 0.4s ease;}
+.intro-welcome{font-family:'Fredoka One',sans-serif;font-size:clamp(44px,11vw,96px);background:linear-gradient(90deg,#ff0080,#ff6600,#ffff00,#00ff88,#00ccff,#aa00ff,#ff0080);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:rainbowShift 0.6s linear infinite,welcomeSlam 0.7s cubic-bezier(.36,.07,.19,.97) forwards;margin-bottom:6px;text-align:center;line-height:1;filter:drop-shadow(0 0 30px rgba(255,0,128,0.7));}
+.intro-sub{font-family:'Fredoka One',sans-serif;font-size:clamp(16px,4vw,28px);color:#fff;letter-spacing:6px;margin-bottom:36px;text-align:center;text-transform:uppercase;animation:subBounce 0.5s ease-in-out 0.9s infinite,colorFlash 0.8s linear infinite;}
+.intro-bar-wrap{width:min(380px,80vw);height:10px;background:#111;border-radius:100px;overflow:hidden;margin-bottom:24px;box-shadow:0 0 20px rgba(255,0,128,0.4);}
+.intro-bar{height:100%;width:0%;background:linear-gradient(90deg,#ff0080,#ff6600,#ffff00,#00ff88,#00ccff,#aa00ff);background-size:300% 100%;border-radius:100px;animation:rainbowShift 0.5s linear infinite,barGlow 1s ease-in-out infinite;transition:width 0.08s linear;}
+.intro-skip{background:rgba(255,255,255,0.05);border:2px solid #333;color:#555;padding:10px 32px;border-radius:100px;font-family:'Nunito',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;cursor:pointer;transition:all 0.15s;text-transform:uppercase;}
+.intro-skip:hover{border-color:#ff0080;color:#ff0080;transform:scale(1.1);}
+.intro-emojis{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.intro-fe{position:absolute;font-size:clamp(28px,5vw,52px);animation:crazyFloat 2.5s ease-in-out infinite;opacity:0;}
+.intro-fe:nth-child(1){left:3%;animation-delay:0s;animation-duration:2.2s;}.intro-fe:nth-child(2){left:10%;animation-delay:0.3s;animation-duration:1.9s;}.intro-fe:nth-child(3){left:19%;animation-delay:0.7s;animation-duration:2.6s;}.intro-fe:nth-child(4){left:28%;animation-delay:0.1s;animation-duration:2.0s;}.intro-fe:nth-child(5){left:38%;animation-delay:0.5s;animation-duration:1.8s;}.intro-fe:nth-child(6){left:48%;animation-delay:0.9s;animation-duration:2.4s;}.intro-fe:nth-child(7){left:57%;animation-delay:0.2s;animation-duration:2.1s;}.intro-fe:nth-child(8){left:66%;animation-delay:0.6s;animation-duration:1.7s;}.intro-fe:nth-child(9){left:75%;animation-delay:0.4s;animation-duration:2.3s;}.intro-fe:nth-child(10){left:84%;animation-delay:0.8s;animation-duration:1.9s;}.intro-fe:nth-child(11){left:92%;animation-delay:0.15s;animation-duration:2.5s;}.intro-fe:nth-child(12){left:97%;animation-delay:1.1s;animation-duration:2.0s;}
+canvas#intro-particles{position:absolute;inset:0;pointer-events:none;width:100%;height:100%;}
+#announcement-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:199999;background:linear-gradient(90deg,#ff0080,#aa00ff);color:#fff;padding:12px 50px 12px 20px;font-size:15px;font-weight:700;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.4);}
+#announcement-close{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:20px;cursor:pointer;}
+#chat-bubble{position:fixed;bottom:24px;right:24px;z-index:9999;}
+#chat-toggle{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#ff0080,#aa00ff);border:none;cursor:pointer;font-size:28px;box-shadow:0 4px 20px rgba(255,0,128,0.5);display:flex;align-items:center;justify-content:center;transition:transform 0.2s;}
+#chat-toggle:hover{transform:scale(1.1);}
+#chat-box{display:none;position:absolute;bottom:70px;right:0;width:320px;background:#1a1a1a;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6);border:2px solid #ff0080;}
+#chat-box-header{background:linear-gradient(135deg,#ff0080,#aa00ff);padding:14px 16px;display:flex;align-items:center;gap:10px;}
+#chat-box-header div{color:#fff;font-weight:700;font-size:14px;}#chat-box-header small{color:rgba(255,255,255,0.8);font-size:11px;display:block;}
+#chat-msgs{height:220px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;}
+.cb-msg{padding:8px 12px;border-radius:12px;font-size:13px;max-width:85%;}
+.cb-msg.admin{background:#ff0080;color:#fff;align-self:flex-start;border-bottom-left-radius:4px;}
+.cb-msg.visitor{background:#222;color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+#chat-name-row{padding:10px 14px 0;display:flex;gap:8px;}#chat-name-input{flex:1;background:#111;border:1px solid #333;border-radius:20px;padding:8px 14px;color:#fff;font-size:13px;outline:none;}
+#chat-input-row{padding:10px 14px 14px;display:flex;gap:8px;}#chat-input{flex:1;background:#111;border:1px solid #333;border-radius:20px;padding:8px 14px;color:#fff;font-size:13px;outline:none;}
+#chat-input:focus,#chat-name-input:focus{border-color:#ff0080;}
+#chat-send{background:linear-gradient(135deg,#ff0080,#aa00ff);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-weight:700;cursor:pointer;font-size:13px;}
+@media(max-width:768px){nav{padding:0 20px;}.nav-links{display:none;}.how-section,.boxes-section,.mystery-section,.mission-banner{padding:60px 20px;}.impact-grid{gap:24px;}}
 </style>
 </head>
 <body>
 
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-inner">
-    <span>🎁 JOY BOX COMPANY — SURPRISE JOY BOXES FOR DISABLED KIDS</span>
-    <span>📦 MINI $5 · SPARK $15 · BLAZE $30 · INFERNO $50 · LEGEND $100 · ULTIMATE $200</span>
-    <span>🚲 FREE BIKE DELIVERY IN LADERA RANCH · SHIPS NATIONWIDE</span>
-    <span>💛 EVERY BOX PACKED BY HAND · EVERY NOTE WRITTEN BY OLIVER</span>
-    <span>🎁 JOY BOX COMPANY — SURPRISE JOY BOXES FOR DISABLED KIDS</span>
-    <span>📦 MINI $5 · SPARK $15 · BLAZE $30 · INFERNO $50 · LEGEND $100 · ULTIMATE $200</span>
-    <span>🚲 FREE BIKE DELIVERY IN LADERA RANCH · SHIPS NATIONWIDE</span>
-    <span>💛 EVERY BOX PACKED BY HAND · EVERY NOTE WRITTEN BY OLIVER</span>
-  </div>
-</div>
+<div class="ticker"><div class="ticker-inner">
+  <span>🎁 BUY COOL STUFF</span><span>💚 SEND JOY TO DISABLED KIDS</span><span>🔥 NEW DROPS EVERY FRIDAY</span><span>⭐ MYSTERY BOXES</span><span>🐻 MYSTERY BEARS</span><span>🌈 RAINBOW BOXES</span><span>💚 EVERY PURCHASE HELPS A KID</span>
+  <span>🎁 BUY COOL STUFF</span><span>💚 SEND JOY TO DISABLED KIDS</span><span>🔥 NEW DROPS EVERY FRIDAY</span><span>⭐ MYSTERY BOXES</span><span>🐻 MYSTERY BEARS</span><span>🌈 RAINBOW BOXES</span><span>💚 EVERY PURCHASE HELPS A KID</span>
+</div></div>
 
-<!-- NAV -->
 <nav>
-  <div class="nav-logo">
-    <img src="logo.jpg" alt="Joy Box Company Logo">
-    <div class="nav-logo-text"><span>Joy Box</span> Company</div>
-  </div>
+  <a href="/" class="nav-logo">Joy Box Company</a>
   <div class="nav-links">
-    <a href="#boxes">The Boxes</a>
-    <a href="#how">How It Works</a>
+    <a href="#boxes">Boxes</a><a href="#drops">Drops</a>
+    <a href="drops.html" style="color:#ff0080;animation:pulse 1s ease-in-out infinite;">⚡ DROPS</a>
     <a href="#mission">Mission</a>
-    <a href="join.html">🚲 Join the Crew</a>
-    <a href="sponsor.html">💛 Sponsor a Box</a>
-    <a href="order.html" class="nav-cta">🎁 Order Now</a>
+    <a href="order.html" class="nav-cta">Order Now 🔥</a>
   </div>
 </nav>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-content">
-    <div class="hero-text">
-      <div class="hero-badge">🎁 FOUNDED BY OLIVER VO, AGE 10 · LADERA RANCH, CA</div>
-      <h1 class="hero-title">Surprise Joy Boxes<br>for <span>Disabled Kids.</span></h1>
-      <p class="hero-sub">Every disabled kid deserves to open a box and know — without any doubt — that <strong>someone is thinking about them.</strong> Joy Box Company makes that happen. One surprise box at a time.</p>
-      <div class="hero-btns">
-        <a href="order.html" class="btn-main">🎁 Order a Box</a>
-        <a href="#mission" class="btn-ghost">Our Mission</a>
-      </div>
-    </div>
-    <div class="hero-img">
-      <img src="logo.jpg" alt="Joy Box Company">
-    </div>
-  </div>
+<div class="mission-banner">
+  <span class="heart">💚</span>
+  <p>Every purchase sends a <span>Joy Box to a disabled kid.</span> You shop. We deliver joy.</p>
+  <span class="heart">💚</span>
 </div>
 
-<!-- STATS -->
-<div class="stats">
-  <div class="stats-grid">
-    <div>
-      <span class="stat-num">6</span>
-      <div class="stat-label">BOX SIZES</div>
-    </div>
-    <div>
-      <span class="stat-num">100%</span>
-      <div class="stat-label">PACKED BY HAND</div>
-    </div>
-    <div>
-      <span class="stat-num">FREE</span>
-      <div class="stat-label">BIKE DELIVERY · LADERA RANCH</div>
-    </div>
-    <div>
-      <span class="stat-num">💛</span>
-      <div class="stat-label">EVERY NOTE HANDWRITTEN</div>
-    </div>
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="floating-emojis">
+    <span class="fe">🎁</span><span class="fe">⭐</span><span class="fe">💚</span><span class="fe">🔥</span>
+    <span class="fe">🐻</span><span class="fe">✨</span><span class="fe">🌈</span><span class="fe">💎</span><span class="fe">❤️</span><span class="fe">🎉</span>
   </div>
-</div>
-
-<!-- THE BOXES -->
-<div class="section boxes-section" id="boxes">
-  <div class="container">
-    <span class="section-tag">// THE BOXES</span>
-    <h2 class="section-title">Pick Your <span>Box.</span></h2>
-    <div class="section-line"></div>
-    <p class="section-desc">Six sizes. All packed by hand. All delivered with love. The bigger the box, the more joy inside.</p>
-    <div class="boxes-grid">
-
-      <div class="box-card">
-        <span class="box-icon">😊</span>
-        <div class="box-name">Smile</div>
-        <div class="box-price">$5</div>
-        <hr class="box-divider">
-        <ul class="box-items">
-          <li>1 small surprise toy</li>
-          <li>Handwritten note from Oliver</li>
-          <li>Joy Box sticker</li>
-        </ul>
-        <a href="order.html?box=smile" class="box-btn">Order Smile</a>
-      </div>
-
-      <div class="box-card">
-        <span class="box-icon">😄</span>
-        <div class="box-name">Giggle</div>
-        <div class="box-price">$15</div>
-        <hr class="box-divider">
-        <ul class="box-items">
-          <li>1 surprise toy</li>
-          <li>Handwritten note from Oliver</li>
-          <li>Joy Box sticker</li>
-          <li>Small joy item (slime, putty, or fidget)</li>
-        </ul>
-        <a href="order.html?box=giggle" class="box-btn">Order Giggle</a>
-      </div>
-
-      <div class="box-card">
-        <div class="box-popular-tag">⭐ MOST POPULAR</div>
-        <span class="box-icon">☀️</span>
-        <div class="box-name">Sunshine</div>
-        <div class="box-price">$30</div>
-        <hr class="box-divider">
-        <ul class="box-items">
-          <li>2–3 surprise toys</li>
-          <li>Handwritten note from Oliver</li>
-          <li>Joy Box sticker pack</li>
-          <li>Slime or Nee Doh</li>
-          <li>Mini Brands or mystery figure</li>
-        </ul>
-        <a href="order.html?box=sunshine" class="box-btn">Order Sunshine</a>
-      </div>
-
-      <div class="box-card">
-        <span class="box-icon">🌈</span>
-        <div class="box-name">Rainbow</div>
-        <div class="box-price">$50</div>
-        <hr class="box-divider">
-        <ul class="box-items">
-          <li>4–5 surprise toys</li>
-          <li>Handwritten note from Oliver</li>
-          <li>Full sticker set</li>
-          <li>Labubu or mystery figure</li>
-          <li>Slime + Nee Doh + fidget set</li>
-          <li>Bonus joy item</li>
-        </ul>
-        <a href="order.html?box=rainbow" class="box-btn">Order Rainbow</a>
-      </div>
-
-
-    </div>
+  <p class="hero-eyebrow">// BUY COOL STUFF · HELP DISABLED KIDS</p>
+  <div class="hero-title"><span class="joy">JOY</span><br><span class="drop-word">BOX CO.</span></div>
+  <p class="hero-tagline">The store that gives back with every single order.</p>
+  <p class="hero-sub">Buy mystery boxes, bears, hype drops &amp; more —<br>and <span>every purchase automatically sends a Joy Box</span><br>to a disabled kid who needs it most.</p>
+  <div class="hero-btns">
+    <a href="order.html" class="btn-main">🔥 Order a Box</a>
+    <a href="#mission" class="btn-secondary">💚 Our Mission</a>
   </div>
-</div>
+</section>
 
-<!-- HOW IT WORKS -->
-<div class="section" id="how">
-  <div class="container">
-    <span class="section-tag">// HOW IT WORKS</span>
-    <h2 class="section-title">Three Steps <span>to Joy.</span></h2>
-    <div class="section-line"></div>
-    <div class="how-steps">
-      <div class="how-step">
-        <div class="step-circle">1</div>
-        <span class="step-icon">📋</span>
-        <h4>Order Your Box</h4>
-        <p>Pick a box size and fill out the order form. Tell us who the box is for and where to deliver it. Takes 2 minutes.</p>
-      </div>
-      <div class="how-step">
-        <div class="step-circle">2</div>
-        <span class="step-icon">📦</span>
-        <h4>Oliver Packs It</h4>
-        <p>Oliver personally packs every single box by hand. He picks the toys, fills it with fun stuff, and writes a note just for the kid receiving it.</p>
-      </div>
-      <div class="how-step">
-        <div class="step-circle">3</div>
-        <span class="step-icon">🚲</span>
-        <h4>It Gets Delivered</h4>
-        <p>In Ladera Ranch, Oliver delivers by bike — free. Outside Ladera Ranch, it ships straight to the door. A disabled kid opens it and feels joy.</p>
-      </div>
-    </div>
+<section class="how-section" id="mission">
+  <span class="section-tag" style="color:#00ff88;">// HOW IT WORKS</span>
+  <h2 class="section-title">Two things happen <span style="color:#00ff88;">every time you buy.</span></h2>
+  <div class="how-grid">
+    <div class="how-card"><div class="how-num">1</div><div class="how-title">You Pick a Joy Box</div><div class="how-text">Smile, Giggle, Sunshine, or Rainbow — packed with surprise toys and a handwritten note.</div></div>
+    <div class="how-card"><div class="how-num">2</div><div class="how-title">We Build It</div><div class="how-text">Oliver hand-packs every single box himself. Real care goes into every one.</div></div>
+    <div class="how-card"><div class="how-num">3</div><div class="how-title">A Disabled Kid Gets a Joy Box</div><div class="how-text">Part of every purchase funds a Joy Box — packed with toys, games, and a handwritten note.</div></div>
+    <div class="how-card"><div class="how-num">4</div><div class="how-title">You Changed Someone's Day</div><div class="how-text">You bought something cool AND changed a kid's life. That's what Joy Box Company is about.</div></div>
   </div>
-</div>
+</section>
 
-<!-- WHAT'S INSIDE -->
-<div class="section boxes-section">
-  <div class="container">
-    <span class="section-tag">// WHAT'S INSIDE</span>
-    <h2 class="section-title">Real Stuff. <span>Real Joy.</span></h2>
-    <div class="section-line"></div>
-    <div class="inside-grid">
-      <div class="inside-items">
-        <div class="inside-item"><div class="inside-item-icon">🧸</div><div><h5>Surprise Toys</h5><p>Real toys — Mini Brands, Labubu figures, mystery items kids actually love.</p></div></div>
-        <div class="inside-item"><div class="inside-item-icon">🟢</div><div><h5>Nee Doh & Slime</h5><p>Satisfying, squishy, stretchy stuff every kid goes crazy for.</p></div></div>
-        <div class="inside-item"><div class="inside-item-icon">🎴</div><div><h5>Mini Brands</h5><p>Mystery unboxing figures — you never know which one you're getting.</p></div></div>
-        <div class="inside-item"><div class="inside-item-icon">✍️</div><div><h5>Handwritten Note</h5><p>Written by Oliver. Personal. Real. Not printed. Just for you.</p></div></div>
-        <div class="inside-item"><div class="inside-item-icon">🏷️</div><div><h5>Joy Box Stickers</h5><p>Official Joy Box Company stickers to put everywhere.</p></div></div>
-      </div>
+<section class="impact-section">
+  <span class="section-tag" style="color:#00ff88;display:block;margin-bottom:12px;">// IMPACT SO FAR</span>
+  <div class="impact-grid">
+    <div class="impact-stat"><div class="impact-num">0</div><div class="impact-label">JOY BOXES DELIVERED SO FAR</div></div>
+    <div class="impact-stat"><div class="impact-num">120</div><div class="impact-label">VISITORS THIS MONTH</div></div>
+    <div class="impact-stat"><div class="impact-num">7</div><div class="impact-label">COUNTRIES REACHED</div></div>
+  </div>
+</section>
+
+<section class="boxes-section" id="boxes">
+  <div style="text-align:center;margin-bottom:48px;">
+    <span class="section-tag" style="color:#ff0080;">// THE JOY BOXES</span>
+    <h2 class="section-title">Pick Your <span style="color:#00ff88;">Box.</span></h2>
+    <p class="section-sub">Every box sends a Joy Box to a disabled kid. No exceptions.</p>
+  </div>
+  <div class="boxes-grid">
+    <div class="box-card"><div class="box-img" style="background:linear-gradient(135deg,#1a0a00,#2a1500);">😊</div><div class="box-info"><div class="box-name" style="color:#aaa;">Smile Box</div><div class="box-desc">The starter box. Stickers, candy, and a surprise toy.</div><div class="box-footer"><span class="box-price" style="color:#aaa;">$5</span><a href="order.html" class="order-btn">Order 🎁</a></div></div></div>
+    <div class="box-card"><div class="box-img" style="background:linear-gradient(135deg,#001a00,#002800);">😄</div><div class="box-info"><div class="box-name" style="color:#00ff88;">Giggle Box</div><div class="box-desc">Cards, toys, candy, and a handwritten note just for the kid.</div><div class="box-footer"><span class="box-price" style="color:#00ff88;">$15</span><a href="order.html" class="order-btn">Order 🎁</a></div></div></div>
+    <div class="box-card"><div class="box-img" style="background:linear-gradient(135deg,#1a1a00,#282800);">☀️</div><div class="box-info"><div class="box-name" style="color:#ffff00;">Sunshine Box</div><div class="box-desc">Gadgets, art supplies, games, and mystery items inside.</div><div class="box-footer"><span class="box-price" style="color:#ffff00;">$30</span><a href="order.html" class="order-btn">Order 🎁</a></div></div></div>
+    <div class="box-card" style="border-color:#ff0080;box-shadow:0 0 30px rgba(255,0,128,0.2);"><div class="box-img" style="background:linear-gradient(135deg,#1a0020,#280040);">🌈</div><div class="box-info"><div class="box-name" style="background:linear-gradient(90deg,#ff0080,#ffff00,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Rainbow Box</div><div class="box-desc">15+ items, premium everything, and a 1-of-1 surprise inside.</div><div class="box-footer"><span class="box-price" style="background:linear-gradient(90deg,#ff0080,#aa00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">$50</span><a href="order.html" class="order-btn">Order 🎁</a></div></div></div>
+  </div>
+</section>
+
+<div class="strip"><div class="strip-inner">
+  <span class="strip-item" style="color:#ff0080;">🔥 CASH PAYMENT · OLIVER DELIVERS</span>
+  <span class="strip-item" style="color:#00ff88;">💚 EVERY PURCHASE HELPS A DISABLED KID</span>
+  <span class="strip-item" style="color:#ffff00;">⚡ NEW DROPS EVERY FRIDAY</span>
+  <span class="strip-item" style="color:#00ccff;">🎁 MYSTERY BOXES IN STOCK</span>
+  <span class="strip-item" style="color:#aa00ff;">🐻 MYSTERY BEARS AVAILABLE</span>
+  <span class="strip-item" style="color:#ff0080;">🔥 CASH PAYMENT · OLIVER DELIVERS</span>
+  <span class="strip-item" style="color:#00ff88;">💚 EVERY PURCHASE HELPS A DISABLED KID</span>
+  <span class="strip-item" style="color:#ffff00;">⚡ NEW DROPS EVERY FRIDAY</span>
+  <span class="strip-item" style="color:#00ccff;">🎁 MYSTERY BOXES IN STOCK</span>
+  <span class="strip-item" style="color:#aa00ff;">🐻 MYSTERY BEARS AVAILABLE</span>
+</div></div>
+
+<section style="padding:60px 24px;background:#0d0d0d;border-top:2px solid #1a1a1a;border-bottom:2px solid #1a1a1a;" id="drops">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:32px;">
       <div>
-        <h3 style="font-family:'Fredoka One',sans-serif;font-size:clamp(28px,4vw,48px);color:var(--navy);margin-bottom:20px;line-height:1.1;">Packed with<br><span style="color:var(--red);">Pure Joy.</span></h3>
-        <p style="font-size:16px;color:var(--silver);line-height:1.9;margin-bottom:16px;">Every single item in a Joy Box is something a kid actually wants. <strong style="color:var(--navy);">Not boring stuff.</strong> Real toys. Fun things. Items that make you smile the second you see them.</p>
-        <p style="font-size:16px;color:var(--silver);line-height:1.9;margin-bottom:16px;">Oliver packs each box himself and treats it like he's packing it for his best friend.</p>
-        <div class="inside-note"><strong>The Handwritten Note:</strong> Every box includes a note written by hand from Oliver — not typed, not printed. He writes to the kid directly, tells them they matter, and signs it. That note is the most important thing in the box.</div>
+        <div style="font-size:12px;font-weight:900;letter-spacing:4px;color:#ff0080;text-transform:uppercase;margin-bottom:8px;animation:liveFlash 1s ease-in-out infinite;">⚡ Limited Drops</div>
+        <h2 style="font-family:'Fredoka One',sans-serif;font-size:clamp(28px,5vw,48px);color:#fff;">Rare Items. <span style="background:linear-gradient(90deg,#ff0080,#aa00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Limited Qty.</span></h2>
+      </div>
+      <a href="drops.html" style="background:linear-gradient(135deg,#ff0080,#aa00ff);color:#fff;padding:14px 32px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:18px;text-decoration:none;box-shadow:0 0 20px rgba(255,0,128,0.5);animation:pulse 1s ease-in-out infinite;">See All Drops ⚡</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;">
+      <div style="background:#111;border:3px solid #ff0000;border-radius:20px;padding:24px;box-shadow:0 0 30px rgba(255,0,0,0.25);animation:glow 1.5s ease-in-out infinite;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="width:10px;height:10px;border-radius:50%;background:#ff0000;display:inline-block;animation:liveFlash 0.7s ease-in-out infinite;"></span><span style="font-size:11px;font-weight:900;letter-spacing:2px;color:#ff4444;">LIVE NOW</span><span style="margin-left:auto;font-size:11px;font-weight:900;color:#ff6600;">1 LEFT!</span></div>
+        <div style="font-size:56px;margin-bottom:12px;">🐻</div>
+        <div style="font-family:'Fredoka One',sans-serif;font-size:22px;color:#fff;margin-bottom:6px;">Joy Box Bear — Secret</div>
+        <div style="font-size:13px;color:#555;margin-bottom:16px;">1-of-1. Never dropping again.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'Fredoka One',sans-serif;font-size:28px;background:linear-gradient(90deg,#ff0080,#ff6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">$30.00</span><a href="drops.html" style="background:linear-gradient(135deg,#ff0080,#aa00ff);color:#fff;padding:10px 20px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:16px;text-decoration:none;animation:pulse 0.8s ease-in-out infinite;">Claim ⚡</a></div>
+      </div>
+      <div style="background:#111;border:3px solid #ff0000;border-radius:20px;padding:24px;box-shadow:0 0 30px rgba(255,0,0,0.25);animation:glow 1.5s ease-in-out 0.5s infinite;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="width:10px;height:10px;border-radius:50%;background:#ff0000;display:inline-block;animation:liveFlash 0.7s ease-in-out infinite;"></span><span style="font-size:11px;font-weight:900;letter-spacing:2px;color:#ff4444;">LIVE NOW</span><span style="margin-left:auto;font-size:11px;font-weight:900;color:#ff6600;">7 LEFT</span></div>
+        <div style="font-size:56px;margin-bottom:12px;">🌈</div>
+        <div style="font-family:'Fredoka One',sans-serif;font-size:22px;color:#fff;margin-bottom:6px;">Rainbow Mystery Box</div>
+        <div style="font-size:13px;color:#555;margin-bottom:16px;">10 mystery items. Only 25 ever made.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'Fredoka One',sans-serif;font-size:28px;color:#00ccff;">$30.00</span><a href="drops.html" style="background:linear-gradient(135deg,#ff0080,#aa00ff);color:#fff;padding:10px 20px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:16px;text-decoration:none;animation:pulse 0.8s ease-in-out infinite;">Claim ⚡</a></div>
+      </div>
+      <div style="background:#111;border:2px solid #333;border-radius:20px;padding:24px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="font-size:11px;font-weight:900;letter-spacing:2px;color:#ffff00;">⏰ DROPPING SOON</span></div>
+        <div style="font-size:56px;margin-bottom:12px;">✨</div>
+        <div style="font-family:'Fredoka One',sans-serif;font-size:22px;color:#fff;margin-bottom:6px;">Holographic Card Pack</div>
+        <div style="font-size:13px;color:#555;margin-bottom:16px;">50 packs only. 4 ultra-rare holos inside.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'Fredoka One',sans-serif;font-size:28px;color:#aaa;">$30.00</span><a href="drops.html" style="background:rgba(255,255,0,0.1);border:2px solid #ffff00;color:#ffff00;padding:10px 20px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:16px;text-decoration:none;">Notify Me 🔔</a></div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- DELIVERY -->
-<div class="section delivery-section" id="delivery">
-  <div class="container">
-    <span class="section-tag">// DELIVERY</span>
-    <h2 class="section-title">We Come <span>to You.</span></h2>
-    <div class="section-line"></div>
-    <div class="delivery-grid">
-      <div class="delivery-map">
-        <span class="map-icon">🚲</span>
-        <h4>Ladera Ranch, CA</h4>
-        <p>Oliver delivers every local box himself — by bike, to your door. No shipping cost. No waiting.</p>
-        <span class="area">📍 FREE DELIVERY ZONE</span>
+<section class="mystery-section" id="mystery">
+  <span class="section-tag" style="color:#aa00ff;position:relative;">// THE MAIN EVENT</span>
+  <span class="mystery-box-visual">📦</span>
+  <div class="mystery-title">Mystery Box</div>
+  <p style="font-size:17px;color:#555;font-weight:700;margin-bottom:8px;position:relative;">You don't know what's inside. That's the whole point.</p>
+  <p style="font-size:15px;color:#00ff88;font-weight:900;margin-bottom:40px;position:relative;">💚 Every mystery box funds a Joy Box for a disabled kid.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;max-width:1200px;margin:0 auto 48px;position:relative;">
+    <div class="tier" style="border:2px solid #aaa;"><span style="font-size:48px;display:block;margin-bottom:12px;">⚪</span><div style="font-family:'Fredoka One',sans-serif;font-size:22px;color:#aaa;margin-bottom:8px;">Pebble Drop</div><div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:8px;">2–3 items · Stickers · Candy</div><div style="font-size:12px;color:#00ff88;font-weight:900;margin-bottom:16px;">💚 Funds 1 Joy Box item</div><div style="font-family:'Fredoka One',sans-serif;font-size:32px;color:#aaa;margin-bottom:12px;">$4.99</div><a href="order.html" style="display:block;background:#aaa;color:#000;padding:12px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:16px;text-decoration:none;">Get It</a></div>
+    <div class="tier" style="border:2px solid #00ff88;"><span style="font-size:48px;display:block;margin-bottom:12px;">🟢</span><div style="font-family:'Fredoka One',sans-serif;font-size:22px;color:#00ff88;margin-bottom:8px;">Starter Drop</div><div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:8px;">3–5 items · Cards · Candy</div><div style="font-size:12px;color:#00ff88;font-weight:900;margin-bottom:16px;">💚 Funds 2 Joy Box items</div><div style="font-family:'Fredoka One',sans-serif;font-size:32px;color:#00ff88;margin-bottom:12px;">$9.99</div><a href="order.html" style="display:block;background:#00ff88;color:#000;padding:12px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:16px;text-decoration:none;">Get It</a></div>
+    <div class="tier" style="border:2px solid #00ccff;background:#0a1a2a;"><span style="font-size:48px;display:block;margin-bottom:12px;">🔵</span><div style="font-family:'Fredoka One',sans-serif;font-size:22px;color:#00ccff;margin-bottom:8px;">Mega Drop</div><div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:8px;">5–7 items · Gadgets · Slime</div><div style="font-size:12px;color:#00ff88;font-weight:900;margin-bottom:16px;">💚 Funds half a Joy Box</div><div style="font-family:'Fredoka One',sans-serif;font-size:32px;color:#00ccff;margin-bottom:12px;">$19.99</div><a href="order.html" style="display:block;background:#00ccff;color:#000;padding:12px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:16px;text-decoration:none;">Get It</a></div>
+    <div class="tier" style="border:2px solid #ff6600;background:#1a0a00;"><span style="font-size:48px;display:block;margin-bottom:12px;">🔥</span><div style="font-family:'Fredoka One',sans-serif;font-size:22px;color:#ff6600;margin-bottom:8px;">Fire Drop</div><div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:8px;">7–9 items · Gadgets · Art</div><div style="font-size:12px;color:#00ff88;font-weight:900;margin-bottom:16px;">💚 Funds 1 FULL Joy Box</div><div style="font-family:'Fredoka One',sans-serif;font-size:32px;color:#ff6600;margin-bottom:12px;">$24.99</div><a href="order.html" style="display:block;background:#ff6600;color:#fff;padding:12px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:16px;text-decoration:none;">Get It</a></div>
+    <div class="tier" style="border:2px solid #ffff00;background:linear-gradient(135deg,#1a1a00,#0a0a20);animation:glow 2s ease-in-out infinite;"><span style="font-size:48px;display:block;margin-bottom:12px;">🌟</span><div style="font-family:'Fredoka One',sans-serif;font-size:22px;background:linear-gradient(90deg,#ffff00,#ff0080,#aa00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;">LEGENDARY</div><div style="font-size:13px;color:#555;line-height:1.8;margin-bottom:8px;">20+ items · The rarest</div><div style="font-size:12px;color:#00ff88;font-weight:900;margin-bottom:16px;">💚 Funds 5 FULL Joy Boxes</div><div style="font-family:'Fredoka One',sans-serif;font-size:32px;background:linear-gradient(90deg,#ffff00,#ff0080);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px;">$30.00</div><a href="order.html" style="display:block;background:linear-gradient(135deg,#ffff00,#ff0080);color:#000;padding:12px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:16px;text-decoration:none;">Get It</a></div>
+  </div>
+</section>
+
+<div style="padding:80px 48px;background:#0d0d0d;text-align:center;border-top:2px solid #1a1a1a;">
+  <span style="font-size:11px;font-weight:900;letter-spacing:4px;color:#ff0080;display:block;margin-bottom:12px;">// EXCLUSIVE DROP</span>
+  <h2 style="font-family:'Fredoka One',sans-serif;font-size:clamp(32px,5vw,64px);color:#fff;margin-bottom:8px;">The <span style="color:#ff0080;">Joy Box Bear</span> 🐻</h2>
+  <p style="color:#555;font-size:16px;font-weight:700;margin-bottom:48px;">Our first ever exclusive toy. Only available at Joy Box Company.</p>
+  <div style="display:flex;gap:48px;align-items:center;justify-content:center;flex-wrap:wrap;max-width:1000px;margin:0 auto;">
+    <img src="joydrop-bear.png" alt="Joy Box Bear" style="width:min(340px,90vw);border-radius:32px;filter:drop-shadow(0 0 40px rgba(255,0,128,0.4));">
+    <div style="text-align:left;max-width:420px;">
+      <div style="font-family:'Fredoka One',sans-serif;font-size:48px;color:#fff;margin-bottom:8px;">Joy Box Bear</div>
+      <div style="font-size:12px;font-weight:900;letter-spacing:3px;color:#ff0080;margin-bottom:24px;">CONTENT CREATOR EDITION</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px;">
+        <div style="display:flex;align-items:center;gap:12px;"><span style="font-size:20px;">🌈</span><span style="color:#aaa;font-size:15px;font-weight:700;">Rainbow fur — every bear is unique</span></div>
+        <div style="display:flex;align-items:center;gap:12px;"><span style="font-size:20px;">🎧</span><span style="color:#aaa;font-size:15px;font-weight:700;">Joy Box headphones included</span></div>
+        <div style="display:flex;align-items:center;gap:12px;"><span style="font-size:20px;">👕</span><span style="color:#aaa;font-size:15px;font-weight:700;">Purple Joy Box hoodie</span></div>
+        <div style="display:flex;align-items:center;gap:12px;"><span style="font-size:20px;">💚</span><span style="color:#00ff88;font-size:15px;font-weight:900;">Every bear sends a Joy Box to a disabled kid</span></div>
       </div>
-      <div>
-        <h3 style="font-family:'Fredoka One',sans-serif;font-size:clamp(28px,4vw,44px);color:var(--navy);margin-bottom:20px;line-height:1.1;">Local or <span style="color:var(--red);">Nationwide.</span></h3>
-        <p style="font-size:16px;color:var(--silver);line-height:1.9;margin-bottom:24px;">B.L.A.Z.E.D started in Ladera Ranch — and that's where Oliver delivers by bike, for free. But disabled kids live everywhere. That's why we ship nationwide.</p>
-        <div class="delivery-tiers">
-          <div class="delivery-tier"><div class="tier-icon">🚲</div><div class="tier-text"><h5>Ladera Ranch — Free Bike Delivery</h5><p>Oliver delivers it himself. Same week. No shipping cost.</p></div></div>
-          <div class="delivery-tier"><div class="tier-icon">📦</div><div class="tier-text"><h5>Nationwide — Ships to Your Door</h5><p>Anywhere in the USA. Ships within 3–5 business days.</p></div></div>
-          <div class="delivery-tier"><div class="tier-icon">🌍</div><div class="tier-text"><h5>Worldwide — Coming Soon</h5><p>International shipping is coming. Disabled kids are everywhere.</p></div></div>
-        </div>
-      </div>
+      <div style="font-family:'Fredoka One',sans-serif;font-size:48px;color:#ff0080;margin-bottom:24px;">$30.00</div>
+      <a href="bear-order.html" style="display:inline-block;background:linear-gradient(135deg,#ff0080,#aa00ff);color:#fff;padding:18px 48px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:20px;text-decoration:none;box-shadow:0 0 30px rgba(255,0,128,0.5);">Get the Bear 🐻</a>
     </div>
   </div>
-</div>
-
-<!-- MISSION -->
-<div class="mission" id="mission">
-  <div class="mission-content">
-    <span class="mission-tag">// THE MISSION</span>
-    <h2 class="mission-title">Disabled Kids<br>Deserve <span>Joy.</span></h2>
-    <p class="mission-body">Disabled kids sometimes feel forgotten. Sometimes the world moves around them and nobody stops to say — <strong>hey, you matter. Hey, someone is thinking about you. Hey, this is for you.</strong> Joy Box Company exists to say exactly that. Every box. Every note. Every delivery.</p>
-    <a href="order.html" class="mission-cta">🎁 Order a Box Now</a>
-  </div>
-</div>
-
-<!-- FOUNDER -->
-<div class="section" id="founder">
-  <div class="container">
-    <span class="section-tag">// THE FOUNDER</span>
-    <h2 class="section-title">Built by <span>a Kid.</span></h2>
-    <div class="section-line"></div>
-    <div class="founder-grid">
-      <div class="founder-img-wrap">
-        <span class="founder-emoji">⚡</span>
-        <div class="founder-tag-badge">FOUNDER · AGE 10</div>
-      </div>
-      <div class="founder-text">
-        <h3>Oliver <span>Vo</span></h3>
-        <span class="founder-sub">// AGE 10 · LADERA RANCH, CA · FOUNDER</span>
-        <p>Oliver Vo is 10 years old, lives in Ladera Ranch, California, and has Tourette syndrome. He built Joy Box Company because he believes disabled kids deserve to feel joy — real, unexpected, someone-is-thinking-about-me joy.</p>
-        <p>Oliver packs every single box himself. He picks every toy. He writes every note. He delivers every local box by bike. <strong>This is not a corporation.</strong> This is one kid who decided disabled kids matter — and built something real to prove it.</p>
-        <div class="founder-tags">
-          <span class="founder-tag">Age 10</span>
-          <span class="founder-tag">Ladera Ranch, CA</span>
-          <span class="founder-tag">Tourette Syndrome</span>
-          <span class="founder-tag">Founder</span>
-          <span class="founder-tag">Packs every box himself</span>
-        </div>
-      </div>
+  <div style="margin-top:64px;">
+    <h3 style="font-family:'Fredoka One',sans-serif;font-size:clamp(24px,4vw,40px);color:#fff;margin-bottom:8px;">🎲 Mystery Bear Box</h3>
+    <p style="color:#555;font-weight:700;font-size:15px;margin-bottom:8px;">You don't know which bear you'll get. That's the whole point.</p>
+    <p style="color:#00ff88;font-weight:900;font-size:13px;letter-spacing:1px;margin-bottom:40px;">Higher box = better odds at rare bears 🐻</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;max-width:1200px;margin:0 auto;">
+      <div style="background:#1a1a1a;border:2px solid #aaa;border-radius:20px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-6px)'" onmouseout="this.style.transform='none'"><div style="font-size:48px;margin-bottom:12px;">📦</div><div style="font-family:'Fredoka One',sans-serif;font-size:20px;color:#aaa;margin-bottom:4px;">Common Box</div><div style="font-size:12px;color:#444;line-height:1.8;margin-bottom:12px;">Common: 80%<br>Uncommon: 15%<br>Rare: 5%</div><div style="font-family:'Fredoka One',sans-serif;font-size:24px;color:#aaa;margin-bottom:12px;">$9.99</div><a href="bear-order.html" style="display:block;background:#aaa;color:#000;padding:10px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:15px;text-decoration:none;">Open It</a></div>
+      <div style="background:#1a1a1a;border:2px solid #00aaff;border-radius:20px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-6px)'" onmouseout="this.style.transform='none'"><div style="font-size:48px;margin-bottom:12px;">📦</div><div style="font-family:'Fredoka One',sans-serif;font-size:20px;color:#00aaff;margin-bottom:4px;">Uncommon Box</div><div style="font-size:12px;color:#444;line-height:1.8;margin-bottom:12px;">Uncommon: 65%<br>Rare: 25%<br>Epic: 10%</div><div style="font-family:'Fredoka One',sans-serif;font-size:24px;color:#00aaff;margin-bottom:12px;">$14.99</div><a href="bear-order.html" style="display:block;background:#00aaff;color:#000;padding:10px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:15px;text-decoration:none;">Open It</a></div>
+      <div style="background:#1a1a1a;border:2px solid #aa00ff;border-radius:20px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-6px)'" onmouseout="this.style.transform='none'"><div style="font-size:48px;margin-bottom:12px;">📦</div><div style="font-family:'Fredoka One',sans-serif;font-size:20px;color:#aa00ff;margin-bottom:4px;">Rare Box</div><div style="font-size:12px;color:#444;line-height:1.8;margin-bottom:12px;">Rare: 60%<br>Epic: 30%<br>Legendary: 10%</div><div style="font-family:'Fredoka One',sans-serif;font-size:24px;color:#aa00ff;margin-bottom:12px;">$19.99</div><a href="bear-order.html" style="display:block;background:#aa00ff;color:#fff;padding:10px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:15px;text-decoration:none;">Open It</a></div>
+      <div style="background:#1a0a00;border:2px solid #ff6600;border-radius:20px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-6px)'" onmouseout="this.style.transform='none'"><div style="font-size:48px;margin-bottom:12px;">📦</div><div style="font-family:'Fredoka One',sans-serif;font-size:20px;color:#ff6600;margin-bottom:4px;">Epic Box</div><div style="font-size:12px;color:#444;line-height:1.8;margin-bottom:12px;">Epic: 55%<br>Legendary: 35%<br>Secret: 10%</div><div style="font-family:'Fredoka One',sans-serif;font-size:24px;color:#ff6600;margin-bottom:12px;">$29.99</div><a href="bear-order.html" style="display:block;background:#ff6600;color:#fff;padding:10px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:15px;text-decoration:none;">Open It</a></div>
+      <div style="background:#1a1000;border:2px solid gold;border-radius:20px;padding:24px;text-align:center;box-shadow:0 0 20px rgba(255,215,0,0.3);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-6px)'" onmouseout="this.style.transform='none'"><div style="font-size:48px;margin-bottom:12px;">📦</div><div style="font-family:'Fredoka One',sans-serif;font-size:20px;color:gold;margin-bottom:4px;">Legendary Box</div><div style="font-size:12px;color:#444;line-height:1.8;margin-bottom:12px;">Legendary: 60%<br>Secret: 40%</div><div style="font-family:'Fredoka One',sans-serif;font-size:24px;color:gold;margin-bottom:12px;">$49.99</div><a href="bear-order.html" style="display:block;background:gold;color:#000;padding:10px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:15px;text-decoration:none;">Open It</a></div>
+      <div style="background:linear-gradient(135deg,#1a0010,#0a001a,#001a0a);border:3px solid transparent;border-radius:20px;padding:24px;text-align:center;position:relative;box-shadow:0 0 40px rgba(255,0,128,0.4);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-6px)'" onmouseout="this.style.transform='none'"><div style="position:absolute;inset:-3px;border-radius:22px;background:linear-gradient(135deg,#ff0080,#ffff00,#00ff88,#00ccff,#aa00ff);z-index:-1;"></div><div style="font-size:48px;margin-bottom:12px;">🔮</div><div style="font-family:'Fredoka One',sans-serif;font-size:20px;background:linear-gradient(90deg,#ff0080,#ffff00,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;">Secret Box</div><div style="font-size:12px;color:#444;line-height:1.8;margin-bottom:12px;">Secret: 100%<br>1-of-1 bear inside</div><div style="font-family:'Fredoka One',sans-serif;font-size:24px;background:linear-gradient(90deg,#ffff00,#ff0080);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px;">$30.00</div><a href="bear-order.html" style="display:block;background:linear-gradient(135deg,#ff0080,#aa00ff);color:#fff;padding:10px;border-radius:100px;font-family:'Fredoka One',sans-serif;font-size:15px;text-decoration:none;">Open It</a></div>
     </div>
+    <p style="margin-top:32px;font-size:13px;color:#333;font-weight:700;letter-spacing:1px;">💚 Every box purchased sends a Joy Box to a disabled kid</p>
   </div>
 </div>
 
-<!-- FOOTER -->
+<div style="padding:80px 48px;background:#0d0d0d;text-align:center;border-top:2px solid #1a1a1a;">
+  <span style="font-size:11px;font-weight:900;letter-spacing:4px;color:#00ff88;display:block;margin-bottom:12px;">// THE FOUNDERS</span>
+  <h2 style="font-family:'Fredoka One',sans-serif;font-size:clamp(32px,5vw,56px);color:#fff;margin-bottom:48px;">Built by <span style="color:#00ff88;">Kids.</span></h2>
+  <div style="display:flex;gap:32px;justify-content:center;flex-wrap:wrap;max-width:800px;margin:0 auto;">
+    <div style="background:#1a1a1a;border:2px solid #ff0080;border-radius:24px;padding:40px 32px;flex:1;min-width:240px;"><div style="font-size:72px;margin-bottom:16px;">⚡</div><div style="font-family:'Fredoka One',sans-serif;font-size:28px;color:#fff;margin-bottom:4px;">Oliver <span style="color:#ff0080;">Vo.</span></div><div style="font-size:11px;font-weight:900;letter-spacing:2px;color:#ff0080;margin-bottom:16px;">FOUNDER</div><div style="font-size:13px;color:#555;line-height:1.8;">Started Joy Box Company at age 10 to deliver surprise boxes to disabled kids. Every box is hand-packed with care.</div></div>
+    <div style="background:#1a1a1a;border:2px solid #00ff88;border-radius:24px;padding:40px 32px;flex:1;min-width:240px;"><div style="font-size:72px;margin-bottom:16px;">🌟</div><div style="font-family:'Fredoka One',sans-serif;font-size:28px;color:#fff;margin-bottom:4px;">William <span style="color:#00ff88;">Miringoff.</span></div><div style="font-size:11px;font-weight:900;letter-spacing:2px;color:#00ff88;margin-bottom:16px;">CO-FOUNDER</div><div style="font-size:13px;color:#555;line-height:1.8;">Co-founded Joy Box Company to help disabled kids get joy boxes through every purchase made on the store.</div></div>
+  </div>
+</div>
+
 <footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-logo">
-          <img src="logo.jpg" alt="Joy Box Company">
-          <div class="footer-logo-text"><span>Joy Box</span> Company</div>
-        </div>
-        <p>Surprise joy boxes for disabled kids. Built by Oliver Vo, Age 10. Ladera Ranch, CA. Founded 2026.</p>
-      </div>
-      <div class="footer-col">
-        <h5>The Boxes</h5>
-        <a href="order.html?box=mini">🌱 Mini — $5</a>
-        <a href="order.html?box=spark">✦ Spark — $15</a>
-        <a href="order.html?box=blaze">🔥 Blaze — $30</a>
-        <a href="order.html?box=inferno">⚡ Inferno — $50</a>
-        <a href="order.html?box=legend">👑 Legend — $100</a>
-        <a href="order.html?box=ultimate">🔱 Ultimate — $200</a>
-      </div>
-      <div class="footer-col">
-        <h5>Joy Box Co.</h5>
-        <a href="#mission">Our Mission</a>
-        <a href="join.html">Join the Crew</a>
-        <a href="sponsor.html">Sponsor a Box</a>
-        <a href="order.html">Order Now</a>
-        <a href="hall.html">Hall of Fame</a>
-        <a href="tracker.html">Box Tracker</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2026 JOY BOX COMPANY — FOUNDED BY <span>OLIVER VO</span>, AGE 10 — LADERA RANCH, CA</p>
-      <p>SURPRISE JOY BOXES FOR DISABLED KIDS 🎁</p>
-    </div>
+  <div class="footer-logo">Joy Box Company</div>
+  <p class="footer-mission">💚 EVERY PURCHASE SENDS A JOY BOX TO A DISABLED KID</p>
+  <div style="display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin:20px 0;">
+    <a href="order.html" style="color:#ff0080;font-weight:900;text-decoration:none;font-size:14px;letter-spacing:1px;">📦 ORDER A BOX</a>
+    <a href="drops.html" style="color:#ffff00;font-weight:900;text-decoration:none;font-size:14px;letter-spacing:1px;">⚡ DROPS</a>
+    <a href="bear-order.html" style="color:#00ff88;font-weight:900;text-decoration:none;font-size:14px;letter-spacing:1px;">🐻 BEARS</a>
   </div>
+  <p class="footer-sub">THE STORE THAT GIVES BACK · EST. 2026 · MISSION VIEJO, CA</p>
 </footer>
 
+<canvas id="cursor-canvas"></canvas>
+<div id="announcement-bar"><span id="announcement-text"></span><button id="announcement-close" onclick="document.getElementById('announcement-bar').style.display='none'">✕</button></div>
+
+<div id="chat-bubble">
+  <div id="chat-box">
+    <div id="chat-box-header"><span style="font-size:22px;">🎁</span><div>Chat with Oliver!<small>Joy Box Company founder</small></div></div>
+    <div id="chat-msgs"><div class="cb-msg admin">Hey! I'm Oliver 👋 Ask me anything about Joy Box Company!</div></div>
+    <div id="chat-name-row"><input id="chat-name-input" placeholder="Your name..." maxlength="40"></div>
+    <div id="chat-input-row"><input id="chat-input" placeholder="Type a message..." maxlength="300" onkeydown="if(event.key==='Enter')cbSend()"><button id="chat-send" onclick="cbSend()">Send</button></div>
+  </div>
+  <button id="chat-toggle" onclick="cbToggle()">💬</button>
+</div>
+
+<div id="tap-screen" style="position:fixed;inset:0;z-index:100000;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;" onclick="startIntro()">
+  <div style="font-family:'Fredoka One',sans-serif;font-size:clamp(48px,12vw,120px);background:linear-gradient(90deg,#ff0080,#ff6600,#ffff00,#00ff88,#00ccff,#aa00ff,#ff0080);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:rainbowShift 0.8s linear infinite,introCrazy 2s ease-in-out infinite;text-align:center;line-height:0.9;margin-bottom:16px;">JOY BOX<br>COMPANY</div>
+  <div style="font-family:'Fredoka One',sans-serif;font-size:clamp(20px,5vw,40px);background:linear-gradient(90deg,#ff0080,#ff6600,#ffff00,#00ff88,#00ccff,#aa00ff,#ff0080);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:rainbowShift 0.8s linear infinite;margin-bottom:20px;">TAP TO ENTER</div>
+  <div style="color:#333;font-weight:900;font-size:14px;letter-spacing:3px;animation:subBounce 0.8s ease-in-out infinite;">🔊 with sound</div>
+</div>
+
+<div id="intro-overlay" style="display:none;">
+  <canvas id="intro-particles"></canvas>
+  <div class="intro-emojis">
+    <div class="intro-fe">🎁</div><div class="intro-fe">✨</div><div class="intro-fe">🐻</div><div class="intro-fe">🌈</div>
+    <div class="intro-fe">💜</div><div class="intro-fe">🎮</div><div class="intro-fe">⭐</div><div class="intro-fe">🎉</div>
+    <div class="intro-fe">🔥</div><div class="intro-fe">💥</div><div class="intro-fe">🎊</div><div class="intro-fe">🚀</div>
+  </div>
+  <div class="intro-welcome" id="intro-welcome">Welcome!</div>
+  <div class="intro-sub" id="intro-sub">to Joy Box Co.</div>
+  <div class="intro-bar-wrap"><div class="intro-bar" id="intro-bar"></div></div>
+  <button class="intro-skip" onclick="closeIntro()">Skip ›</button>
+</div>
+
+<script>
+const SB='https://qbzpyhsbrjagyqsruzcb.supabase.co';
+const SK='sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs';
+(function(){const cv=document.getElementById('cursor-canvas');const cx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;addEventListener('resize',()=>{cv.width=innerWidth;cv.height=innerHeight;});const C=['#ff0080','#ff6600','#ffff00','#00ff88','#00ccff','#aa00ff'];const tr=[];addEventListener('mousemove',e=>{tr.push({x:e.clientX,y:e.clientY,r:8,c:C[Math.floor(Math.random()*C.length)],l:1});});(function d(){cx.clearRect(0,0,cv.width,cv.height);for(let i=tr.length-1;i>=0;i--){const p=tr[i];cx.beginPath();cx.arc(p.x,p.y,p.r*p.l,0,Math.PI*2);cx.fillStyle=p.c;cx.globalAlpha=p.l*0.7;cx.fill();p.l-=0.06;p.r*=0.97;if(p.l<=0)tr.splice(i,1);}cx.globalAlpha=1;requestAnimationFrame(d);})();})();
+const BE=['💥','✨','🌈','⭐','🎉','💜','🔥','🎁'];document.addEventListener('click',e=>{const el=document.createElement('div');el.className='click-burst';el.textContent=BE[Math.floor(Math.random()*BE.length)];el.style.left=e.clientX+'px';el.style.top=e.clientY+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),700);});
+const ob=new IntersectionObserver(es=>{es.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);ob.unobserve(e.target);}});},{threshold:0.1});document.querySelectorAll('.how-card,.box-card,.tier,.impact-stat').forEach(el=>ob.observe(el));
+let cs=localStorage.getItem('jbc')||(Math.random().toString(36).slice(2));localStorage.setItem('jbc',cs);let co=false,cl=1;
+function cbToggle(){co=!co;document.getElementById('chat-box').style.display=co?'block':'none';document.getElementById('chat-toggle').textContent=co?'✕':'💬';if(co)cbLoad();}
+async function cbLoad(){const r=await fetch(`${SB}/rest/v1/chat_messages?session_id=eq.${cs}&order=created_at.asc`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`}});if(!r.ok)return;const m=await r.json();const b=document.getElementById('chat-msgs');if(!m.length)return;b.innerHTML='<div class="cb-msg admin">Hey! I\'m Oliver 👋 Ask me anything about Joy Box Company!</div>';m.forEach(x=>{const d=document.createElement('div');d.className='cb-msg '+x.sender;d.textContent=x.message;b.appendChild(d);});b.scrollTop=b.scrollHeight;cl=m.length;}
+async function cbSend(){const n=document.getElementById('chat-name-input').value.trim()||'Visitor';const i=document.getElementById('chat-input');const msg=i.value.trim();if(!msg)return;i.value='';const b=document.getElementById('chat-msgs');const d=document.createElement('div');d.className='cb-msg visitor';d.textContent=msg;b.appendChild(d);b.scrollTop=b.scrollHeight;await fetch(`${SB}/rest/v1/chat_messages`,{method:'POST',headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Content-Type':'application/json'},body:JSON.stringify({session_id:cs,sender:'visitor',name:n,message:msg})});}
+setInterval(async()=>{if(!co)return;const r=await fetch(`${SB}/rest/v1/chat_messages?session_id=eq.${cs}&order=created_at.asc`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`}});if(!r.ok)return;const m=await r.json();if(m.length>cl){const b=document.getElementById('chat-msgs');for(let i=cl;i<m.length;i++){const d=document.createElement('div');d.className='cb-msg '+m[i].sender;d.textContent=m[i].message;b.appendChild(d);}b.scrollTop=b.scrollHeight;cl=m.length;}},3000);
+(async()=>{const r=await fetch(`${SB}/rest/v1/announcements?active=eq.true&order=created_at.desc&limit=1`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`}});if(!r.ok)return;const d=await r.json();if(d.length){document.getElementById('announcement-text').textContent='📢 '+d[0].message;document.getElementById('announcement-bar').style.display='block';}})();
+function startIntro(){document.getElementById('tap-screen').style.display='none';document.getElementById('intro-overlay').style.display='flex';runIntro();}
+function runIntro(){
+  const DUR=10000;
+  const W={en:['Welcome!','to Joy Box Co.'],es:['¡Bienvenido!','Joy Box Co.'],fr:['Bienvenue!','Joy Box Co.'],de:['Willkommen!','Joy Box Co.'],pt:['Bem-vindo!','Joy Box Co.'],ja:['ようこそ！','Joy Box Co.'],ko:['어서오세요!','Joy Box Co.'],zh:['欢迎！','Joy Box Co.'],ar:['أهلاً!','Joy Box Co.'],hi:['स्वागत!','Joy Box Co.'],ru:['Добро пожаловать!','Joy Box Co.']};
+  const lg=(navigator.language||'en').split('-')[0].toLowerCase();const w=W[lg]||W.en;
+  document.getElementById('intro-welcome').textContent=w[0];document.getElementById('intro-sub').textContent=w[1];
+  const cv=document.getElementById('intro-particles');const cx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const C=['#ff0080','#ff6600','#ffff00','#00ff88','#00ccff','#aa00ff','#fff'];
+  const pts=Array.from({length:120},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4,r:Math.random()*4+1,c:C[Math.floor(Math.random()*C.length)],l:Math.random()}));
+  let pr;function dp(){cx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.l+=.01;if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle=p.c;cx.globalAlpha=.5+.5*Math.sin(p.l*3);cx.fill();});cx.globalAlpha=1;pr=requestAnimationFrame(dp);}dp();
+  setTimeout(()=>{const ov=document.getElementById('intro-overlay');if(ov){ov.classList.add('shake');setTimeout(()=>ov.classList.remove('shake'),400);}},300);
+  try{const ac=new(window.AudioContext||window.webkitAudioContext)();ac.resume();
+    function kick(t){const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.setValueAtTime(160,t);o.frequency.exponentialRampToValueAtTime(40,t+.15);g.gain.setValueAtTime(.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.22);}
+    function snare(t){const b=ac.createBuffer(1,ac.sampleRate*.15,ac.sampleRate);const d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);const s=ac.createBufferSource(),g=ac.createGain();s.buffer=b;s.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);s.start(t);}
+    function note(f,t,d,v,tp){const o=ac.createOscillator(),g=ac.createGain(),fl=ac.createBiquadFilter();fl.type='lowpass';fl.frequency.value=2000;o.connect(fl);fl.connect(g);g.connect(ac.destination);o.type=tp;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.setValueAtTime(v,t+d-.04);g.gain.linearRampToValueAtTime(0,t+d);o.start(t);o.stop(t+d+.02);}
+    const s=ac.currentTime+.05,b=60/130,q=b/4;
+    [0,b*2,b*4,b*6,b*8,b*10].forEach(t=>kick(s+t));[b,b*3,b*5,b*7,b*9].forEach(t=>snare(s+t));
+    [[1046.5,0,q],[1318.5,b/2,b/2],[880,b,q],[1174.66,b+b/2,b/2],[1567.98,b*3,b],[1318.5,b*4,q],[1046.5,b*4+b/2,b/2],[880,b*5,q],[1046.5,b*6,b/2],[880,b*6+b/2,b/2],[1318.5,b*7,q],[1046.5,b*8,b*1.5],[1567.98,b*10+b/2,b/2]].forEach(([f,t,d])=>note(f,s+t,d,.28,'square'));
+    [[130.81,0,q*3],[164.81,b*2,q*3],[196,b*4,q*3],[164.81,b*6,b],[130.81,b*8,q*3],[196,b*10,b]].forEach(([f,t,d])=>note(f,s+t,d,.22,'sawtooth'));
+  }catch(e){}
+  const bar=document.getElementById('intro-bar');const st=Date.now();let rf;
+  function tb(){const p=Math.min(100,((Date.now()-st)/DUR)*100);bar.style.width=p+'%';if(p<100)rf=requestAnimationFrame(tb);else closeIntro();}rf=requestAnimationFrame(tb);
+  window.closeIntro=function(){cancelAnimationFrame(rf);cancelAnimationFrame(pr);const ov=document.getElementById('intro-overlay');ov.classList.add('fade-out');setTimeout(()=>ov.remove(),500);};
+}
+</script>
 </body>
 </html>
