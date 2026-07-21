@@ -377,15 +377,7 @@ function runIntro(){
   const pts=Array.from({length:120},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4,r:Math.random()*4+1,c:C[Math.floor(Math.random()*C.length)],l:Math.random()}));
   let pr;function dp(){cx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.l+=.01;if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle=p.c;cx.globalAlpha=.5+.5*Math.sin(p.l*3);cx.fill();});cx.globalAlpha=1;pr=requestAnimationFrame(dp);}dp();
   setTimeout(()=>{const ov=document.getElementById('intro-overlay');if(ov){ov.classList.add('shake');setTimeout(()=>ov.classList.remove('shake'),400);}},300);
-  try{const ac=new(window.AudioContext||window.webkitAudioContext)();ac.resume();
-    function kick(t){const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.setValueAtTime(160,t);o.frequency.exponentialRampToValueAtTime(40,t+.15);g.gain.setValueAtTime(.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.22);}
-    function snare(t){const b=ac.createBuffer(1,ac.sampleRate*.15,ac.sampleRate);const d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);const s=ac.createBufferSource(),g=ac.createGain();s.buffer=b;s.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);s.start(t);}
-    function note(f,t,d,v,tp){const o=ac.createOscillator(),g=ac.createGain(),fl=ac.createBiquadFilter();fl.type='lowpass';fl.frequency.value=2000;o.connect(fl);fl.connect(g);g.connect(ac.destination);o.type=tp;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.setValueAtTime(v,t+d-.04);g.gain.linearRampToValueAtTime(0,t+d);o.start(t);o.stop(t+d+.02);}
-    const s=ac.currentTime+.05,b=60/130,q=b/4;
-    [0,b*2,b*4,b*6,b*8,b*10].forEach(t=>kick(s+t));[b,b*3,b*5,b*7,b*9].forEach(t=>snare(s+t));
-    [[1046.5,0,q],[1318.5,b/2,b/2],[880,b,q],[1174.66,b+b/2,b/2],[1567.98,b*3,b],[1318.5,b*4,q],[1046.5,b*4+b/2,b/2],[880,b*5,q],[1046.5,b*6,b/2],[880,b*6+b/2,b/2],[1318.5,b*7,q],[1046.5,b*8,b*1.5],[1567.98,b*10+b/2,b/2]].forEach(([f,t,d])=>note(f,s+t,d,.28,'square'));
-    [[130.81,0,q*3],[164.81,b*2,q*3],[196,b*4,q*3],[164.81,b*6,b],[130.81,b*8,q*3],[196,b*10,b]].forEach(([f,t,d])=>note(f,s+t,d,.22,'sawtooth'));
-  }catch(e){}
+  try{const audio=new Audio('joybox-song.mp3');audio.volume=0.7;audio.play();window._jbAudio=audio;}catch(e){}
   const bar=document.getElementById('intro-bar');const st=Date.now();let rf;
   function tb(){const p=Math.min(100,((Date.now()-st)/DUR)*100);bar.style.width=p+'%';if(p<100)rf=requestAnimationFrame(tb);else closeIntro();}rf=requestAnimationFrame(tb);
   window.closeIntro=function(){cancelAnimationFrame(rf);cancelAnimationFrame(pr);const ov=document.getElementById('intro-overlay');ov.classList.add('fade-out');setTimeout(()=>ov.remove(),500);};
