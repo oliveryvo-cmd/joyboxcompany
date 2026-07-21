@@ -325,6 +325,20 @@ canvas#intro-particles{position:absolute;inset:0;pointer-events:none;width:100%;
 <canvas id="cursor-canvas"></canvas>
 <div id="announcement-bar"><span id="announcement-text"></span><button id="announcement-close" onclick="document.getElementById('announcement-bar').style.display='none'">✕</button></div>
 
+<div id="music-bar" style="position:fixed;bottom:24px;left:24px;z-index:9999;background:#1a1a1a;border:2px solid #ff0080;border-radius:100px;padding:10px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 0 20px rgba(255,0,128,0.4);">
+  <button id="music-btn" onclick="toggleMusic()" style="background:linear-gradient(135deg,#ff0080,#aa00ff);border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">▶️</button>
+  <div>
+    <div style="font-family:'Fredoka One',sans-serif;font-size:13px;background:linear-gradient(90deg,#ff0080,#aa00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Joy Box Song</div>
+    <div style="font-size:10px;color:#444;font-weight:700;letter-spacing:1px;">BY OLIVER VO</div>
+  </div>
+  <div style="display:flex;gap:3px;align-items:center;" id="music-waves">
+    <span style="width:3px;background:#ff0080;border-radius:3px;height:8px;display:block;animation:barGlow 0.5s ease-in-out infinite;"></span>
+    <span style="width:3px;background:#aa00ff;border-radius:3px;height:14px;display:block;animation:barGlow 0.5s ease-in-out 0.1s infinite;"></span>
+    <span style="width:3px;background:#ff0080;border-radius:3px;height:10px;display:block;animation:barGlow 0.5s ease-in-out 0.2s infinite;"></span>
+    <span style="width:3px;background:#aa00ff;border-radius:3px;height:16px;display:block;animation:barGlow 0.5s ease-in-out 0.3s infinite;"></span>
+    <span style="width:3px;background:#ff0080;border-radius:3px;height:6px;display:block;animation:barGlow 0.5s ease-in-out 0.4s infinite;"></span>
+  </div>
+</div>
 <div id="chat-bubble">
   <div id="chat-box">
     <div id="chat-box-header"><span style="font-size:22px;">🎁</span><div>Chat with Oliver!<small>Joy Box Company founder</small></div></div>
@@ -377,7 +391,8 @@ function runIntro(){
   const pts=Array.from({length:120},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4,r:Math.random()*4+1,c:C[Math.floor(Math.random()*C.length)],l:Math.random()}));
   let pr;function dp(){cx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.l+=.01;if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle=p.c;cx.globalAlpha=.5+.5*Math.sin(p.l*3);cx.fill();});cx.globalAlpha=1;pr=requestAnimationFrame(dp);}dp();
   setTimeout(()=>{const ov=document.getElementById('intro-overlay');if(ov){ov.classList.add('shake');setTimeout(()=>ov.classList.remove('shake'),400);}},300);
-  try{const audio=new Audio('joybox-song.mp3');audio.volume=0.7;audio.play();window._jbAudio=audio;}catch(e){}
+  try{const audio=new Audio('joybox-song.mp3');audio.volume=0.7;audio.loop=true;audio.play();window._jbAudio=audio;document.getElementById('music-btn').textContent='⏸️';}catch(e){}
+  window.toggleMusic=function(){const a=window._jbAudio;if(!a){const na=new Audio('joybox-song.mp3');na.volume=0.7;na.loop=true;na.play();window._jbAudio=na;document.getElementById('music-btn').textContent='⏸️';}else if(a.paused){a.play();document.getElementById('music-btn').textContent='⏸️';}else{a.pause();document.getElementById('music-btn').textContent='▶️';}};
   const bar=document.getElementById('intro-bar');const st=Date.now();let rf;
   function tb(){const p=Math.min(100,((Date.now()-st)/DUR)*100);bar.style.width=p+'%';if(p<100)rf=requestAnimationFrame(tb);else closeIntro();}rf=requestAnimationFrame(tb);
   window.closeIntro=function(){cancelAnimationFrame(rf);cancelAnimationFrame(pr);const ov=document.getElementById('intro-overlay');ov.classList.add('fade-out');setTimeout(()=>ov.remove(),500);};
