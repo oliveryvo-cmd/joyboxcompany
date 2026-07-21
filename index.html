@@ -391,7 +391,7 @@ function runIntro(){
   const pts=Array.from({length:120},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4,r:Math.random()*4+1,c:C[Math.floor(Math.random()*C.length)],l:Math.random()}));
   let pr;function dp(){cx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.l+=.01;if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle=p.c;cx.globalAlpha=.5+.5*Math.sin(p.l*3);cx.fill();});cx.globalAlpha=1;pr=requestAnimationFrame(dp);}dp();
   setTimeout(()=>{const ov=document.getElementById('intro-overlay');if(ov){ov.classList.add('shake');setTimeout(()=>ov.classList.remove('shake'),400);}},300);
-  try{const audio=new Audio('joybox-song.mp3');audio.volume=0.7;audio.loop=true;audio.play();window._jbAudio=audio;document.getElementById('music-btn').textContent='⏸️';}catch(e){}
+  try{const audio=new Audio('joybox-song.mp3');audio.volume=1.0;audio.loop=true;audio.play();window._jbAudio=audio;document.getElementById('music-btn').textContent='⏸️';}catch(e){}
   window.toggleMusic=function(){const a=window._jbAudio;if(!a){const na=new Audio('joybox-song.mp3');na.volume=0.7;na.loop=true;na.play();window._jbAudio=na;document.getElementById('music-btn').textContent='⏸️';}else if(a.paused){a.play();document.getElementById('music-btn').textContent='⏸️';}else{a.pause();document.getElementById('music-btn').textContent='▶️';}};
   const bar=document.getElementById('intro-bar');const st=Date.now();let rf;
   function tb(){const p=Math.min(100,((Date.now()-st)/DUR)*100);bar.style.width=p+'%';if(p<100)rf=requestAnimationFrame(tb);else closeIntro();}rf=requestAnimationFrame(tb);
