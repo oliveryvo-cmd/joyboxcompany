@@ -308,176 +308,216 @@ for (let i = 0; i < 25; i++) {
   ));
 }
 
-// ─── PHOENIX (3D procedural model) ────────────────────────────
+// ─── PHOENIX (EPIC 3D MODEL) ───────────────────────────────────
 const phoenixGroup = new THREE.Group();
 scene.add(phoenixGroup);
-
-// Inner pivot — model faces -Z (forward), fixed here
 const phoenixModel = new THREE.Group();
 phoenixGroup.add(phoenixModel);
 
 // Materials
-const bodyMat   = new THREE.MeshStandardMaterial({ color: 0xff5500, emissive: 0xff2200, emissiveIntensity: 0.6, roughness: 0.25, metalness: 0.3 });
-const chestMat  = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0xff8800, emissiveIntensity: 0.5, roughness: 0.2, metalness: 0.4 });
-const headMat   = new THREE.MeshStandardMaterial({ color: 0xff6600, emissive: 0xff3300, emissiveIntensity: 0.5, roughness: 0.25, metalness: 0.3 });
-const wingMat   = new THREE.MeshStandardMaterial({ color: 0xff4400, emissive: 0xff2200, emissiveIntensity: 0.4, roughness: 0.3, metalness: 0.2, side: THREE.DoubleSide });
-const featherMat= new THREE.MeshStandardMaterial({ color: 0xffcc00, emissive: 0xff8800, emissiveIntensity: 0.7, roughness: 0.2, metalness: 0.3 });
-const beakMat   = new THREE.MeshStandardMaterial({ color: 0xffdd00, emissive: 0xffaa00, emissiveIntensity: 0.4, roughness: 0.3 });
-const eyeMat    = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffff00, emissiveIntensity: 5 });
-const crownMat  = new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffcc00, emissiveIntensity: 1.5, roughness: 0.1, metalness: 0.8 });
-const tailMats  = [0xff6600,0xff4400,0xffaa00,0xff2200,0xffcc00,0xff8800,0xff0000].map(c =>
-  new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: 0.6, roughness: 0.2, side: THREE.DoubleSide }));
+const mBody  = new THREE.MeshStandardMaterial({ color:0xcc2200, emissive:0xff2200, emissiveIntensity:0.8, roughness:0.2, metalness:0.4 });
+const mChest = new THREE.MeshStandardMaterial({ color:0xffaa00, emissive:0xff8800, emissiveIntensity:1.0, roughness:0.15, metalness:0.5 });
+const mWing1 = new THREE.MeshStandardMaterial({ color:0xdd3300, emissive:0xff2200, emissiveIntensity:0.7, roughness:0.2, metalness:0.3, side:THREE.DoubleSide });
+const mWing2 = new THREE.MeshStandardMaterial({ color:0xff6600, emissive:0xff4400, emissiveIntensity:0.9, roughness:0.15, metalness:0.3, side:THREE.DoubleSide });
+const mWing3 = new THREE.MeshStandardMaterial({ color:0xffcc00, emissive:0xffaa00, emissiveIntensity:1.2, roughness:0.1, metalness:0.4, side:THREE.DoubleSide });
+const mHead  = new THREE.MeshStandardMaterial({ color:0xff5500, emissive:0xff3300, emissiveIntensity:0.6, roughness:0.2, metalness:0.3 });
+const mBeak  = new THREE.MeshStandardMaterial({ color:0x888800, emissive:0x444400, emissiveIntensity:0.3, roughness:0.3 });
+const mEye   = new THREE.MeshStandardMaterial({ color:0xff4400, emissive:0xff2200, emissiveIntensity:8 });
+const mCrown = new THREE.MeshStandardMaterial({ color:0xffff00, emissive:0xffdd00, emissiveIntensity:2.0, roughness:0.05, metalness:0.9 });
+const mTail  = (c,e) => new THREE.MeshStandardMaterial({ color:c, emissive:e||c, emissiveIntensity:0.8, roughness:0.15, metalness:0.3, side:THREE.DoubleSide });
 
-// Body — sleek teardrop shape (points forward = -Z)
-const body = new THREE.Mesh(new THREE.SphereGeometry(0.72, 14, 10), bodyMat);
-body.scale.set(0.85, 0.78, 1.7);
+// ── BODY ──
+const body = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 12), mBody);
+body.scale.set(0.75, 0.7, 1.9);
 phoenixModel.add(body);
 
-// Chest highlight
-const chest = new THREE.Mesh(new THREE.SphereGeometry(0.45, 10, 8), chestMat);
-chest.scale.set(0.9, 0.7, 0.8);
-chest.position.set(0, -0.08, -0.4);
+// Chest gold
+const chest = new THREE.Mesh(new THREE.SphereGeometry(0.5, 12, 10), mChest);
+chest.scale.set(0.85, 0.65, 0.75);
+chest.position.set(0, -0.05, -0.5);
 phoenixModel.add(chest);
 
-// Neck
-const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.28, 0.6, 8), headMat);
-neck.rotation.x = -0.35;
-neck.position.set(0, 0.32, -1.0);
+// ── NECK & HEAD ──
+const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.26, 0.7, 8), mHead);
+neck.rotation.x = -0.5;
+neck.position.set(0, 0.42, -1.1);
 phoenixModel.add(neck);
 
-// Head
-const head = new THREE.Mesh(new THREE.SphereGeometry(0.42, 12, 10), headMat);
-head.scale.set(0.9, 0.92, 1.0);
-head.position.set(0, 0.55, -1.3);
+const head = new THREE.Mesh(new THREE.SphereGeometry(0.44, 14, 10), mHead);
+head.scale.set(0.88, 0.9, 1.05);
+head.position.set(0, 0.68, -1.42);
 phoenixModel.add(head);
 
-// Crown feathers
-for (let i = 0; i < 5; i++) {
-  const cr = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.4 + i*0.06, 5), crownMat);
-  const angle = (i/4) * Math.PI * 0.7 - 0.35;
-  cr.position.set(Math.sin(angle)*0.25, 0.88 + Math.abs(Math.cos(angle))*0.1, -1.3);
-  cr.rotation.z = -angle * 0.4;
+// ── CROWN — tall fire spikes ──
+for (let i = 0; i < 7; i++) {
+  const a = (i/6)*Math.PI*0.8 - 0.4;
+  const len = 0.5 + Math.sin((i/6)*Math.PI)*0.5;
+  const cr = new THREE.Mesh(new THREE.ConeGeometry(0.04, len, 5), mCrown);
+  cr.position.set(Math.sin(a)*0.28, 1.02 + Math.cos(a)*0.1, -1.42);
+  cr.rotation.z = -a * 0.5;
+  cr.rotation.x = -0.15;
   phoenixModel.add(cr);
 }
 
-// Beak (upper + lower)
-const beakU = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.42, 6), beakMat);
-beakU.rotation.x = Math.PI/2 + 0.15;
-beakU.position.set(0, 0.52, -1.75);
-phoenixModel.add(beakU);
+// ── BEAK ──
+const beakTop = new THREE.Mesh(new THREE.ConeGeometry(0.075, 0.5, 6), mBeak);
+beakTop.rotation.x = Math.PI/2 + 0.2;
+beakTop.position.set(0, 0.62, -1.9);
+phoenixModel.add(beakTop);
+const beakBot = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.32, 6), mBeak);
+beakBot.rotation.x = Math.PI/2 - 0.25;
+beakBot.position.set(0, 0.46, -1.85);
+phoenixModel.add(beakBot);
 
-const beakL = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.28, 6), beakMat);
-beakL.rotation.x = Math.PI/2 - 0.2;
-beakL.position.set(0, 0.38, -1.7);
-phoenixModel.add(beakL);
-
-// Eyes
-[-0.18, 0.18].forEach(xOff => {
-  const eyeWhite = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), eyeMat);
-  eyeWhite.position.set(xOff, 0.6, -1.62);
-  phoenixModel.add(eyeWhite);
-  const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.055, 6, 6),
-    new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xff4400, emissiveIntensity: 2 }));
-  pupil.position.set(xOff * 1.02, 0.6, -1.7);
-  phoenixModel.add(pupil);
+// ── EYES ──
+[-0.19, 0.19].forEach(xo => {
+  const e = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), mEye);
+  e.position.set(xo, 0.74, -1.75);
+  phoenixModel.add(e);
+  // Glow ring
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.025, 6, 12),
+    new THREE.MeshStandardMaterial({ color:0xffff00, emissive:0xffdd00, emissiveIntensity:4 }));
+  ring.position.set(xo, 0.74, -1.74);
+  phoenixModel.add(ring);
 });
 
-// Wings
-function makeWing(side) {
+// ── WINGS — massive, multi-layer, feathered ──
+function makeEpicWing(side) {
   const wg = new THREE.Group();
 
-  // Main wing membrane — swept back shape
-  const shape = new THREE.Shape();
-  shape.moveTo(0, 0);
-  shape.bezierCurveTo(side*1.5, 0.8,  side*3.5,  1.0, side*5.5, 0.4);
-  shape.bezierCurveTo(side*5.8, 0,    side*5.0, -1.5, side*3.5, -2.2);
-  shape.bezierCurveTo(side*2.0, -2.8, side*1.0, -1.8, 0, -0.8);
-  const wGeo = new THREE.ShapeGeometry(shape, 12);
-  const wMesh = new THREE.Mesh(wGeo, wingMat);
-  wg.add(wMesh);
+  // Layer 1 — dark base membrane
+  const s1 = new THREE.Shape();
+  s1.moveTo(0, 0);
+  s1.bezierCurveTo(side*2, 1.2, side*5, 2.0, side*8, 1.2);
+  s1.bezierCurveTo(side*9, 0.5, side*8.5,-1.5, side*6.5,-3.2);
+  s1.bezierCurveTo(side*4.5,-4.5, side*2,-3.0, 0,-1.2);
+  wg.add(new THREE.Mesh(new THREE.ShapeGeometry(s1,16), mWing1));
 
-  // Secondary wing layer (slightly smaller, different color)
-  const shape2 = new THREE.Shape();
-  shape2.moveTo(0, -0.2);
-  shape2.bezierCurveTo(side*1.2, 0.4,  side*3.0,  0.5, side*4.5, 0.1);
-  shape2.bezierCurveTo(side*4.8,-0.2, side*4.0, -1.8, side*2.5,-2.5);
-  shape2.bezierCurveTo(side*1.5,-3.0, side*0.5,-2.0, 0,-1.0);
-  const wGeo2 = new THREE.ShapeGeometry(shape2, 10);
-  const wMesh2 = new THREE.Mesh(wGeo2,
-    new THREE.MeshStandardMaterial({ color: 0xff2200, emissive: 0xff1100, emissiveIntensity: 0.5, roughness: 0.4, side: THREE.DoubleSide }));
-  wMesh2.position.z = side * 0.05;
-  wg.add(wMesh2);
+  // Layer 2 — mid orange layer
+  const s2 = new THREE.Shape();
+  s2.moveTo(0,-0.3);
+  s2.bezierCurveTo(side*1.5,0.7, side*4,1.2, side*7,0.7);
+  s2.bezierCurveTo(side*7.8,0.2, side*7,-1.2, side*5.5,-2.8);
+  s2.bezierCurveTo(side*3.5,-3.8, side*1.5,-2.5, 0,-1.0);
+  const m2 = new THREE.Mesh(new THREE.ShapeGeometry(s2,14), mWing2);
+  m2.position.z = side*0.04;
+  wg.add(m2);
 
-  // Long glowing feather tips
-  const featherCount = 7;
-  for (let i = 0; i < featherCount; i++) {
-    const t = i / (featherCount-1);
-    const fx = side * (2.5 + t * 3.0);
-    const fy = -1.8 - t * 0.5;
-    const flen = 1.0 + t * 0.8;
-    const ft = new THREE.Mesh(new THREE.ConeGeometry(0.06, flen, 5), featherMat);
-    ft.position.set(fx, fy - flen/2, 0.05);
-    ft.rotation.z = side * (0.15 + t * 0.25);
-    wg.add(ft);
+  // Layer 3 — bright inner gold layer
+  const s3 = new THREE.Shape();
+  s3.moveTo(0,-0.5);
+  s3.bezierCurveTo(side*1,0.3, side*3,0.6, side*5,0.3);
+  s3.bezierCurveTo(side*5.8,-0.1, side*5,-1.0, side*3.5,-2.2);
+  s3.bezierCurveTo(side*2,-2.8, side*0.8,-1.8, 0,-0.8);
+  const m3 = new THREE.Mesh(new THREE.ShapeGeometry(s3,12), mWing3);
+  m3.position.z = side*0.08;
+  wg.add(m3);
+
+  // Individual long feathers along trailing edge
+  const featherColors = [mWing1, mWing2, mWing3, mWing2, mWing1];
+  const fCount = 10;
+  for (let i = 0; i < fCount; i++) {
+    const t = i/(fCount-1);
+    // Position along the wing trailing edge
+    const fx = side * (1.5 + t * 6.5);
+    const fy = -1.5 - t * 1.8;
+    const flen = 1.4 + t * 1.2;
+    const fwid = 0.18 - t * 0.06;
+
+    // Each feather as a shape
+    const fs = new THREE.Shape();
+    fs.moveTo(0,0);
+    fs.bezierCurveTo(fwid,flen*0.3, fwid*0.8,flen*0.7, 0,flen);
+    fs.bezierCurveTo(-fwid*0.8,flen*0.7, -fwid,flen*0.3, 0,0);
+    const fm = new THREE.Mesh(new THREE.ShapeGeometry(fs,8),
+      featherColors[i%featherColors.length]);
+    fm.position.set(fx, fy - flen*0.2, side*0.1);
+    fm.rotation.z = side*(0.1 + t*0.35);
+    fm.rotation.x = 0.1;
+    wg.add(fm);
   }
 
-  wg.position.set(side * 0.6, 0.1, 0.1);
+  // Fire streaks along wing tips
+  for (let i = 0; i < 5; i++) {
+    const t = i/4;
+    const streak = new THREE.Mesh(
+      new THREE.ConeGeometry(0.04, 1.2+t*0.8, 4),
+      new THREE.MeshStandardMaterial({ color:0xffff00, emissive:0xffdd00, emissiveIntensity:3, transparent:true, opacity:0.7+t*0.2 })
+    );
+    streak.position.set(side*(5+t*3.5), -2.5-t*1.5, side*0.15);
+    streak.rotation.z = side*(0.3+t*0.4);
+    streak.rotation.x = 0.2;
+    wg.add(streak);
+  }
+
+  wg.position.set(side*0.65, 0.2, 0.2);
   return wg;
 }
-const wingL = makeWing(-1);
-const wingR = makeWing(1);
+const wingL = makeEpicWing(-1);
+const wingR = makeEpicWing(1);
 phoenixModel.add(wingL);
 phoenixModel.add(wingR);
 
-// Tail feathers — fan out behind (+Z)
-const tailCount = 9;
-for (let i = 0; i < tailCount; i++) {
-  const t = (i / (tailCount-1)) - 0.5;
-  const tailG = new THREE.Group();
+// ── TAIL — long dramatic flowing feathers ──
+const tailDefs = [
+  { spread:0,    len:6.0, wid:0.5,  mat:mTail(0xff6600,0xff4400) },
+  { spread:-0.3, len:5.5, wid:0.4,  mat:mTail(0xff4400,0xff2200) },
+  { spread:0.3,  len:5.5, wid:0.4,  mat:mTail(0xff4400,0xff2200) },
+  { spread:-0.6, len:4.5, wid:0.32, mat:mTail(0xdd2200,0xcc1100) },
+  { spread:0.6,  len:4.5, wid:0.32, mat:mTail(0xdd2200,0xcc1100) },
+  { spread:-0.9, len:3.5, wid:0.25, mat:mTail(0xffaa00,0xff8800) },
+  { spread:0.9,  len:3.5, wid:0.25, mat:mTail(0xffaa00,0xff8800) },
+];
+tailDefs.forEach(def => {
+  const tg = new THREE.Group();
 
-  // Main feather shaft
-  const shaft = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.025, 0.015, 2.5 + Math.abs(t)*0.8, 5),
-    tailMats[i % tailMats.length]
-  );
-  shaft.position.y = 1.25 + Math.abs(t)*0.4;
-  tailG.add(shaft);
+  // Feather shape
+  const ts = new THREE.Shape();
+  ts.moveTo(0,0);
+  ts.bezierCurveTo(def.wid,def.len*0.25, def.wid*0.6,def.len*0.6, 0,def.len);
+  ts.bezierCurveTo(-def.wid*0.6,def.len*0.6, -def.wid,def.len*0.25, 0,0);
+  const tm = new THREE.Mesh(new THREE.ShapeGeometry(ts,10), def.mat);
+  tg.add(tm);
 
-  // Feather vane
-  const vane = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.3 - Math.abs(t)*0.1, 2.0 + Math.abs(t)*0.5),
-    tailMats[i % tailMats.length]
-  );
-  vane.position.y = 1.0 + Math.abs(t)*0.3;
-  vane.position.z = 0.01;
-  tailG.add(vane);
+  // Glowing tip
+  const tip = new THREE.Mesh(new THREE.SphereGeometry(0.12,6,6),
+    new THREE.MeshStandardMaterial({ color:0xffff00, emissive:0xffff00, emissiveIntensity:4, transparent:true, opacity:0.9 }));
+  tip.position.y = def.len + 0.1;
+  tg.add(tip);
 
-  tailG.rotation.x = -Math.PI/2 - 0.1;
-  tailG.rotation.z = t * 0.55;
-  tailG.position.set(t * 0.5, -0.1, 1.1);
-  phoenixModel.add(tailG);
-}
+  // Shaft
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.018,0.012,def.len,5),
+    new THREE.MeshStandardMaterial({ color:0x881100, emissive:0x440000, emissiveIntensity:0.3 }));
+  shaft.position.y = def.len/2;
+  tg.add(shaft);
 
-// Legs / talons
-[-0.25, 0.25].forEach(xOff => {
-  const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.05, 0.5, 5), bodyMat);
-  leg.position.set(xOff, -0.7, 0.1);
-  leg.rotation.x = 0.3;
+  tg.rotation.x = -(Math.PI/2 + 0.25);
+  tg.rotation.z = def.spread * 0.2;
+  tg.position.set(def.spread * 0.35, -0.15, 1.2);
+  phoenixModel.add(tg);
+});
+
+// ── LEGS & TALONS ──
+[-0.28, 0.28].forEach(xo => {
+  const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.055,0.55,6), mBody);
+  leg.position.set(xo, -0.75, 0.15);
+  leg.rotation.x = 0.35;
   phoenixModel.add(leg);
-  // Talons
-  for (let t = 0; t < 3; t++) {
-    const talon = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.25, 4), beakMat);
+  for (let t = 0; t < 4; t++) {
+    const talon = new THREE.Mesh(new THREE.ConeGeometry(0.035,0.3,4), mBeak);
     talon.rotation.x = Math.PI/2;
-    talon.rotation.z = (t-1) * 0.4;
-    talon.position.set(xOff + (t-1)*0.12, -1.0, -0.1 + t*0.05);
+    talon.rotation.z = (t-1.5)*0.38;
+    talon.position.set(xo+(t-1.5)*0.13, -1.08, -0.08+t*0.04);
     phoenixModel.add(talon);
   }
 });
 
-// Glow light
-const phoenixLight = new THREE.PointLight(0xff6600, 4, 15);
-phoenixLight.position.set(0, 0, 0);
+// ── GLOW LIGHTS ──
+const phoenixLight = new THREE.PointLight(0xff6600, 5, 18);
 phoenixGroup.add(phoenixLight);
+const phoenixLight2 = new THREE.PointLight(0xffaa00, 3, 10);
+phoenixLight2.position.set(0, 1, -1.5);
+phoenixGroup.add(phoenixLight2);
 
 // ─── FIRE PARTICLES ───────────────────────────────────────────
 const fireParticles = [];
