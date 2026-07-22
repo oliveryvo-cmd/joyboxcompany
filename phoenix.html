@@ -656,13 +656,13 @@ engine.runRenderLoop(() => {
     phoenixGlow.position.set(phoenixPos.x, phoenixPos.y + bob, phoenixPos.z);
 
     // Camera (3rd person)
-    const camDist = 10;
+    const camDist = 18;
     const idealCam = new BABYLON.Vector3(
       phoenixPos.x - Math.sin(yaw)*camDist,
-      phoenixPos.y + 3 + Math.sin(pitch)*camDist*0.4,
+      phoenixPos.y + 6 - Math.sin(pitch)*camDist*0.5,
       phoenixPos.z - Math.cos(yaw)*camDist
     );
-    camera.position = BABYLON.Vector3.Lerp(camera.position, idealCam, 0.12);
+    camera.position = BABYLON.Vector3.Lerp(camera.position, idealCam, 0.1);
     camera.setTarget(new BABYLON.Vector3(phoenixPos.x, phoenixPos.y+1, phoenixPos.z));
 
     // Animals
