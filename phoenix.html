@@ -359,25 +359,76 @@ for (let i = 0; i < 7; i++) {
   phoenixModel.add(cr);
 }
 
-// ── BEAK ──
-const beakTop = new THREE.Mesh(new THREE.ConeGeometry(0.075, 0.5, 6), mBeak);
-beakTop.rotation.x = Math.PI/2 + 0.2;
-beakTop.position.set(0, 0.62, -1.9);
-phoenixModel.add(beakTop);
-const beakBot = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.32, 6), mBeak);
-beakBot.rotation.x = Math.PI/2 - 0.25;
-beakBot.position.set(0, 0.46, -1.85);
-phoenixModel.add(beakBot);
+// ── BEAK — hooked eagle beak pointing down-forward ──
+const mBeakHook = new THREE.MeshStandardMaterial({ color:0x888800, emissive:0x555500, emissiveIntensity:0.4, roughness:0.25, metalness:0.5 });
+// Upper beak — thick base, curves down sharply
+const beakBase = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.1, 0.38), mBeakHook);
+beakBase.position.set(0, 0.58, -1.88);
+beakBase.rotation.x = 0.25;
+phoenixModel.add(beakBase);
+// Hook tip
+const beakHook = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.32, 6), mBeakHook);
+beakHook.rotation.x = Math.PI/2 + 0.7;
+beakHook.position.set(0, 0.44, -2.06);
+phoenixModel.add(beakHook);
+// Lower jaw — small
+const jawMat = new THREE.MeshStandardMaterial({ color:0x666600, emissive:0x333300, emissiveIntensity:0.3, roughness:0.3 });
+const jaw = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.07, 0.22), jawMat);
+jaw.position.set(0, 0.47, -1.88);
+jaw.rotation.x = -0.15;
+phoenixModel.add(jaw);
+// Beak ridge line
+const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.04, 0.35), mBeakHook);
+ridge.position.set(0, 0.635, -1.87);
+ridge.rotation.x = 0.25;
+phoenixModel.add(ridge);
 
-// ── EYES ──
-[-0.19, 0.19].forEach(xo => {
-  const e = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), mEye);
-  e.position.set(xo, 0.74, -1.75);
-  phoenixModel.add(e);
-  // Glow ring
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.025, 6, 12),
-    new THREE.MeshStandardMaterial({ color:0xffff00, emissive:0xffdd00, emissiveIntensity:4 }));
-  ring.position.set(xo, 0.74, -1.74);
+// ── FACE FEATHER TUFTS around eyes ──
+const mFace = new THREE.MeshStandardMaterial({ color:0xff4400, emissive:0xff2200, emissiveIntensity:0.6, roughness:0.2, side:THREE.DoubleSide });
+[-0.2, 0.2].forEach(xo => {
+  // Brow ridge — fierce angled feather above eye
+  const brow = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.05, 0.12),
+    new THREE.MeshStandardMaterial({ color:0xcc2200, emissive:0xaa1100, emissiveIntensity:0.6, roughness:0.2 }));
+  brow.position.set(xo, 0.86, -1.72);
+  brow.rotation.z = xo > 0 ? -0.4 : 0.4;
+  brow.rotation.x = 0.2;
+  phoenixModel.add(brow);
+
+  // Cheek feather tuft
+  for (let f = 0; f < 3; f++) {
+    const cf = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.22+f*0.05, 4), mFace);
+    cf.position.set(xo + (xo>0?0.15:-0.15) + f*xo*0.08, 0.66 - f*0.05, -1.65 + f*0.05);
+    cf.rotation.z = xo > 0 ? 0.6+f*0.1 : -0.6-f*0.1;
+    cf.rotation.x = -0.3;
+    phoenixModel.add(cf);
+  }
+});
+
+// ── EYES — fierce glowing orange ──
+[-0.2, 0.2].forEach(xo => {
+  // Eye socket dark surround
+  const socket = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 8),
+    new THREE.MeshStandardMaterial({ color:0x220000, emissive:0x110000, emissiveIntensity:0.2, roughness:0.5 }));
+  socket.position.set(xo, 0.76, -1.72);
+  phoenixModel.add(socket);
+
+  // Iris — fierce amber/red
+  const iris = new THREE.Mesh(new THREE.SphereGeometry(0.095, 10, 10),
+    new THREE.MeshStandardMaterial({ color:0xff6600, emissive:0xff4400, emissiveIntensity:6 }));
+  iris.position.set(xo, 0.76, -1.785);
+  phoenixModel.add(iris);
+
+  // Pupil slit — like a bird of prey
+  const pupil = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.09, 6),
+    new THREE.MeshStandardMaterial({ color:0x000000, emissive:0x000000 }));
+  pupil.rotation.x = Math.PI/2;
+  pupil.position.set(xo, 0.76, -1.82);
+  phoenixModel.add(pupil);
+
+  // Outer glow ring
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.018, 6, 14),
+    new THREE.MeshStandardMaterial({ color:0xffcc00, emissive:0xffaa00, emissiveIntensity:5 }));
+  ring.position.set(xo, 0.76, -1.77);
   phoenixModel.add(ring);
 });
 
