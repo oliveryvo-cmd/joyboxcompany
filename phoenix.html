@@ -432,73 +432,83 @@ const mFace = new THREE.MeshStandardMaterial({ color:0xff4400, emissive:0xff2200
   phoenixModel.add(ring);
 });
 
-// ── WINGS — swept back like a real bird, built in XZ plane ──
+// ── WINGS — individual feathers fanning from shoulder ──
+// Built in XY plane (what camera sees from behind), tilted slightly
 function makeEpicWing(side) {
   const wg = new THREE.Group();
 
-  // Wing built along X (out) and Z (backward) axes
-  // so when viewed from behind it looks like a proper bird wing
-
-  // Layer 1 — dark base (largest)
+  // Wing membrane — proper bird wing shape in XY plane
+  // Leading edge goes up+out, tip points out, trailing edge sweeps down
   const s1 = new THREE.Shape();
   s1.moveTo(0, 0);
-  s1.bezierCurveTo(side*2, -0.5,  side*5, -0.3,  side*7, 0.5);
-  s1.bezierCurveTo(side*8,  1.0,  side*7,  2.5,  side*4, 3.5);
-  s1.bezierCurveTo(side*2,  4.0,  side*0.5,3.0,  0,      1.5);
-  wg.add(new THREE.Mesh(new THREE.ShapeGeometry(s1,16), mWing1));
+  s1.bezierCurveTo(side*1.5, 1.5,  side*4.0, 2.5,  side*6.5, 2.0); // leading edge up
+  s1.bezierCurveTo(side*7.5, 1.5,  side*7.5, 0.5,  side*7.0, 0.0); // wing tip
+  s1.bezierCurveTo(side*6.0,-1.0,  side*4.0,-2.0,  side*2.0,-2.5); // trailing edge down
+  s1.bezierCurveTo(side*1.0,-2.8,  side*0.3,-1.5,  0,        -0.5); // back to body
+  wg.add(new THREE.Mesh(new THREE.ShapeGeometry(s1, 16), mWing1));
 
-  // Layer 2 — mid orange
+  // Mid layer — orange, slightly smaller
   const s2 = new THREE.Shape();
-  s2.moveTo(0, 0.3);
-  s2.bezierCurveTo(side*1.5,-0.2, side*4,  0.0,  side*6, 0.8);
-  s2.bezierCurveTo(side*6.5, 1.2, side*5.5,2.2,  side*3, 3.0);
-  s2.bezierCurveTo(side*1.5, 3.5, side*0.3,2.5,  0,      1.2);
-  const m2 = new THREE.Mesh(new THREE.ShapeGeometry(s2,14), mWing2);
-  m2.position.y = 0.04;
+  s2.moveTo(0, -0.2);
+  s2.bezierCurveTo(side*1.2, 1.0,  side*3.5, 1.8,  side*5.5, 1.5);
+  s2.bezierCurveTo(side*6.2, 1.2,  side*6.2, 0.3,  side*5.8, 0.0);
+  s2.bezierCurveTo(side*5.0,-0.8,  side*3.2,-1.6,  side*1.5,-2.0);
+  s2.bezierCurveTo(side*0.8,-2.2,  side*0.2,-1.2,  0,        -0.4);
+  const m2 = new THREE.Mesh(new THREE.ShapeGeometry(s2, 14), mWing2);
+  m2.position.z = 0.04;
   wg.add(m2);
 
-  // Layer 3 — gold inner
+  // Inner gold layer
   const s3 = new THREE.Shape();
-  s3.moveTo(0, 0.6);
-  s3.bezierCurveTo(side*1, 0.2,   side*3,  0.4,  side*4.5,1.1);
-  s3.bezierCurveTo(side*5, 1.4,   side*4,  2.2,  side*2,  2.6);
-  s3.bezierCurveTo(side*1, 2.8,   side*0.2,2.2,  0,       1.0);
-  const m3 = new THREE.Mesh(new THREE.ShapeGeometry(s3,12), mWing3);
-  m3.position.y = 0.08;
+  s3.moveTo(0, -0.1);
+  s3.bezierCurveTo(side*0.8, 0.6,  side*2.5, 1.1,  side*4.0, 0.9);
+  s3.bezierCurveTo(side*4.5, 0.7,  side*4.5,-0.1,  side*4.0,-0.3);
+  s3.bezierCurveTo(side*3.0,-0.9,  side*1.8,-1.2,  side*0.8,-1.4);
+  s3.bezierCurveTo(side*0.4,-1.5,  side*0.1,-0.8,  0,        -0.3);
+  const m3 = new THREE.Mesh(new THREE.ShapeGeometry(s3, 12), mWing3);
+  m3.position.z = 0.08;
   wg.add(m3);
 
-  // Individual primary feathers — long, fan out from trailing edge
-  const fCount = 10;
-  for (let i = 0; i < fCount; i++) {
-    const t = i / (fCount-1);
-    const fx = side * (1.5 + t * 5.5);
-    const fz = 3.8 + t * 0.8;           // how far back
-    const flen = 1.3 + t * 1.0;
-    const fwid = 0.22 - t * 0.07;
-    const fMats = [mWing1, mWing2, mWing3];
+  // Primary feathers — long individual feathers along trailing edge
+  const primaries = 8;
+  for (let i = 0; i < primaries; i++) {
+    const t = i / (primaries - 1);
+    // Fan positions along trailing edge
+    const angle = -0.3 - t * 1.1; // angle from body outward+downward
+    const reach = 3.5 + t * 3.5;  // how far out
+    const flen  = 1.8 + t * 1.4;  // feather length
+    const fwid  = 0.28 - t * 0.08;
+    const fMat  = t < 0.4 ? mWing1 : t < 0.7 ? mWing2 : mWing3;
 
+    const fx = side * Math.cos(angle) * reach;
+    const fy = Math.sin(angle) * reach;
+
+    // Feather as a pointed oval shape
     const fs = new THREE.Shape();
-    fs.moveTo(-fwid*0.5, 0);
-    fs.bezierCurveTo(-fwid*0.3, flen*0.4, -fwid*0.1, flen*0.8, 0, flen);
-    fs.bezierCurveTo(fwid*0.1, flen*0.8,  fwid*0.3,  flen*0.4, fwid*0.5, 0);
-    const fm = new THREE.Mesh(new THREE.ShapeGeometry(fs, 6), fMats[i%3]);
-    fm.position.set(fx, 0.12, fz);
-    fm.rotation.x = -Math.PI/2;
-    fm.rotation.z = side * t * 0.3;
+    fs.moveTo(0, 0);
+    fs.bezierCurveTo(-fwid*0.6, flen*0.25, -fwid*0.4, flen*0.6, 0, flen);
+    fs.bezierCurveTo( fwid*0.4, flen*0.6,   fwid*0.6, flen*0.25, 0, 0);
+    const fm = new THREE.Mesh(new THREE.ShapeGeometry(fs, 8), fMat);
+    fm.position.set(fx, fy, 0.1 + i*0.01);
+    // Feather points outward from body
+    fm.rotation.z = angle + (side > 0 ? Math.PI : 0) + (side > 0 ? 0 : Math.PI);
     wg.add(fm);
 
-    // Glowing tip
-    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.06,5,5),
-      new THREE.MeshStandardMaterial({ color:0xffff00, emissive:0xffff00, emissiveIntensity:4, transparent:true, opacity:0.85 }));
-    tip.position.set(fx + side*t*0.2, 0.14, fz + flen);
+    // Glowing fire tip
+    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.07, 5, 5),
+      new THREE.MeshStandardMaterial({ color:0xffff00, emissive:0xffff00, emissiveIntensity:5, transparent:true, opacity:0.9 }));
+    const tipAngle = angle + (side > 0 ? 0 : Math.PI);
+    tip.position.set(
+      fx + side * Math.cos(angle) * flen,
+      fy + Math.sin(angle) * flen,
+      0.15
+    );
     wg.add(tip);
   }
 
-  // Wing is built in XZ, position at shoulder
-  wg.position.set(side * 0.55, 0.1, 0.3);
-  // Tilt up like a soaring bird
-  wg.rotation.x = -0.25;
-  wg.rotation.z = side * 0.18;
+  // Attach at shoulder, tilt upward like soaring bird
+  wg.position.set(side * 0.5, 0.15, 0.0);
+  wg.rotation.z = side * 0.15; // slight dihedral angle
   return wg;
 }
 const wingL = makeEpicWing(-1);
