@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHOENIX RISE — Open World Adventure</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+#c { display: block; width: 100vw; height: 100vh; }
+
+/* HUD */
+#hud { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+
+#top-left {
+  position: absolute; top: 24px; left: 24px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.bar-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; margin-bottom: 3px; }
+.bar-track { width: 180px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+#hp-label { color: #ff4444; text-shadow: 0 0 8px #ff4444; }
+#hp-fill { background: linear-gradient(90deg, #ff0000, #ff6600); box-shadow: 0 0 8px #ff4400; }
+#xp-label { color: #ffaa00; text-shadow: 0 0 8px #ffaa00; }
+#xp-fill { background: linear-gradient(90deg, #ffaa00, #ffff00); box-shadow: 0 0 8px #ffaa00; }
+#level-badge {
+  color: #fff; font-size: 13px; font-weight: 900; letter-spacing: 2px;
+  background: linear-gradient(135deg, #ff6600, #ff0080);
+  padding: 4px 12px; border-radius: 100px;
+  box-shadow: 0 0 15px rgba(255,100,0,0.6);
+  width: fit-content;
+}
+
+#top-right {
+  position: absolute; top: 24px; right: 24px; text-align: right;
+}
+#quest-box {
+  background: rgba(0,0,0,0.6); border: 1px solid rgba(255,170,0,0.4);
+  border-radius: 12px; padding: 12px 16px; min-width: 200px;
+}
+#quest-title { color: #ffaa00; font-size: 10px; font-weight: 700; letter-spacing: 3px; margin-bottom: 6px; text-shadow: 0 0 8px #ffaa00; }
+#quest-text { color: #fff; font-size: 13px; font-weight: 600; }
+#quest-progress { color: #aaa; font-size: 11px; margin-top: 4px; }
+
+#bottom-hud {
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+#ability-bar { display: flex; gap: 12px; }
+.ability-slot {
+  width: 52px; height: 52px; border-radius: 10px;
+  background: rgba(0,0,0,0.7); border: 2px solid rgba(255,100,0,0.5);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 22px; position: relative;
+}
+.ability-slot .key { position: absolute; bottom: 2px; right: 4px; font-size: 9px; color: #aaa; font-weight: 700; }
+.ability-slot.active { border-color: #ff6600; box-shadow: 0 0 15px rgba(255,100,0,0.6); }
+#controls-hint { color: rgba(255,255,255,0.35); font-size: 11px; letter-spacing: 1px; }
+
+/* Kill / XP popup */
+#popup {
+  position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
+  text-align: center; pointer-events: none; opacity: 0; transition: opacity 0.15s;
+}
+#popup-text { font-size: 28px; font-weight: 900; letter-spacing: 3px; text-shadow: 0 0 20px #ff6600; color: #ffaa00; }
+#popup-sub { font-size: 13px; color: #fff; letter-spacing: 2px; margin-top: 4px; }
+
+/* Minimap */
+#minimap {
+  position: absolute; bottom: 24px; right: 24px;
+  width: 130px; height: 130px;
+  background: rgba(0,0,0,0.65); border: 1px solid rgba(255,170,0,0.3);
+  border-radius: 50%; overflow: hidden;
+}
+#minimap canvas { width: 100%; height: 100%; }
+
+/* Vignette + scanlines */
+#vig { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.6) 100%); z-index: 5; }
+
+/* Overlay screens */
+#overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: linear-gradient(180deg, #0a0005 0%, #1a0010 50%, #0a0005 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+}
+#overlay h1 {
+  font-size: clamp(40px, 8vw, 90px); font-weight: 900; letter-spacing: 8px;
+  background: linear-gradient(90deg, #ff6600, #ff0080, #ffaa00, #ff6600);
+  background-size: 400%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; animation: rShift 1.5s linear infinite;
+}
+@keyframes rShift { 0%{background-position:0%}100%{background-position:400%} }
+#overlay .subtitle { color: rgba(255,200,100,0.7); font-size: 15px; letter-spacing: 4px; text-transform: uppercase; }
+#overlay button {
+  background: linear-gradient(135deg, #ff6600, #ff0080);
+  border: none; color: #fff; font-size: 18px; font-weight: 900;
+  padding: 16px 52px; border-radius: 100px; cursor: pointer;
+  letter-spacing: 3px; box-shadow: 0 0 40px rgba(255,100,0,0.5);
+  transition: transform 0.15s, box-shadow 0.15s; margin-top: 10px;
+  pointer-events: all;
+}
+#overlay button:hover { transform: scale(1.06); box-shadow: 0 0 60px rgba(255,100,0,0.8); }
+#overlay .tip { color: rgba(255,255,255,0.4); font-size: 12px; letter-spacing: 2px; }
+.fire-emoji { font-size: 60px; animation: floatFire 2s ease-in-out infinite; }
+@keyframes floatFire { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-20px) scale(1.1)} }
+
+/* Level up */
+#lvlup {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  z-index: 100; pointer-events: none; opacity: 0; text-align: center;
+}
+#lvlup h2 { font-size: 56px; font-weight: 900; color: #ffaa00; text-shadow: 0 0 40px #ff6600, 0 0 80px #ff0080; letter-spacing: 6px; }
+#lvlup p { color: #fff; font-size: 16px; letter-spacing: 3px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="hud">
+  <div id="top-left">
+    <div id="level-badge">🔥 LEVEL 1</div>
+    <div>
+      <div class="bar-label" id="hp-label">HEALTH</div>
+      <div class="bar-track"><div class="bar-fill" id="hp-fill" style="width:100%"></div></div>
+    </div>
+    <div>
+      <div class="bar-label" id="xp-label">EXPERIENCE</div>
+      <div class="bar-track"><div class="bar-fill" id="xp-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div id="top-right">
+    <div id="quest-box">
+      <div id="quest-title">🗺 ACTIVE QUEST</div>
+      <div id="quest-text">Hunt the Forest Rabbits</div>
+      <div id="quest-progress">0 / 3 defeated</div>
+    </div>
+  </div>
+
+  <div id="bottom-hud">
+    <div id="ability-bar">
+      <div class="ability-slot active" id="slot-fire">🔥<span class="key">LMB</span></div>
+      <div class="ability-slot" id="slot-dash">💨<span class="key">SHIFT</span></div>
+      <div class="ability-slot" id="slot-rise">⬆️<span class="key">SPACE</span></div>
+      <div class="ability-slot" id="slot-roar">🌟<span class="key">Q</span></div>
+    </div>
+    <div id="controls-hint">WASD · MOVE &nbsp;|&nbsp; MOUSE · LOOK &nbsp;|&nbsp; SPACE · FLY UP &nbsp;|&nbsp; LMB · FIRE BLAST</div>
+  </div>
+
+  <div id="popup">
+    <div id="popup-text">DEFEATED!</div>
+    <div id="popup-sub">+50 XP</div>
+  </div>
+
+  <div id="minimap"><canvas id="mm" width="130" height="130"></canvas></div>
+</div>
+
+<div id="vig"></div>
+
+<div id="lvlup">
+  <h2>LEVEL UP!</h2>
+  <p id="lvlup-desc">PHOENIX GROWS STRONGER</p>
+</div>
+
+<div id="overlay">
+  <div class="fire-emoji">🔥</div>
+  <h1>PHOENIX RISE</h1>
+  <div class="subtitle">Open World · 3rd Person · Adventure</div>
+  <button onclick="startGame()">🐦 BEGIN YOUR JOURNEY</button>
+  <div class="tip">WASD to fly · Mouse to look · Click to fire · Defeat animals to level up</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ─── RENDERER ─────────────────────────────────────────────────
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.4;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x87ceeb, 80, 300);
+scene.background = new THREE.Color(0x4a90d9);
+
+const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 500);
+
+// ─── LIGHTING ─────────────────────────────────────────────────
+const sun = new THREE.DirectionalLight(0xfff5e0, 2.5);
+sun.position.set(100, 200, 100);
+sun.castShadow = true;
+sun.shadow.mapSize.width = 2048;
+sun.shadow.mapSize.height = 2048;
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far = 500;
+sun.shadow.camera.left = -100;
+sun.shadow.camera.right = 100;
+sun.shadow.camera.top = 100;
+sun.shadow.camera.bottom = -100;
+scene.add(sun);
+
+const ambient = new THREE.AmbientLight(0x88bbff, 1.2);
+scene.add(ambient);
+
+const hemi = new THREE.HemisphereLight(0x87ceeb, 0x3d6b2f, 0.8);
+scene.add(hemi);
+
+// ─── TERRAIN ──────────────────────────────────────────────────
+const TERRAIN_SIZE = 400;
+const TERRAIN_SEGS = 80;
+const terrainGeo = new THREE.PlaneGeometry(TERRAIN_SIZE, TERRAIN_SIZE, TERRAIN_SEGS, TERRAIN_SEGS);
+terrainGeo.rotateX(-Math.PI / 2);
+
+// Height map
+const pos = terrainGeo.attributes.position;
+for (let i = 0; i < pos.count; i++) {
+  const x = pos.getX(i), z = pos.getZ(i);
+  const h = Math.sin(x * 0.05) * 4 + Math.cos(z * 0.04) * 3
+          + Math.sin(x * 0.02 + z * 0.03) * 6
+          + Math.sin(x * 0.1) * 1.5 + Math.cos(z * 0.08) * 2;
+  pos.setY(i, h);
+}
+terrainGeo.computeVertexNormals();
+
+const terrainMat = new THREE.MeshStandardMaterial({
+  color: 0x3d8c40, roughness: 0.9, metalness: 0.0,
+  vertexColors: false,
+});
+const terrain = new THREE.Mesh(terrainGeo, terrainMat);
+terrain.receiveShadow = true;
+scene.add(terrain);
+
+// Water plane
+const waterGeo = new THREE.PlaneGeometry(TERRAIN_SIZE, TERRAIN_SIZE);
+const waterMat = new THREE.MeshStandardMaterial({ color: 0x1a6fbe, transparent: true, opacity: 0.75, metalness: 0.5, roughness: 0.1 });
+const water = new THREE.Mesh(waterGeo, waterMat);
+water.rotation.x = -Math.PI / 2;
+water.position.y = -2;
+scene.add(water);
+
+// ─── TREES ────────────────────────────────────────────────────
+function makeTree(x, z) {
+  const g = new THREE.Group();
+  // Trunk
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.3, 0.5, 4 + Math.random()*2, 6),
+    new THREE.MeshStandardMaterial({ color: 0x5c3a1e, roughness: 0.9 })
+  );
+  trunk.position.y = 2;
+  trunk.castShadow = true;
+  g.add(trunk);
+  // Foliage layers
+  const colors = [0x2d7a2d, 0x3a9a3a, 0x256225];
+  for (let i = 0; i < 3; i++) {
+    const r = 3 - i * 0.5;
+    const h = 3.5 - i * 0.3;
+    const leaf = new THREE.Mesh(
+      new THREE.ConeGeometry(r, h, 7),
+      new THREE.MeshStandardMaterial({ color: colors[i % 3], roughness: 0.8 })
+    );
+    leaf.position.y = 4 + i * 2.2;
+    leaf.castShadow = true;
+    g.add(leaf);
+  }
+  g.position.set(x, getTerrainHeight(x, z), z);
+  g.rotation.y = Math.random() * Math.PI * 2;
+  scene.add(g);
+  return g;
+}
+
+const trees = [];
+for (let i = 0; i < 300; i++) {
+  const x = (Math.random() - 0.5) * 360;
+  const z = (Math.random() - 0.5) * 360;
+  if (Math.abs(x) > 10 || Math.abs(z) > 10) trees.push(makeTree(x, z));
+}
+
+// Terrain height sampler
+function getTerrainHeight(x, z) {
+  return Math.sin(x * 0.05) * 4 + Math.cos(z * 0.04) * 3
+       + Math.sin(x * 0.02 + z * 0.03) * 6
+       + Math.sin(x * 0.1) * 1.5 + Math.cos(z * 0.08) * 2;
+}
+
+// ─── CLOUDS ───────────────────────────────────────────────────
+const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.85, roughness: 1 });
+function makeCloud(x, y, z) {
+  const g = new THREE.Group();
+  for (let i = 0; i < 5; i++) {
+    const s = 4 + Math.random() * 4;
+    const m = new THREE.Mesh(new THREE.SphereGeometry(s, 7, 7), cloudMat);
+    m.position.set((Math.random()-0.5)*10, (Math.random()-0.5)*3, (Math.random()-0.5)*8);
+    g.add(m);
+  }
+  g.position.set(x, y, z);
+  scene.add(g);
+  return g;
+}
+const clouds = [];
+for (let i = 0; i < 25; i++) {
+  clouds.push(makeCloud(
+    (Math.random()-0.5)*400,
+    40 + Math.random()*30,
+    (Math.random()-0.5)*400
+  ));
+}
+
+// ─── PHOENIX (3D procedural model) ────────────────────────────
+const phoenixGroup = new THREE.Group();
+scene.add(phoenixGroup);
+
+// Body
+const bodyMat = new THREE.MeshStandardMaterial({ color: 0xff6600, emissive: 0xff3300, emissiveIntensity: 0.4, roughness: 0.3, metalness: 0.2 });
+const body = new THREE.Mesh(new THREE.SphereGeometry(0.7, 12, 8), bodyMat);
+body.scale.set(1, 0.8, 1.6);
+phoenixGroup.add(body);
+
+// Head
+const head = new THREE.Mesh(new THREE.SphereGeometry(0.38, 10, 8),
+  new THREE.MeshStandardMaterial({ color: 0xff8800, emissive: 0xff4400, emissiveIntensity: 0.5, roughness: 0.3 }));
+head.position.set(0, 0.3, -0.9);
+phoenixGroup.add(head);
+
+// Beak
+const beak = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.35, 6),
+  new THREE.MeshStandardMaterial({ color: 0xffcc00, roughness: 0.4 }));
+beak.rotation.x = Math.PI / 2;
+beak.position.set(0, 0.25, -1.28);
+phoenixGroup.add(beak);
+
+// Eyes
+[-0.15, 0.15].forEach(xOff => {
+  const eye = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 6),
+    new THREE.MeshStandardMaterial({ color: 0xffff00, emissive: 0xffff00, emissiveIntensity: 3 }));
+  eye.position.set(xOff, 0.42, -1.15);
+  phoenixGroup.add(eye);
+});
+
+// Wings
+function makeWing(side) {
+  const wg = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({ color: 0xff4400, emissive: 0xff2200, emissiveIntensity: 0.3, roughness: 0.4, side: THREE.DoubleSide });
+  // Main wing panel
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0);
+  shape.lineTo(side * 3.5, 0.5);
+  shape.lineTo(side * 4.5, -0.3);
+  shape.lineTo(side * 3, -1.2);
+  shape.lineTo(side * 1.5, -0.8);
+  shape.lineTo(0, -0.3);
+  const wingGeo = new THREE.ShapeGeometry(shape);
+  const wingMesh = new THREE.Mesh(wingGeo, mat);
+  wg.add(wingMesh);
+
+  // Feather tips
+  for (let i = 0; i < 5; i++) {
+    const ft = new THREE.Mesh(
+      new THREE.ConeGeometry(0.08, 0.6, 5),
+      new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0xff6600, emissiveIntensity: 0.5 })
+    );
+    ft.position.set(side * (2 + i * 0.5), -1.3 + i * 0.1, 0);
+    ft.rotation.z = side * (0.2 + i * 0.05);
+    wg.add(ft);
+  }
+  wg.position.set(side * 0.5, 0, 0);
+  return wg;
+}
+const wingL = makeWing(-1);
+const wingR = makeWing(1);
+phoenixGroup.add(wingL);
+phoenixGroup.add(wingR);
+
+// Tail feathers
+for (let i = 0; i < 5; i++) {
+  const tail = new THREE.Mesh(
+    new THREE.ConeGeometry(0.1, 1.5, 5),
+    new THREE.MeshStandardMaterial({ color: [0xff6600,0xff4400,0xffaa00,0xff2200,0xffcc00][i], emissive: 0xff3300, emissiveIntensity: 0.5 })
+  );
+  tail.rotation.x = -Math.PI / 2 + (i - 2) * 0.18;
+  tail.rotation.z = (i - 2) * 0.2;
+  tail.position.set((i-2) * 0.25, -0.1, 1.2);
+  phoenixGroup.add(tail);
+}
+
+// Glow light
+const phoenixLight = new THREE.PointLight(0xff6600, 3, 12);
+phoenixGroup.add(phoenixLight);
+
+// ─── FIRE PARTICLES ───────────────────────────────────────────
+const fireParticles = [];
+function spawnFireParticle(pos) {
+  const geo = new THREE.SphereGeometry(0.05 + Math.random()*0.08, 4, 4);
+  const colors = [0xff6600, 0xff4400, 0xffaa00, 0xff0000, 0xffff00];
+  const mat = new THREE.MeshBasicMaterial({ color: colors[Math.floor(Math.random()*colors.length)], transparent: true, opacity: 1 });
+  const m = new THREE.Mesh(geo, mat);
+  m.position.copy(pos);
+  m.position.x += (Math.random()-0.5)*0.5;
+  m.position.y += (Math.random()-0.5)*0.3;
+  const vel = new THREE.Vector3((Math.random()-0.5)*0.05, 0.06+Math.random()*0.06, (Math.random()-0.5)*0.05);
+  scene.add(m);
+  fireParticles.push({ m, vel, life: 1 });
+}
+
+// ─── FIRE BLAST ───────────────────────────────────────────────
+const fireBlasts = [];
+function shootFireBlast() {
+  const geo = new THREE.SphereGeometry(0.3, 8, 8);
+  const mat = new THREE.MeshStandardMaterial({ color: 0xff6600, emissive: 0xff4400, emissiveIntensity: 3, transparent: true, opacity: 1 });
+  const blast = new THREE.Mesh(geo, mat);
+  blast.position.copy(phoenixGroup.position);
+  blast.position.y += 0.5;
+  const light = new THREE.PointLight(0xff6600, 4, 8);
+  blast.add(light);
+
+  // Direction: where camera is looking
+  const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+  scene.add(blast);
+  fireBlasts.push({ mesh: blast, vel: dir.clone().multiplyScalar(0.8), life: 1, light });
+}
+
+// ─── ANIMALS ──────────────────────────────────────────────────
+const animals = [];
+const ANIMAL_TYPES = [
+  { name: 'Rabbit',   color: 0xcccccc, size: 0.4, hp: 1, xp: 30,  speed: 0.03, hostile: false, emoji: '🐇' },
+  { name: 'Deer',     color: 0xc68642, size: 0.8, hp: 2, xp: 60,  speed: 0.02, hostile: false, emoji: '🦌' },
+  { name: 'Fox',      color: 0xd2691e, size: 0.6, hp: 3, xp: 80,  speed: 0.04, hostile: true,  emoji: '🦊' },
+  { name: 'Wolf',     color: 0x666666, size: 0.9, hp: 5, xp: 120, speed: 0.035,hostile: true,  emoji: '🐺' },
+  { name: 'Bear',     color: 0x4a3728, size: 1.4, hp: 8, xp: 200, speed: 0.025,hostile: true,  emoji: '🐻' },
+];
+
+function spawnAnimal(type, x, z) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({ color: type.color, roughness: 0.8 });
+  const s = type.size;
+
+  // Body
+  const body = new THREE.Mesh(new THREE.SphereGeometry(s*0.5, 8, 6), mat);
+  body.scale.set(1.4, 0.9, 1.8);
+  body.castShadow = true;
+  g.add(body);
+
+  // Head
+  const hd = new THREE.Mesh(new THREE.SphereGeometry(s*0.32, 8, 6), mat);
+  hd.position.set(0, s*0.3, -s*0.7);
+  hd.castShadow = true;
+  g.add(hd);
+
+  // Legs
+  [-0.4*s, 0.4*s].forEach(xo => {
+    [-0.5*s, 0.5*s].forEach(zo => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(s*0.1, s*0.08, s*0.8, 6), mat);
+      leg.position.set(xo, -s*0.55, zo);
+      leg.castShadow = true;
+      g.add(leg);
+    });
+  });
+
+  // Health bar (red sprite above animal)
+  const hpCanvas = document.createElement('canvas');
+  hpCanvas.width = 64; hpCanvas.height = 16;
+  const hpCtx = hpCanvas.getContext('2d');
+  const hpTex = new THREE.CanvasTexture(hpCanvas);
+  const hpSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: hpTex, transparent: true }));
+  hpSprite.scale.set(2, 0.5, 1);
+  hpSprite.position.y = s * 1.5;
+  g.add(hpSprite);
+
+  const y = getTerrainHeight(x, z) + s * 0.5;
+  g.position.set(x, y, z);
+  scene.add(g);
+
+  const a = { group: g, type, hp: type.hp, maxHp: type.hp, dead: false, hpSprite, hpCtx, hpTex, s,
+    vel: new THREE.Vector3(), roamTarget: new THREE.Vector3(x, y, z), roamTimer: 0 };
+  animals.push(a);
+  return a;
+}
+
+function updateAnimalHP(a) {
+  const ctx = a.hpCtx;
+  ctx.clearRect(0, 0, 64, 16);
+  ctx.fillStyle = '#330000';
+  ctx.fillRect(0, 4, 64, 8);
+  ctx.fillStyle = a.hp / a.maxHp > 0.5 ? '#00ff44' : '#ff4400';
+  ctx.fillRect(0, 4, 64 * (a.hp / a.maxHp), 8);
+  a.hpTex.needsUpdate = true;
+}
+
+// Spawn animals
+ANIMAL_TYPES.forEach(type => {
+  for (let i = 0; i < 8; i++) {
+    const x = (Math.random()-0.5)*300, z = (Math.random()-0.5)*300;
+    spawnAnimal(type, x, z);
+  }
+});
+
+// ─── QUESTS ───────────────────────────────────────────────────
+const quests = [
+  { text: 'Hunt the Forest Rabbits', target: 'Rabbit', count: 3, reward: 200 },
+  { text: 'Defeat the Foxes',        target: 'Fox',    count: 3, reward: 300 },
+  { text: 'Hunt the Deer',           target: 'Deer',   count: 2, reward: 250 },
+  { text: 'Defeat the Wolf Pack',    target: 'Wolf',   count: 4, reward: 500 },
+  { text: 'Slay the Bears',          target: 'Bear',   count: 2, reward: 800 },
+];
+let currentQuest = 0;
+let questKills = 0;
+
+function updateQuestHUD() {
+  const q = quests[currentQuest];
+  if (!q) { document.getElementById('quest-text').textContent = '🏆 ALL QUESTS DONE!'; document.getElementById('quest-progress').textContent = ''; return; }
+  document.getElementById('quest-text').textContent = q.text;
+  document.getElementById('quest-progress').textContent = `${questKills} / ${q.count} defeated`;
+}
+
+// ─── PLAYER STATE ─────────────────────────────────────────────
+let health = 100, maxHealth = 100;
+let xp = 0, xpToNext = 100;
+let level = 1;
+let gameActive = false;
+const phoenixPos = new THREE.Vector3(0, 25, 0);
+const velocity = new THREE.Vector3();
+let yaw = 0, pitch = 0.2;
+let dashCooldown = 0;
+let roarCooldown = 0;
+let roarActive = false;
+let fireCooldown = 0;
+
+// ─── INPUT ────────────────────────────────────────────────────
+const keys = {};
+document.addEventListener('keydown', e => { keys[e.code] = true; });
+document.addEventListener('keyup',   e => { keys[e.code] = false; });
+document.addEventListener('mousemove', e => {
+  if (!gameActive) return;
+  yaw   -= e.movementX * 0.002;
+  pitch -= e.movementY * 0.0015;
+  pitch  = Math.max(-0.8, Math.min(0.6, pitch));
+});
+document.addEventListener('click', () => {
+  if (!gameActive) return;
+  if (fireCooldown <= 0) { shootFireBlast(); fireCooldown = 0.35; }
+});
+document.addEventListener('pointerlockchange', () => {
+  gameActive = document.pointerLockElement === canvas;
+});
+
+// ─── HUD UPDATES ──────────────────────────────────────────────
+function updateHealthHUD() {
+  document.getElementById('hp-fill').style.width = Math.max(0, health/maxHealth*100) + '%';
+}
+function updateXPHUD() {
+  document.getElementById('xp-fill').style.width = (xp/xpToNext*100) + '%';
+}
+function setLevelBadge() {
+  document.getElementById('level-badge').textContent = '🔥 LEVEL ' + level;
+}
+function showPopup(title, sub) {
+  const el = document.getElementById('popup');
+  document.getElementById('popup-text').textContent = title;
+  document.getElementById('popup-sub').textContent = sub;
+  el.style.opacity = 1;
+  setTimeout(() => { el.style.opacity = 0; }, 1200);
+}
+
+function gainXP(amount) {
+  xp += amount;
+  if (xp >= xpToNext) {
+    xp -= xpToNext;
+    level++;
+    xpToNext = Math.floor(xpToNext * 1.5);
+    maxHealth += 20;
+    health = maxHealth;
+    setLevelBadge();
+    updateHealthHUD();
+    showLevelUp();
+  }
+  updateXPHUD();
+}
+
+function showLevelUp() {
+  const el = document.getElementById('lvlup');
+  document.getElementById('lvlup-desc').textContent = 'PHOENIX GROWS STRONGER · LVL ' + level;
+  el.style.opacity = 1;
+  el.style.transition = 'opacity 0.3s';
+  setTimeout(() => { el.style.opacity = 0; }, 2200);
+}
+
+// ─── MINIMAP ──────────────────────────────────────────────────
+const mmCtx = document.getElementById('mm').getContext('2d');
+const MM_R = 65, MM_SCALE = 130/300;
+
+function drawMinimap() {
+  mmCtx.clearRect(0, 0, 130, 130);
+  mmCtx.fillStyle = 'rgba(10,30,10,0.85)';
+  mmCtx.beginPath(); mmCtx.arc(MM_R, MM_R, MM_R, 0, Math.PI*2); mmCtx.fill();
+
+  // Animals
+  animals.forEach(a => {
+    if (a.dead) return;
+    const mx = MM_R + a.group.position.x * MM_SCALE;
+    const my = MM_R + a.group.position.z * MM_SCALE;
+    mmCtx.fillStyle = a.type.hostile ? '#ff4444' : '#44ff88';
+    mmCtx.beginPath(); mmCtx.arc(mx, my, 2.5, 0, Math.PI*2); mmCtx.fill();
+  });
+
+  // Player
+  const px = MM_R + phoenixPos.x * MM_SCALE;
+  const py = MM_R + phoenixPos.z * MM_SCALE;
+  mmCtx.fillStyle = '#ffaa00';
+  mmCtx.beginPath(); mmCtx.arc(px, py, 5, 0, Math.PI*2); mmCtx.fill();
+
+  // Direction
+  mmCtx.strokeStyle = '#ffaa00'; mmCtx.lineWidth = 2;
+  mmCtx.beginPath(); mmCtx.moveTo(px, py);
+  mmCtx.lineTo(px + Math.sin(yaw)*-14, py + Math.cos(yaw)*-14); mmCtx.stroke();
+
+  // Circle mask
+  mmCtx.globalCompositeOperation = 'destination-in';
+  mmCtx.beginPath(); mmCtx.arc(MM_R, MM_R, MM_R, 0, Math.PI*2); mmCtx.fill();
+  mmCtx.globalCompositeOperation = 'source-over';
+}
+
+// ─── CAMERA (3rd person) ──────────────────────────────────────
+const camOffset = new THREE.Vector3(0, 3, 8);
+
+function updateCamera() {
+  const euler = new THREE.Euler(pitch, yaw, 0, 'YXZ');
+  const rot = new THREE.Quaternion().setFromEuler(euler);
+  const offset = camOffset.clone().applyQuaternion(rot);
+  camera.position.copy(phoenixPos).add(offset);
+  camera.lookAt(phoenixPos.clone().add(new THREE.Vector3(0, 1, 0)));
+}
+
+// ─── PHYSICS & MOVEMENT ───────────────────────────────────────
+const clock = new THREE.Clock();
+let wingTime = 0;
+
+function updatePhoenix(delta) {
+  dashCooldown = Math.max(0, dashCooldown - delta);
+  fireCooldown = Math.max(0, fireCooldown - delta);
+  roarCooldown = Math.max(0, roarCooldown - delta);
+
+  const forward = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw));
+  const right   = new THREE.Vector3(-Math.cos(yaw), 0,  Math.sin(yaw));
+  const acc = new THREE.Vector3();
+
+  if (keys['KeyW'] || keys['ArrowUp'])    acc.addScaledVector(forward, 1);
+  if (keys['KeyS'] || keys['ArrowDown'])  acc.addScaledVector(forward, -1);
+  if (keys['KeyA'] || keys['ArrowLeft'])  acc.addScaledVector(right, -1);
+  if (keys['KeyD'] || keys['ArrowRight']) acc.addScaledVector(right, 1);
+  if (keys['Space'])  acc.y += 1;
+  if (keys['ControlLeft'] || keys['KeyC']) acc.y -= 1;
+
+  // Dash
+  if (keys['ShiftLeft'] && dashCooldown <= 0 && acc.length() > 0) {
+    velocity.addScaledVector(acc.clone().normalize(), 25);
+    dashCooldown = 2;
+    showPopup('💨 DASH!', '');
+  }
+
+  // Roar (AOE stun)
+  if (keys['KeyQ'] && roarCooldown <= 0) {
+    roarCooldown = 5;
+    roarActive = true;
+    setTimeout(() => { roarActive = false; }, 800);
+    showPopup('🌟 PHOENIX ROAR!', 'Stuns nearby animals');
+    animals.forEach(a => {
+      if (!a.dead && a.group.position.distanceTo(phoenixPos) < 15) {
+        a.stunned = true;
+        setTimeout(() => { if(a) a.stunned = false; }, 2000);
+      }
+    });
+  }
+
+  const speed = 18;
+  velocity.addScaledVector(acc.normalize(), speed * delta * 3);
+  velocity.multiplyScalar(0.88);
+
+  phoenixPos.addScaledVector(velocity, delta);
+
+  // Clamp to world
+  phoenixPos.x = Math.max(-190, Math.min(190, phoenixPos.x));
+  phoenixPos.z = Math.max(-190, Math.min(190, phoenixPos.z));
+
+  // Stay above terrain
+  const groundH = getTerrainHeight(phoenixPos.x, phoenixPos.z);
+  if (phoenixPos.y < groundH + 2) {
+    phoenixPos.y = groundH + 2;
+    velocity.y = Math.max(0, velocity.y);
+  }
+  phoenixPos.y = Math.max(groundH + 1.5, Math.min(180, phoenixPos.y));
+
+  // Phoenix mesh
+  phoenixGroup.position.copy(phoenixPos);
+  phoenixGroup.rotation.y = yaw + Math.PI;
+
+  // Wing flap animation
+  wingTime += delta * (acc.length() > 0 ? 5 : 2.5);
+  wingL.rotation.z = Math.sin(wingTime) * 0.5 - 0.3;
+  wingR.rotation.z = -Math.sin(wingTime) * 0.5 + 0.3;
+
+  // Body bob
+  phoenixGroup.position.y += Math.sin(wingTime * 0.5) * 0.15;
+
+  // Tilt in direction
+  phoenixGroup.rotation.z = -velocity.x * 0.04;
+  phoenixGroup.rotation.x = -velocity.z * 0.02;
+}
+
+// ─── UPDATE ANIMALS ───────────────────────────────────────────
+function updateAnimals(delta) {
+  animals.forEach(a => {
+    if (a.dead) return;
+    const dist = a.group.position.distanceTo(phoenixPos);
+
+    if (a.stunned) return;
+
+    if (a.type.hostile && dist < 30) {
+      // Chase phoenix
+      const dir = new THREE.Vector3().subVectors(phoenixPos, a.group.position).normalize();
+      a.vel.addScaledVector(dir, a.type.speed * 0.4);
+      a.vel.multiplyScalar(0.92);
+      a.group.position.addScaledVector(a.vel, 1);
+      a.group.lookAt(phoenixPos);
+
+      // Bite
+      if (dist < 3 && !a.biteTimer) {
+        health -= 8;
+        updateHealthHUD();
+        flashDmg();
+        if (health <= 0) triggerDeath();
+        a.biteTimer = true;
+        setTimeout(() => { a.biteTimer = false; }, 1000);
+      }
+    } else {
+      // Roam
+      a.roamTimer -= delta;
+      if (a.roamTimer <= 0) {
+        a.roamTarget.set(
+          a.group.position.x + (Math.random()-0.5)*20,
+          0,
+          a.group.position.z + (Math.random()-0.5)*20
+        );
+        a.roamTarget.x = Math.max(-180, Math.min(180, a.roamTarget.x));
+        a.roamTarget.z = Math.max(-180, Math.min(180, a.roamTarget.z));
+        a.roamTimer = 2 + Math.random() * 3;
+      }
+      const dir = new THREE.Vector3().subVectors(a.roamTarget, a.group.position);
+      dir.y = 0;
+      if (dir.length() > 0.5) {
+        dir.normalize();
+        a.group.position.addScaledVector(dir, a.type.speed * 0.4);
+        a.group.lookAt(new THREE.Vector3(a.roamTarget.x, a.group.position.y, a.roamTarget.z));
+      }
+      a.group.position.y = getTerrainHeight(a.group.position.x, a.group.position.z) + a.s * 0.5;
+    }
+
+    updateAnimalHP(a);
+  });
+}
+
+// ─── UPDATE FIRE BLASTS ───────────────────────────────────────
+function updateFireBlasts(delta) {
+  for (let i = fireBlasts.length - 1; i >= 0; i--) {
+    const b = fireBlasts[i];
+    b.mesh.position.addScaledVector(b.vel, 1);
+    b.life -= delta * 1.5;
+    b.mesh.material.opacity = b.life;
+    b.mesh.scale.setScalar(1 + (1-b.life) * 0.5);
+
+    // Spawn trail fire
+    if (Math.random() < 0.4) spawnFireParticle(b.mesh.position.clone());
+
+    // Hit animals
+    animals.forEach(a => {
+      if (a.dead) return;
+      if (b.mesh.position.distanceTo(a.group.position) < 2 + a.s) {
+        a.hp--;
+        updateAnimalHP(a);
+        spawnFireParticle(a.group.position.clone());
+
+        if (a.hp <= 0) {
+          a.dead = true;
+          scene.remove(a.group);
+          gainXP(a.type.xp);
+          showPopup('🔥 ' + a.type.name + ' DEFEATED!', '+' + a.type.xp + ' XP');
+
+          // Quest progress
+          const q = quests[currentQuest];
+          if (q && a.type.name === q.target) {
+            questKills++;
+            if (questKills >= q.count) {
+              gainXP(q.reward);
+              showPopup('✅ QUEST COMPLETE!', '+' + q.reward + ' BONUS XP');
+              currentQuest++;
+              questKills = 0;
+              // Respawn some animals
+              for (let j = 0; j < 5; j++) {
+                const t = ANIMAL_TYPES[Math.floor(Math.random()*ANIMAL_TYPES.length)];
+                spawnAnimal(t, (Math.random()-0.5)*300, (Math.random()-0.5)*300);
+              }
+            }
+            updateQuestHUD();
+          }
+        }
+        b.life = 0;
+      }
+    });
+
+    if (b.life <= 0) {
+      scene.remove(b.mesh);
+      fireBlasts.splice(i, 1);
+    }
+  }
+}
+
+// ─── FIRE PARTICLES UPDATE ────────────────────────────────────
+function updateFireParticles(delta) {
+  for (let i = fireParticles.length - 1; i >= 0; i--) {
+    const p = fireParticles[i];
+    p.life -= delta * 2.5;
+    p.m.position.addScaledVector(p.vel, 1);
+    p.m.material.opacity = p.life;
+    if (p.life <= 0) { scene.remove(p.m); fireParticles.splice(i, 1); }
+  }
+}
+
+// Phoenix trail fire
+let trailTimer = 0;
+function spawnTrail(delta) {
+  trailTimer += delta;
+  if (trailTimer > 0.05) {
+    trailTimer = 0;
+    spawnFireParticle(phoenixPos.clone());
+    spawnFireParticle(phoenixPos.clone().add(new THREE.Vector3(0.5, 0, 0)));
+    spawnFireParticle(phoenixPos.clone().add(new THREE.Vector3(-0.5, 0, 0)));
+  }
+}
+
+// ─── DAMAGE FLASH ─────────────────────────────────────────────
+function flashDmg() {
+  document.body.style.boxShadow = 'inset 0 0 80px rgba(255,0,0,0.6)';
+  setTimeout(() => { document.body.style.boxShadow = ''; }, 200);
+}
+
+// ─── CLOUD MOVEMENT ───────────────────────────────────────────
+function updateClouds(delta) {
+  clouds.forEach(c => {
+    c.position.x += delta * 3;
+    if (c.position.x > 200) c.position.x = -200;
+  });
+}
+
+// ─── DEATH ────────────────────────────────────────────────────
+function triggerDeath() {
+  gameActive = false;
+  document.exitPointerLock();
+  document.getElementById('overlay').innerHTML = `
+    <div class="fire-emoji">💀</div>
+    <h1 style="font-size:clamp(32px,6vw,72px)">YOU FELL</h1>
+    <div class="subtitle">LEVEL ${level} · ${xp} XP EARNED</div>
+    <button onclick="location.reload()">🔥 RISE AGAIN</button>
+  `;
+  document.getElementById('overlay').style.display = 'flex';
+}
+
+// ─── GAME LOOP ────────────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  const delta = Math.min(clock.getDelta(), 0.05);
+
+  if (gameActive) {
+    updatePhoenix(delta);
+    updateCamera();
+    updateAnimals(delta);
+    updateFireBlasts(delta);
+    updateFireParticles(delta);
+    spawnTrail(delta);
+    updateClouds(delta);
+    drawMinimap();
+
+    // Passive health regen
+    if (health < maxHealth) { health = Math.min(maxHealth, health + delta * 2); updateHealthHUD(); }
+
+    // Phoenix glow pulse
+    phoenixLight.intensity = 3 + Math.sin(Date.now()*0.005) * 1;
+  }
+
+  renderer.render(scene, camera);
+}
+
+// ─── START ────────────────────────────────────────────────────
+function startGame() {
+  document.getElementById('overlay').style.display = 'none';
+  canvas.requestPointerLock();
+  updateQuestHUD();
+  setLevelBadge();
+  updateHealthHUD();
+  updateXPHUD();
+}
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+animate();
+</script>
+</body>
+</html>
