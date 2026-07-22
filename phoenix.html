@@ -432,59 +432,83 @@ const mFace = new THREE.MeshStandardMaterial({ color:0xff4400, emissive:0xff2200
   phoenixModel.add(ring);
 });
 
-// ── WINGS — individual PlaneGeometry feathers fanning out ──
-// Each feather is a thin plane facing the camera (+Z), angled in XY
-function makeFeather(len, wid, mat) {
-  // Pointed feather: wide in middle, tapered at both ends
-  const shape = new THREE.Shape();
-  shape.moveTo(0, 0);
-  shape.bezierCurveTo(-wid*0.5, len*0.2, -wid*0.5, len*0.5, 0, len);
-  shape.bezierCurveTo( wid*0.5, len*0.5,  wid*0.5, len*0.2, 0, 0);
-  return new THREE.Mesh(new THREE.ShapeGeometry(shape, 6), mat);
-}
-
+// ── WINGS — flat panels in XZ plane (horizontal), proper bird wings ──
 function makeEpicWing(side) {
   const wg = new THREE.Group();
 
-  // Feather definitions: [angleFromHorizontal, length, width, material, layerZ]
-  // angle: 0 = straight out, positive = up, negative = down
-  // For right wing (side=1): feathers fan from upper-front to lower-back
-  const featherDefs = [
-    [ 0.55, 2.8, 0.38, mWing3, 0.00 ], // upper coverts (short, near body)
-    [ 0.38, 3.4, 0.40, mWing3, 0.01 ],
-    [ 0.22, 4.0, 0.42, mWing2, 0.02 ],
-    [ 0.08, 4.6, 0.44, mWing2, 0.03 ], // mid-wing
-    [-0.08, 5.0, 0.45, mWing1, 0.04 ],
-    [-0.22, 5.2, 0.44, mWing1, 0.05 ], // primary feathers start
-    [-0.36, 5.0, 0.42, mWing1, 0.06 ],
-    [-0.50, 4.6, 0.40, mWing1, 0.07 ],
-    [-0.64, 4.0, 0.36, mWing2, 0.08 ],
-    [-0.78, 3.4, 0.30, mWing2, 0.09 ], // wingtip feathers
-    [-0.92, 2.6, 0.24, mWing3, 0.10 ],
+  // Wing membrane — flat horizontal panel (XZ plane)
+  // X = outward from body, Z = forward/back, Y = up/down (very thin)
+  const wingShape = new THREE.Shape();
+  wingShape.moveTo(0, 0);
+  wingShape.bezierCurveTo(2, -0.5,   5, -0.3,   7,  0.2);  // leading edge sweeps forward
+  wingShape.bezierCurveTo(8,  0.4,   8,  1.2,   6,  2.0);  // wingtip
+  wingShape.bezierCurveTo(4,  3.0,   2,  3.5,   0,  2.0);  // trailing edge back to body
+  const wGeo = new THREE.ShapeGeometry(wingShape, 14);
+  // Shape is in XY, rotate to lie in XZ (horizontal)
+  const wMesh = new THREE.Mesh(wGeo, mWing1);
+  wMesh.rotation.x = -Math.PI / 2;
+  wg.add(wMesh);
+
+  // Mid orange layer on top
+  const wingShape2 = new THREE.Shape();
+  wingShape2.moveTo(0.2, 0.2);
+  wingShape2.bezierCurveTo(2, -0.2,  4.5, 0.0,   6,  0.5);
+  wingShape2.bezierCurveTo(6.8, 0.7, 6.5, 1.4,   5,  2.0);
+  wingShape2.bezierCurveTo(3.2, 2.8, 1.5, 3.0,   0.2, 1.8);
+  const wMesh2 = new THREE.Mesh(new THREE.ShapeGeometry(wingShape2, 12), mWing2);
+  wMesh2.rotation.x = -Math.PI / 2;
+  wMesh2.position.y = 0.04;
+  wg.add(wMesh2);
+
+  // Gold inner layer
+  const wingShape3 = new THREE.Shape();
+  wingShape3.moveTo(0.3, 0.4);
+  wingShape3.bezierCurveTo(1.5, 0.1, 3.5, 0.3,  5,  0.8);
+  wingShape3.bezierCurveTo(5.5, 1.0, 5.0, 1.5,  3.5, 2.0);
+  wingShape3.bezierCurveTo(2.2, 2.4, 1.0, 2.4,  0.3, 1.6);
+  const wMesh3 = new THREE.Mesh(new THREE.ShapeGeometry(wingShape3, 10), mWing3);
+  wMesh3.rotation.x = -Math.PI / 2;
+  wMesh3.position.y = 0.08;
+  wg.add(wMesh3);
+
+  // Individual primary feathers — vertical thin planes hanging from trailing edge
+  // These are visible from both behind AND the side
+  const primDefs = [
+    // [x along wing, z position, feather length, width]
+    [1.0, 2.2, 2.0, 0.38],
+    [2.0, 2.8, 2.4, 0.40],
+    [3.0, 3.2, 2.8, 0.42],
+    [4.0, 3.4, 3.2, 0.42],
+    [5.0, 3.3, 3.4, 0.40],
+    [6.0, 2.8, 3.2, 0.38],
+    [6.8, 2.0, 2.6, 0.34],
+    [7.2, 1.2, 2.0, 0.28],
   ];
 
-  featherDefs.forEach(([angle, len, wid, mat, z]) => {
-    const f = makeFeather(len, wid, mat);
-    // Position base of feather at shoulder, spread outward
-    f.position.set(0, 0, z);
-    // Rotate so feather points outward at given angle
-    f.rotation.z = side > 0 ? -angle : (Math.PI + angle);
-    wg.add(f);
+  primDefs.forEach(([x, z, len, wid], i) => {
+    // Feather as vertical plane (XY plane = visible from side and behind)
+    const fShape = new THREE.Shape();
+    fShape.moveTo(-wid/2, 0);
+    fShape.bezierCurveTo(-wid*0.6, len*0.3, -wid*0.3, len*0.7, 0, len);
+    fShape.bezierCurveTo( wid*0.3, len*0.7,  wid*0.6, len*0.3, wid/2, 0);
+    const fMesh = new THREE.Mesh(new THREE.ShapeGeometry(fShape, 6),
+      i < 3 ? mWing1 : i < 6 ? mWing2 : mWing3);
+    fMesh.position.set(x, -0.1, z);  // hang below wing
+    fMesh.rotation.y = side * 0.1 * i; // slight fan angle
+    wg.add(fMesh);
 
-    // Fire tip glow
-    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.06, 5, 5),
-      new THREE.MeshStandardMaterial({ color:0xffff00, emissive:0xffff00, emissiveIntensity:5, transparent:true, opacity:0.85 }));
-    tip.position.set(
-      side * Math.cos(angle) * len,
-      Math.sin(angle) * len,
-      z + 0.05
-    );
+    // Glowing tip
+    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.07, 5, 5),
+      new THREE.MeshStandardMaterial({ color:0xffff00, emissive:0xffff00, emissiveIntensity:5, transparent:true, opacity:0.9 }));
+    tip.position.set(x, -len - 0.1, z);
     wg.add(tip);
   });
 
-  // Position shoulder joint on body side
-  wg.position.set(side * 0.45, 0.1, 0.0);
-  // Slight upward tilt (dihedral) like a soaring bird
+  // Mirror for left wing
+  if (side < 0) wg.scale.x = -1;
+
+  wg.position.set(side * 0.45, 0.1, -0.5);
+  // Slight upward dihedral like soaring eagle
   wg.rotation.z = side * 0.12;
   return wg;
 }
