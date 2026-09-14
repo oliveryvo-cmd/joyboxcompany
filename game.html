@@ -1,305 +1,438 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Boxy Jump — Joy Box Company</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:#1a2744;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:'Nunito',sans-serif;overflow:hidden;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoenix Odyssey: Photorealistic Open World</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+            background: #050508;
+        }
 
-nav{position:fixed;top:0;left:0;right:0;padding:12px 24px;display:flex;align-items:center;z-index:10;}
-nav a{font-weight:900;color:rgba(255,255,255,0.4);text-decoration:none;font-size:13px;letter-spacing:1px;}
-nav a:hover{color:#fff;}
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+        }
 
-#game-wrap{position:relative;}
-canvas{border-radius:16px;display:block;}
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
 
-#ui{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
+        .hud-card {
+            background: rgba(10, 10, 18, 0.8);
+            padding: 16px 26px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 120, 0, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(255, 80, 0, 0.25);
+            backdrop-filter: blur(10px);
+        }
 
-#start-screen,#over-screen{background:rgba(26,39,68,0.92);border-radius:16px;padding:40px 48px;text-align:center;pointer-events:all;}
-#start-screen h1,#over-screen h1{font-family:'Fredoka One',sans-serif;font-size:48px;color:#fff;margin-bottom:8px;}
-#start-screen h1 span,#over-screen h1 span{color:#e63030;}
-#start-screen p{color:rgba(255,255,255,0.6);margin-bottom:28px;font-size:16px;}
-#over-screen p{color:rgba(255,255,255,0.6);margin-bottom:8px;font-size:16px;}
-#final-score{font-family:'Fredoka One',sans-serif;font-size:40px;color:#e63030;margin-bottom:24px;}
-.play-btn{background:#e63030;color:#fff;border:none;padding:16px 48px;border-radius:100px;font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;cursor:pointer;letter-spacing:1px;transition:all .2s;}
-.play-btn:hover{background:#ff4d4d;transform:translateY(-2px);}
+        h1 {
+            margin: 0 0 6px 0;
+            font-size: 24px;
+            letter-spacing: 2px;
+            color: #ff9900;
+            text-transform: uppercase;
+        }
 
-#score-display{position:absolute;top:20px;right:24px;font-family:'Fredoka One',sans-serif;font-size:28px;color:#fff;pointer-events:none;}
-#over-screen{display:none;}
-</style>
+        .stat-bar-container {
+            width: 220px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            margin: 8px 0;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-bar {
+            height: 100%;
+            width: 100%;
+            transition: width 0.3s ease;
+        }
+
+        #hp-bar { background: linear-gradient(90deg, #ff1e00, #ff5500); }
+        #xp-bar { background: linear-gradient(90deg, #ffaa00, #ffee00); width: 0%; }
+
+        #controls-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 22px;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            pointer-events: none;
+        }
+
+        #quest-box {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #fff;
+            min-width: 210px;
+        }
+
+        .level-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffaa00, #ff3300);
+            color: #fff;
+            font-weight: bold;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
-<nav><a href="index.html">← Joy Box Company</a></nav>
+    <div id="canvas-container"></div>
 
-<div id="game-wrap">
-  <canvas id="c" width="800" height="300"></canvas>
-  <div id="ui">
-    <div id="start-screen">
-      <h1>🎁 <span>Boxy</span> Jump</h1>
-      <p>Jump over the spikes! Press SPACE or tap to jump.<br>How far can Boxy go?</p>
-      <button class="play-btn" onclick="startGame()">▶ PLAY</button>
+    <div id="hud">
+        <div class="hud-card">
+            <h1>Phoenix <span id="level-txt" class="level-badge">Lvl 1</span></h1>
+            
+            <div style="font-size: 11px; color: #bbb; letter-spacing: 1px;">HEALTH</div>
+            <div class="stat-bar-container">
+                <div id="hp-bar" class="stat-bar"></div>
+            </div>
+
+            <div style="font-size: 11px; color: #bbb; letter-spacing: 1px; margin-top: 6px;">XP TO UPGRADE</div>
+            <div class="stat-bar-container">
+                <div id="xp-bar" class="stat-bar"></div>
+            </div>
+
+            <div style="margin-top: 10px; font-size: 13px;">
+                Flame Power: <span id="atk-val" style="color:#ffaa00; font-weight: bold;">20</span>
+            </div>
+        </div>
     </div>
-    <div id="over-screen">
-      <h1>Game <span>Over!</span></h1>
-      <p>You scored</p>
-      <div id="final-score">0</div>
-      <button class="play-btn" onclick="startGame()">▶ PLAY AGAIN</button>
+
+    <div id="quest-box" class="hud-card">
+        <h3 style="margin: 0 0 8px 0; color: #ffaa00; font-size: 15px; letter-spacing: 1px;">ACTIVE HUNT</h3>
+        <div id="quest-desc" style="font-size: 14px;">Defeat Wild Creatures</div>
+        <div id="quest-progress" style="font-size: 20px; font-weight: bold; margin-top: 6px; color: #00ffcc;">0 / 3</div>
     </div>
-  </div>
-  <div id="score-display" style="display:none;">0</div>
-</div>
 
-<script>
-const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
+    <div id="controls-hint">
+        <b>W / S</b>: Pitch | <b>A / D</b>: Turn | <b>SPACE</b>: Boost | <b>CLICK</b>: Flame Strike
+    </div>
 
-const W = canvas.width;
-const H = canvas.height;
-const GROUND = H - 60;
+    <script>
+        // --- ENGINE SETUP ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0c101a);
+        scene.fog = new THREE.FogExp2(0x0c101a, 0.0025);
 
-let boxy, obstacles, score, speed, frame, running, animId;
+        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1200);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.25;
+        container.appendChild(renderer.domElement);
 
-function initGame() {
-  boxy = { x: 100, y: GROUND, w: 50, h: 50, vy: 0, jumping: false };
-  obstacles = [];
-  score = 0;
-  speed = 5;
-  frame = 0;
-  running = false;
-}
+        // --- LIGHTS ---
+        const ambientLight = new THREE.AmbientLight(0x2d3a4e, 0.8);
+        scene.add(ambientLight);
 
-function startGame() {
-  music.play().catch(()=>{});
-  document.getElementById('start-screen').style.display = 'none';
-  document.getElementById('over-screen').style.display = 'none';
-  document.getElementById('score-display').style.display = 'block';
-  if (animId) cancelAnimationFrame(animId);
-  initGame();
-  running = true;
-  loop();
-}
+        const sunLight = new THREE.DirectionalLight(0xff9944, 2.2);
+        sunLight.position.set(150, 250, 100);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        scene.add(sunLight);
 
-function jump() {
-  if (!boxy.jumping) {
-    boxy.vy = -16;
-    boxy.jumping = true;
-  }
-}
+        // --- STATE ---
+        const playerState = {
+            level: 1, hp: 100, maxHp: 100, xp: 0, xpToNext: 100,
+            attackPower: 20, speed: 0, maxSpeed: 1.1, targetSpeed: 0.4
+        };
+        const quest = { target: 3, current: 0 };
 
-document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); if (running) jump(); } });
-canvas.addEventListener('click', () => { if (running) jump(); });
-canvas.addEventListener('touchstart', e => { e.preventDefault(); if (running) jump(); });
+        // --- WORLD ---
+        const worldSize = 700;
+        const terrainGeo = new THREE.PlaneGeometry(worldSize, worldSize, 120, 120);
+        terrainGeo.rotateX(-Math.PI / 2);
 
-function spawnObstacle() {
-  const h = 30 + Math.random() * 30;
-  obstacles.push({ x: W, w: 20, h });
-}
+        const posAttr = terrainGeo.attributes.position;
+        for (let i = 0; i < posAttr.count; i++) {
+            const x = posAttr.getX(i);
+            const z = posAttr.getZ(i);
+            const y = Math.sin(x * 0.015) * Math.cos(z * 0.015) * 22 + Math.sin(x * 0.04) * 7;
+            posAttr.setY(i, y);
+        }
+        terrainGeo.computeVertexNormals();
 
-function drawBoxy(x, y, w, h) {
-  // Box body
-  ctx.fillStyle = '#e63030';
-  ctx.beginPath();
-  ctx.roundRect(x, y, w, h, 8);
-  ctx.fill();
+        const terrain = new THREE.Mesh(terrainGeo, new THREE.MeshStandardMaterial({ color: 0x1d3018, roughness: 0.85, flatShading: true }));
+        terrain.receiveShadow = true;
+        scene.add(terrain);
 
-  // Shine
-  ctx.fillStyle = 'rgba(255,255,255,0.15)';
-  ctx.beginPath();
-  ctx.roundRect(x + 4, y + 4, w/2 - 4, h/3, 4);
-  ctx.fill();
+        // --- HIGH-REALISM PHOENIX MODEL ENGINE ---
+        function createFeatherMesh(length, width, c1, c2) {
+            const shape = new THREE.Shape();
+            shape.moveTo(0, 0);
+            shape.quadraticCurveTo(width * 1.2, length * 0.4, width, length);
+            shape.quadraticCurveTo(0, length * 1.05, -width, length);
+            shape.quadraticCurveTo(-width * 1.2, length * 0.4, 0, 0);
 
-  // Ribbon vertical
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(x + w/2 - 3, y, 6, h);
+            const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.02, bevelEnabled: true, bevelSize: 0.01 });
+            const mat = new THREE.MeshPhysicalMaterial({
+                color: c1, emissive: c2, emissiveIntensity: 0.4,
+                roughness: 0.2, metalness: 0.5, clearcoat: 0.8
+            });
+            return new THREE.Mesh(geo, mat);
+        }
 
-  // Ribbon horizontal
-  ctx.fillRect(x, y + h/2 - 3, w, 6);
+        function buildHyperRealisticPhoenix() {
+            const phoenix = new THREE.Group();
 
-  // Bow left
-  ctx.fillStyle = '#ffd000';
-  ctx.beginPath();
-  ctx.ellipse(x + w/2 - 10, y + 2, 10, 6, -0.5, 0, Math.PI * 2);
-  ctx.fill();
+            // Materials
+            const bodyMat = new THREE.MeshPhysicalMaterial({
+                color: 0xd62200, emissive: 0xaa1100, emissiveIntensity: 0.6,
+                roughness: 0.15, metalness: 0.4, clearcoat: 1.0, clearcoatRoughness: 0.1
+            });
 
-  // Bow right
-  ctx.beginPath();
-  ctx.ellipse(x + w/2 + 10, y + 2, 10, 6, 0.5, 0, Math.PI * 2);
-  ctx.fill();
+            const beakMat = new THREE.MeshStandardMaterial({
+                color: 0xffaa00, metalness: 0.8, roughness: 0.2, emissive: 0xff4400, emissiveIntensity: 0.2
+            });
 
-  // Bow center
-  ctx.fillStyle = '#ff6b00';
-  ctx.beginPath();
-  ctx.ellipse(x + w/2, y + 2, 5, 5, 0, 0, Math.PI * 2);
-  ctx.fill();
+            const bodyGroup = new THREE.Group();
 
-  // Eyes
-  ctx.fillStyle = '#fff';
-  ctx.beginPath();
-  ctx.ellipse(x + 14, y + h * 0.45, 6, 6, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(x + 32, y + h * 0.45, 6, 6, 0, 0, Math.PI * 2);
-  ctx.fill();
+            // 1. SCULPTED ANATOMICAL TORSO & CHEST KEEL
+            const chestGeo = new THREE.SphereGeometry(1.2, 16, 16);
+            chestGeo.scale(0.85, 1.3, 1.9);
+            const chest = new THREE.Mesh(chestGeo, bodyMat);
+            chest.castShadow = true;
+            bodyGroup.add(chest);
 
-  // Pupils
-  ctx.fillStyle = '#1a2744';
-  ctx.beginPath();
-  ctx.ellipse(x + 15, y + h * 0.45, 3, 3, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(x + 33, y + h * 0.45, 3, 3, 0, 0, Math.PI * 2);
-  ctx.fill();
+            // Layered Body Plumage (Feather Tiles on Body)
+            for (let i = 0; i < 40; i++) {
+                const featherTile = createFeatherMesh(0.6, 0.15, 0xff3300, 0xff8800);
+                const phi = Math.random() * Math.PI * 2;
+                const theta = Math.random() * Math.PI;
 
-  // Smile
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(x + w/2, y + h * 0.65, 8, 0.1, Math.PI - 0.1);
-  ctx.stroke();
-}
+                featherTile.position.set(
+                    0.7 * Math.sin(theta) * Math.cos(phi),
+                    0.9 * Math.cos(theta),
+                    1.2 * Math.sin(theta) * Math.sin(phi)
+                );
+                featherTile.rotation.set(theta, phi, 0);
+                bodyGroup.add(featherTile);
+            }
 
-function drawSpike(x, w, h) {
-  ctx.fillStyle = '#3a6fd8';
-  ctx.beginPath();
-  ctx.moveTo(x, GROUND + 1);
-  ctx.lineTo(x + w/2, GROUND - h);
-  ctx.lineTo(x + w, GROUND + 1);
-  ctx.fill();
+            // 2. DETAILED NECK & ANATOMICAL HEAD
+            const neckGeo = new THREE.CylinderGeometry(0.35, 0.65, 2.2, 12);
+            neckGeo.rotateX(0.35);
+            const neck = new THREE.Mesh(neckGeo, bodyMat);
+            neck.position.set(0, 1.2, 1.1);
+            bodyGroup.add(neck);
 
-  // Shine
-  ctx.fillStyle = 'rgba(255,255,255,0.2)';
-  ctx.beginPath();
-  ctx.moveTo(x + 2, GROUND + 1);
-  ctx.lineTo(x + w/2, GROUND - h + 6);
-  ctx.lineTo(x + w/2 - 3, GROUND + 1);
-  ctx.fill();
-}
+            const headGroup = new THREE.Group();
+            headGroup.position.set(0, 2.2, 1.7);
 
-function drawGround() {
-  // Ground
-  ctx.fillStyle = '#0d1220';
-  ctx.fillRect(0, GROUND + 1, W, H - GROUND - 1);
+            // Cranium Skull
+            const craniumGeo = new THREE.SphereGeometry(0.55, 16, 16);
+            craniumGeo.scale(0.8, 0.9, 1.1);
+            const cranium = new THREE.Mesh(craniumGeo, bodyMat);
+            headGroup.add(cranium);
 
-  // Ground line
-  ctx.strokeStyle = '#3a6fd8';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(0, GROUND + 1);
-  ctx.lineTo(W, GROUND + 1);
-  ctx.stroke();
+            // Fierce Brow Ridge (Eagled Eyebrows)
+            const browGeo = new THREE.BoxGeometry(0.8, 0.12, 0.4);
+            const brow = new THREE.Mesh(browGeo, bodyMat);
+            brow.position.set(0, 0.28, 0.25);
+            brow.rotation.x = 0.2;
+            headGroup.add(brow);
 
-  // Dashes
-  ctx.strokeStyle = 'rgba(58,111,216,0.3)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([20, 20]);
-  const dashOffset = -(frame * speed * 0.5) % 40;
-  ctx.beginPath();
-  ctx.moveTo(dashOffset, GROUND - 20);
-  for (let x = dashOffset; x < W; x += 40) {
-    ctx.moveTo(x, GROUND - 20);
-    ctx.lineTo(x + 20, GROUND - 20);
-  }
-  ctx.stroke();
-  ctx.setLineDash([]);
-}
+            // Realistic Multi-part Curved Beak
+            const upperBeakShape = new THREE.Shape();
+            upperBeakShape.moveTo(0, 0);
+            upperBeakShape.lineTo(0.2, -0.15);
+            upperBeakShape.quadraticCurveTo(0.18, -0.9, 0, -1.2);
+            upperBeakShape.quadraticCurveTo(-0.18, -0.9, -0.2, -0.15);
+            upperBeakShape.closePath();
 
-function drawBg() {
-  // Sky gradient
-  const grad = ctx.createLinearGradient(0, 0, 0, GROUND);
-  grad.addColorStop(0, '#0d1220');
-  grad.addColorStop(1, '#1a2744');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, W, GROUND);
+            const upperBeakGeo = new THREE.ExtrudeGeometry(upperBeakShape, { depth: 0.18, bevelEnabled: true, bevelSize: 0.02 });
+            upperBeakGeo.rotateX(-1.25);
+            const upperBeak = new THREE.Mesh(upperBeakGeo, beakMat);
+            upperBeak.position.set(0, 0.05, 0.45);
+            headGroup.add(upperBeak);
 
-  // Stars
-  ctx.fillStyle = 'rgba(255,255,255,0.4)';
-  const stars = [[50,30],[150,60],[300,20],[450,50],[600,30],[700,60],[750,20],[200,80],[520,70]];
-  stars.forEach(([sx, sy]) => {
-    ctx.beginPath();
-    ctx.arc(sx, sy, 1.5, 0, Math.PI * 2);
-    ctx.fill();
-  });
+            // Eyes & glowing pupil orbits
+            const eyeSocketMat = new THREE.MeshBasicMaterial({ color: 0x110000 });
+            const eyePupilMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
 
-  // Clouds / joy emojis floating
-  ctx.font = '20px serif';
-  ctx.globalAlpha = 0.15;
-  const emojis = ['🎁','💛','🎁','💛','🎁'];
-  emojis.forEach((e, i) => {
-    const ex = ((i * 200) - (frame * speed * 0.3) % (W + 200) + W * 1.5) % (W + 200) - 100;
-    ctx.fillText(e, ex, 40 + (i % 2) * 30);
-  });
-  ctx.globalAlpha = 1;
-}
+            const createEye = (isLeft) => {
+                const eyeGroup = new THREE.Group();
+                const socket = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 12), eyeSocketMat);
+                const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 12), eyePupilMat);
+                pupil.position.z = 0.08;
+                eyeGroup.add(socket, pupil);
+                eyeGroup.position.set(isLeft ? 0.38 : -0.38, 0.12, 0.22);
+                return eyeGroup;
+            };
+            headGroup.add(createEye(true), createEye(false));
 
-function loop() {
-  ctx.clearRect(0, 0, W, H);
-  drawBg();
-  drawGround();
+            // Crown Crest Plumes
+            for (let i = -3; i <= 3; i++) {
+                const plume = createFeatherMesh(2.0, 0.12, 0xff5500, 0xffbb00);
+                plume.position.set(i * 0.07, 0.35, -0.1);
+                plume.rotation.x = -0.7 - Math.abs(i) * 0.08;
+                plume.rotation.z = i * 0.12;
+                headGroup.add(plume);
+            }
+            bodyGroup.add(headGroup);
 
-  // Physics
-  boxy.vy += 0.8;
-  boxy.y += boxy.vy;
-  if (boxy.y >= GROUND - boxy.h) {
-    boxy.y = GROUND - boxy.h;
-    boxy.vy = 0;
-    boxy.jumping = false;
-  }
+            // 3. WINGS
+            const createWing = (isLeft) => {
+                const wing = new THREE.Group();
+                const side = isLeft ? 1 : -1;
 
-  // Obstacles
-  frame++;
-  const spawnRate = Math.max(60, 120 - Math.floor(score / 10));
-  if (frame % spawnRate === 0) spawnObstacle();
+                for (let i = 0; i < 11; i++) {
+                    const feather = createFeatherMesh(4.0 - i * 0.2, 0.22, 0xff2200, 0xffaa00);
+                    feather.position.set((i * 0.35 + 0.5) * side, 0, -i * 0.12);
+                    feather.rotation.z = side * (-1.2 + i * 0.08);
+                    feather.rotation.y = side * 0.2;
+                    wing.add(feather);
+                }
+                wing.position.set(0.6 * side, 0.3, 0.2);
+                return wing;
+            };
 
-  obstacles.forEach(o => o.x -= speed);
-  obstacles = obstacles.filter(o => o.x > -50);
+            const leftWing = createWing(true);
+            const rightWing = createWing(false);
+            bodyGroup.add(leftWing, rightWing);
 
-  // Collision
-  for (let o of obstacles) {
-    const bx = boxy.x + 6, by = boxy.y + 6, bw = boxy.w - 12, bh = boxy.h - 6;
-    const ox = o.x + 3, ow = o.w - 6;
-    if (bx < ox + ow && bx + bw > ox && by + bh > GROUND - o.h) {
-      gameOver();
-      return;
-    }
-  }
+            // 4. TAIL
+            const tailGroup = new THREE.Group();
+            tailGroup.position.set(0, -0.3, -1.2);
+            for (let i = -3; i <= 3; i++) {
+                const plume = createFeatherMesh(4.8 - Math.abs(i) * 0.4, 0.25, 0xff1100, 0xffaa00);
+                plume.position.set(i * 0.18, 0, -0.2);
+                plume.rotation.x = -2.6 + Math.abs(i) * 0.08;
+                plume.rotation.y = i * 0.12;
+                tailGroup.add(plume);
+            }
+            bodyGroup.add(tailGroup);
 
-  // Draw obstacles
-  obstacles.forEach(o => drawSpike(o.x, o.w, o.h));
+            // Light core
+            const coreLight = new THREE.PointLight(0xff6600, 4.5, 20);
+            coreLight.position.set(0, 0.5, 0.5);
+            bodyGroup.add(coreLight);
 
-  // Draw boxy
-  drawBoxy(boxy.x, boxy.y, boxy.w, boxy.h);
+            phoenix.add(bodyGroup);
 
-  // Score
-  score++;
-  speed = 5 + Math.floor(score / 200) * 0.5;
-  document.getElementById('score-display').textContent = Math.floor(score / 10);
+            return { mesh: phoenix, leftWing, rightWing, tail: tailGroup, head: headGroup };
+        }
 
-  animId = requestAnimationFrame(loop);
-}
+        const phoenixData = buildHyperRealisticPhoenix();
+        const player = phoenixData.mesh;
+        player.position.set(0, 45, 0);
+        scene.add(player);
 
-function gameOver() {
-  running = false;
-  cancelAnimationFrame(animId);
-  document.getElementById('final-score').textContent = Math.floor(score / 10);
-  document.getElementById('over-screen').style.display = 'block';
-  document.getElementById('score-display').style.display = 'none';
-}
+        // --- WILDLIFE ---
+        const animals = [];
+        function spawnAnimal(isPredator = false) {
+            const mesh = new THREE.Mesh(
+                new THREE.CapsuleGeometry(0.8, 1.8, 8, 16),
+                new THREE.MeshStandardMaterial({ color: isPredator ? 0xff2244 : 0x2288ff })
+            );
+            mesh.castShadow = true;
+            const x = (Math.random() - 0.5) * (worldSize - 80);
+            const z = (Math.random() - 0.5) * (worldSize - 80);
+            mesh.position.set(x, 10, z);
 
-initGame();
+            const animalData = { mesh, isPredator, hp: isPredator ? 60 : 25, maxHp: isPredator ? 60 : 25, vx: 0.1, vz: 0.1 };
+            scene.add(mesh);
+            animals.push(animalData);
+        }
+        for (let i = 0; i < 15; i++) spawnAnimal(false);
+        for (let i = 0; i < 5; i++) spawnAnimal(true);
 
-// Music placeholder
-const music = { play: ()=>Promise.resolve(), pause: ()=>{} };
+        // --- CONTROLS & ATTACK ---
+        const keys = {};
+        window.addEventListener('keydown', (e) => keys[e.code] = true);
+        window.addEventListener('keyup', (e) => keys[e.code] = false);
 
-// Draw initial frame
-ctx.fillStyle = '#1a2744';
-ctx.fillRect(0, 0, W, H);
-drawBg();
-drawGround();
-drawBoxy(boxy.x, GROUND - boxy.h, boxy.w, boxy.h);
-</script>
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') playerState.speed = Math.min(playerState.speed + 0.35, playerState.maxSpeed);
+        });
+
+        window.addEventListener('pointerdown', () => {
+            const blast = new THREE.Mesh(new THREE.SphereGeometry(6, 16, 16), new THREE.MeshBasicMaterial({ color: 0xff6600, wireframe: true }));
+            blast.position.copy(player.position);
+            scene.add(blast);
+            setTimeout(() => scene.remove(blast), 200);
+
+            animals.forEach((a, index) => {
+                if (player.position.distanceTo(a.mesh.position) < 12) {
+                    a.hp -= playerState.attackPower;
+                    if (a.hp <= 0) {
+                        scene.remove(a.mesh);
+                        animals.splice(index, 1);
+                        quest.current++;
+                        document.getElementById('quest-progress').innerText = `${quest.current} / ${quest.target}`;
+                        spawnAnimal(Math.random() > 0.6);
+                    }
+                }
+            });
+        });
+
+        // --- LOOP ---
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+            const time = clock.getElapsedTime();
+
+            if (keys['KeyA']) player.rotation.y += 1.6 * delta;
+            if (keys['KeyD']) player.rotation.y -= 1.6 * delta;
+            if (keys['KeyW']) player.rotation.x = Math.max(player.rotation.x - 1.3 * delta, -Math.PI / 2.8);
+            if (keys['KeyS']) player.rotation.x = Math.min(player.rotation.x + 1.3 * delta, Math.PI / 2.8);
+
+            if (!keys['KeyW'] && !keys['KeyS']) player.rotation.x *= 0.97;
+
+            const forward = new THREE.Vector3(0, 0, 1).applyQuaternion(player.quaternion);
+            playerState.speed = THREE.MathUtils.lerp(playerState.speed, playerState.targetSpeed, delta * 0.6);
+            player.position.addScaledVector(forward, playerState.speed);
+
+            // Flap animation
+            const flapAngle = Math.sin(time * 10) * 0.65;
+            phoenixData.leftWing.rotation.z = flapAngle;
+            phoenixData.rightWing.rotation.z = -flapAngle;
+
+            // Camera Tracking
+            const camOffset = new THREE.Vector3(0, 4, -13).applyQuaternion(player.quaternion);
+            camera.position.lerp(player.position.clone().add(camOffset), 0.1);
+            camera.lookAt(player.position);
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
 </body>
 </html>

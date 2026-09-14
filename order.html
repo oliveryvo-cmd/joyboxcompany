@@ -1,179 +1,129 @@
-<!DOCTYPE html>
+<!doctype html>
+<meta charset="utf-8">
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Order a Box — Joy Box Company</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order a Joy Box — Joy Box Company</title>
+<link rel="stylesheet" href="style.css">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{--red:#e63030;--navy:#1a2744;--blue:#3a6fd8;--lightblue:#d6e4f7;--white:#ffffff;--silver:#6b7a99;}
-body{background:linear-gradient(160deg,var(--lightblue) 0%,var(--white) 60%);min-height:100vh;font-family:'Nunito',sans-serif;padding:40px 20px;}
-
-nav{max-width:640px;margin:0 auto 48px;display:flex;align-items:center;}
-nav a{font-weight:800;color:var(--navy);text-decoration:none;font-size:14px;letter-spacing:1px;}
-nav a:hover{color:var(--red);}
-
-.card{background:var(--white);border-radius:24px;padding:48px;max-width:640px;margin:0 auto;box-shadow:0 20px 60px rgba(26,39,68,0.12);}
-.emoji{font-size:56px;margin-bottom:16px;}
-h1{font-family:'Fredoka One',sans-serif;font-size:36px;color:var(--navy);margin-bottom:8px;}
-h1 span{color:var(--red);}
-.sub{color:var(--silver);font-size:15px;line-height:1.7;margin-bottom:36px;}
-
-.box-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px;}
-.box-opt{border:2px solid var(--lightblue);border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;}
-.box-opt:hover{border-color:var(--blue);}
-.box-opt.selected{border-color:var(--red);background:rgba(230,48,48,0.05);}
-.box-opt-icon{font-size:28px;margin-bottom:6px;}
-.box-opt-name{font-weight:900;font-size:14px;color:var(--navy);}
-.box-opt-price{font-family:'Fredoka One',sans-serif;font-size:20px;color:var(--red);}
-
-label{display:block;font-weight:800;font-size:13px;letter-spacing:1px;color:var(--navy);margin-bottom:6px;margin-top:20px;}
-input,textarea,select{width:100%;padding:14px 18px;border:2px solid var(--lightblue);border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:var(--navy);outline:none;transition:border .2s;background:var(--white);}
-input:focus,textarea:focus,select:focus{border-color:var(--blue);}
-input::placeholder,textarea::placeholder{color:#b0bec5;font-weight:600;}
-textarea{resize:vertical;min-height:100px;}
-
-.btn{width:100%;padding:18px;background:var(--red);color:var(--white);border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;cursor:pointer;transition:all .2s;letter-spacing:1px;margin-top:28px;}
-.btn:hover{background:#ff4d4d;transform:translateY(-2px);}
-
-.success{display:none;background:#e8f5e9;border:2px solid #66bb6a;border-radius:16px;padding:28px;margin-top:24px;text-align:center;}
-.success h2{color:#2e7d32;font-size:24px;margin-bottom:8px;}
-.success p{color:#388e3c;font-size:15px;line-height:1.7;}
-
-.note{font-size:13px;color:var(--silver);text-align:center;margin-top:16px;line-height:1.6;}
-
-@media(max-width:500px){.box-picker{grid-template-columns:repeat(2,1fr);}  .card{padding:28px 20px;}}
+  header{padding:clamp(48px,9vh,88px) 0 36px}
+  .picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:26px}
+  .box-opt{border:1px solid var(--line);border-radius:14px;padding:22px 16px;background:var(--card);
+    cursor:pointer;text-align:center;transition:.16s}
+  .box-opt:hover{border-color:#3a3a3f;transform:translateY(-2px)}
+  .box-opt.selected{border-color:var(--jade);background:#0f1512}
+  .box-opt-icon{font-size:30px;line-height:1}
+  .box-opt-name{font-size:15px;font-weight:600;margin-top:12px}
+  .box-opt-price{font-size:26px;font-weight:600;letter-spacing:-.03em;margin-top:4px}
+  .box-opt.selected .box-opt-price{color:var(--jade)}
+  form{max-width:620px}
+  .note{font-size:13px;color:var(--dim);margin-top:14px;text-align:center}
+  .success{display:none;border:1px solid var(--jade);background:#0f1512;border-radius:14px;
+    padding:28px;margin-top:30px}
+  .success h2{font-size:24px;margin-bottom:10px}
+  .success p{color:#cfcbc3;font-size:15px}
+  .success .mail{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);
+    font-size:15px;color:var(--jade)}
+  .promise{border-left:2px solid var(--jade);background:#0f1512;padding:20px 22px;
+    margin-top:34px;font-size:14.5px;color:#cfcbc3;max-width:620px}
 </style>
 </head>
 <body>
 
-<nav><a href="index.html">← Back to Joy Box Company</a></nav>
-
-<div class="card">
-  <div class="emoji">🎁</div>
-  <h1>Order a <span>Joy Box.</span></h1>
-  <p class="sub">Pick a box size, fill in the details, and we'll pack it with surprise toys and a handwritten note just for the kid.</p>
-
-  <div class="box-picker">
-    <div class="box-opt" onclick="selectBox(this,'Smile','$1')">
-      <div class="box-opt-icon">😊</div>
-      <div class="box-opt-name">Smile</div>
-      <div class="box-opt-price">$1</div>
-    </div>
-    <div class="box-opt" onclick="selectBox(this,'Giggle','$5')">
-      <div class="box-opt-icon">😄</div>
-      <div class="box-opt-name">Giggle</div>
-      <div class="box-opt-price">$5</div>
-    </div>
-    <div class="box-opt" onclick="selectBox(this,'Sunshine','$10')">
-      <div class="box-opt-icon">☀️</div>
-      <div class="box-opt-name">Sunshine</div>
-      <div class="box-opt-price">$10</div>
-    </div>
-    <div class="box-opt" onclick="selectBox(this,'Rainbow','$20')">
-      <div class="box-opt-icon">🌈</div>
-      <div class="box-opt-name">Rainbow</div>
-      <div class="box-opt-price">$20</div>
-    </div>
+<nav><div class="wrap">
+  <a href="index.html" class="mark">Joy Box<i>.</i></a>
+  <div class="navlinks">
+    <a href="index.html#how">How it works</a>
+    <a href="index.html#boxes">Boxes</a>
+    <a href="about.html">About</a>
+    <a href="order.html" class="btn">Order a box</a>
   </div>
+</div></nav>
 
-  <label>YOUR NAME</label>
-  <input type="text" id="sender-name" placeholder="Your name">
+<header><div class="wrap">
+  <div class="eyebrow">Order</div>
+  <h1 style="margin-top:22px">Send a box.<br>Send a second one<br>to a kid who needs it.</h1>
+  <p class="lead" style="margin-top:22px">Pick a size, tell us about the kid, and we pack it by hand —
+    toys chosen for them and a handwritten note. Part of what you pay sends a Joy Box
+    to a disabled kid.</p>
+</div></header>
 
-  <label>YOUR EMAIL</label>
-  <input type="email" id="sender-email" placeholder="your@email.com">
+<section style="border-bottom:0">
+  <div class="wrap">
+    <form onsubmit="return false">
 
-  <label>KID'S NAME</label>
-  <input type="text" id="kid-name" placeholder="Who is this box for?">
+      <div class="eyebrow">Choose a box</div>
+      <div class="picker">
+        <div class="box-opt" onclick="selectBox(this,'Smile','$1')">
+          <div class="box-opt-icon">🙂</div><div class="box-opt-name">Smile</div>
+          <div class="box-opt-price">$1</div></div>
+        <div class="box-opt" onclick="selectBox(this,'Giggle','$5')">
+          <div class="box-opt-icon">😄</div><div class="box-opt-name">Giggle</div>
+          <div class="box-opt-price">$5</div></div>
+        <div class="box-opt" onclick="selectBox(this,'Sunshine','$10')">
+          <div class="box-opt-icon">☀️</div><div class="box-opt-name">Sunshine</div>
+          <div class="box-opt-price">$10</div></div>
+        <div class="box-opt" onclick="selectBox(this,'Rainbow','$20')">
+          <div class="box-opt-icon">🌈</div><div class="box-opt-name">Rainbow</div>
+          <div class="box-opt-price">$20</div></div>
+      </div>
 
-  <label>KID'S AGE</label>
-  <input type="number" id="kid-age" placeholder="How old are they?" min="1" max="18">
+      <label for="sender-name">Your name</label>
+      <input type="text" id="sender-name" placeholder="Your name" autocomplete="name">
 
-  <label>DELIVERY ADDRESS</label>
-  <input type="text" id="address" placeholder="Street address, city, state, zip">
+      <label for="sender-email">Your email</label>
+      <input type="email" id="sender-email" placeholder="you@email.com" autocomplete="email">
 
-  <label>ANYTHING WE SHOULD KNOW ABOUT THE KID?</label>
-  <textarea id="notes" placeholder="Favorite colors, interests, allergies, anything — totally optional"></textarea>
+      <label for="kid-name">Kid&rsquo;s name</label>
+      <input type="text" id="kid-name" placeholder="Who is this box for?">
 
-  <button class="btn" onclick="submitOrder()">🎁 PLACE ORDER</button>
-  <p class="note">Payment is cash. Oliver will contact you to arrange it. 💛</p>
+      <label for="kid-age">Kid&rsquo;s age</label>
+      <input type="number" id="kid-age" placeholder="How old are they?" min="1" max="18">
 
-  <div class="success" id="success">
-    <h2>🎉 Order Received!</h2>
-    <p style="margin-bottom:16px;">Oliver will reach out to arrange <strong>cash payment</strong> and delivery!</p>
-    <div style="background:#f0f7ff;border-radius:12px;padding:16px;margin-top:8px;">
-      <p style="font-weight:900;color:#1a2744;margin-bottom:8px;">📬 Contact Oliver directly:</p>
-      <p style="color:#3a6fd8;font-weight:800;">📧 truongnvo@gmail.com</p>
-    </div>
+      <label for="street">Delivery address</label>
+      <input type="text" id="street" placeholder="Street address" autocomplete="address-line1">
+      <div class="row" style="margin-top:10px">
+        <input type="text" id="city" placeholder="City" autocomplete="address-level2" style="flex:2">
+        <input type="text" id="state" placeholder="State" maxlength="20" autocomplete="address-level1" style="flex:1">
+        <input type="text" id="zip" placeholder="ZIP" maxlength="10" inputmode="numeric" autocomplete="postal-code" style="flex:1">
+      </div>
+      <div class="hint">We need all four or the box cannot be mailed.</div>
+
+      <label for="notes">Anything we should know about the kid?</label>
+      <textarea id="notes" placeholder="Favourite colours, interests, allergies — anything. Optional, but it makes the box better."></textarea>
+
+      <button class="btn wide" style="margin-top:28px" onclick="submitOrder()">Place order</button>
+      <p class="note">Payment is cash. Oliver will contact you to arrange it.</p>
+
+      <div class="success" id="success">
+        <h2>Order received</h2>
+        <p>Oliver will reach out to arrange <strong>cash payment</strong> and delivery.
+           A confirmation is on its way to <span id="confirm-email"></span>.</p>
+        <div class="mail">truongnvo@gmail.com</div>
+      </div>
+
+      <div class="promise">
+        Being straight with you: Joy Box Company is run by a kid in Mission Viejo, California,
+        and every box is packed and sent by hand. That means it is slower than a shop —
+        and that a real person chose what went inside.
+      </div>
+
+    </form>
   </div>
-</div>
+</section>
 
-<script>
-let selectedBox = '';
+<footer><div class="wrap">
+  <div class="fgrid">
+    <div class="fcol"><h4>Joy Box</h4>
+      <a href="index.html">Home</a><a href="order.html">Order a box</a><a href="about.html">About</a></div>
+    <div class="fcol"><h4>More</h4>
+      <a href="press.html">Press</a><a href="join.html">Join</a><a href="index.html#film">Film</a></div>
+    <div class="fcol"><h4>Contact</h4>
+      <a href="mailto:truongnvo@gmail.com">truongnvo@gmail.com</a></div>
+  </div>
+  <div>Joy Box Company &middot; Mission Viejo, California &middot; Est. 2026</div>
+</div></footer>
 
-function selectBox(el, name, price) {
-  document.querySelectorAll('.box-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedBox = name + ' ' + price;
-}
-
-async function submitOrder() {
-  const name = document.getElementById('sender-name').value.trim();
-  const email = document.getElementById('sender-email').value.trim();
-  const kid = document.getElementById('kid-name').value.trim();
-  const age = document.getElementById('kid-age').value.trim();
-  const address = document.getElementById('address').value.trim();
-  const notes = document.getElementById('notes').value.trim();
-
-  if (!selectedBox || !name || !email || !kid || !address) {
-    alert('Please fill in all required fields and pick a box!');
-    return;
-  }
-
-  const subject = encodeURIComponent('Joy Box Order — ' + selectedBox);
-  const body = encodeURIComponent(
-    'Box: ' + selectedBox + '\n' +
-    'From: ' + name + '\n' +
-    'Email: ' + email + '\n' +
-    "Kid's name: " + kid + '\n' +
-    "Kid's age: " + age + '\n' +
-    'Address: ' + address + '\n' +
-    'Notes: ' + (notes || 'None')
-  );
-
-  const btn = document.querySelector('.btn');
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-
-  try {
-    const res = await fetch('https://qbzpyhsbrjagyqsruzcb.supabase.co/rest/v1/orders', {
-      method: 'POST',
-      headers: {
-        'apikey': 'sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs',
-        'Authorization': 'Bearer sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs',
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ box: selectedBox, sender_name: name, sender_email: email, kid_name: kid, kid_age: age, address, notes })
-    });
-
-    if (res.ok || res.status === 201) {
-      window.location.href = 'mailto:truongnvo@gmail.com?subject=' + subject + '&body=' + body;
-      document.getElementById('confirm-email').textContent = email;
-      document.getElementById('success').style.display = 'block';
-      btn.textContent = '✅ ORDER PLACED!';
-    } else {
-      btn.disabled = false;
-      btn.textContent = '🎁 PLACE ORDER';
-      alert('Something went wrong. Try again!');
-    }
-  } catch(e) {
-    btn.disabled = false;
-    btn.textContent = '🎁 PLACE ORDER';
-    alert('Something went wrong. Try again!');
-  }
-}
-</script>
+<script src="order.js"></script>
 </body>
 </html>

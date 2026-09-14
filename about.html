@@ -1,167 +1,103 @@
-<!DOCTYPE html>
+<!doctype html>
+<meta charset="utf-8">
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>About — Joy Box Company</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About — Joy Box Company</title>
+<link rel="stylesheet" href="style.css">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{--red:#e63030;--navy:#1a2744;--blue:#3a6fd8;--lightblue:#d6e4f7;--white:#ffffff;--silver:#6b7a99;}
-body{background:var(--white);font-family:'Nunito',sans-serif;color:var(--navy);overflow-x:hidden;}
-
-nav{background:var(--white);border-bottom:3px solid var(--lightblue);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:80px;box-shadow:0 2px 20px rgba(26,39,68,0.08);}
-.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
-.nav-logo img{height:52px;}
-.nav-logo-text{font-family:'Fredoka One',sans-serif;font-size:22px;color:var(--navy);letter-spacing:1px;}
-.nav-logo-text span{color:var(--red);}
-nav a.back{font-weight:800;color:var(--silver);text-decoration:none;font-size:14px;letter-spacing:1px;}
-nav a.back:hover{color:var(--red);}
-
-/* HERO */
-.hero{background:linear-gradient(160deg,var(--navy) 0%,#0d1f3c 100%);padding:100px 48px;text-align:center;position:relative;overflow:hidden;}
-.hero::before{content:'💛';font-size:400px;position:absolute;right:-80px;bottom:-80px;opacity:0.04;}
-.hero-tag{display:inline-block;background:rgba(230,48,48,0.2);color:var(--red);font-size:11px;font-weight:900;letter-spacing:3px;padding:6px 20px;border-radius:100px;margin-bottom:24px;}
-.hero h1{font-family:'Fredoka One',sans-serif;font-size:clamp(48px,7vw,90px);color:var(--white);line-height:1.05;margin-bottom:20px;}
-.hero h1 span{color:var(--red);}
-.hero p{font-size:20px;color:rgba(255,255,255,0.6);max-width:600px;margin:0 auto;line-height:1.8;}
-
-/* STORY */
-.story{max-width:760px;margin:0 auto;padding:100px 48px;}
-.story-block{margin-bottom:64px;}
-.story-block .tag{font-size:11px;font-weight:900;letter-spacing:3px;color:var(--red);margin-bottom:16px;}
-.story-block h2{font-family:'Fredoka One',sans-serif;font-size:36px;color:var(--navy);margin-bottom:20px;line-height:1.2;}
-.story-block h2 span{color:var(--red);}
-.story-block p{font-size:17px;color:var(--silver);line-height:2;margin-bottom:16px;}
-.story-block p strong{color:var(--navy);}
-
-/* QUOTE */
-.quote{background:var(--navy);border-radius:24px;padding:48px;margin:64px 0;text-align:center;}
-.quote p{font-family:'Fredoka One',sans-serif;font-size:28px;color:var(--white);line-height:1.4;}
-.quote p span{color:var(--red);}
-
-/* VALUES */
-.values{background:var(--lightblue);padding:80px 48px;}
-.values-inner{max-width:960px;margin:0 auto;}
-.values-tag{font-size:11px;font-weight:900;letter-spacing:3px;color:var(--red);margin-bottom:16px;}
-.values h2{font-family:'Fredoka One',sans-serif;font-size:40px;color:var(--navy);margin-bottom:48px;}
-.values h2 span{color:var(--red);}
-.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
-.value-card{background:var(--white);border-radius:20px;padding:32px 28px;}
-.value-icon{font-size:40px;margin-bottom:16px;}
-.value-title{font-family:'Fredoka One',sans-serif;font-size:22px;color:var(--navy);margin-bottom:8px;}
-.value-desc{font-size:14px;color:var(--silver);line-height:1.8;}
-
-/* CTA */
-.cta{background:var(--red);padding:80px 48px;text-align:center;}
-.cta h2{font-family:'Fredoka One',sans-serif;font-size:48px;color:var(--white);margin-bottom:16px;}
-.cta p{font-size:18px;color:rgba(255,255,255,0.8);margin-bottom:40px;}
-.cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
-.btn-white{background:var(--white);color:var(--red);padding:16px 36px;border-radius:100px;font-weight:900;font-size:16px;text-decoration:none;transition:all .2s;}
-.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2);}
-.btn-outline{background:transparent;color:var(--white);border:3px solid rgba(255,255,255,0.4);padding:16px 36px;border-radius:100px;font-weight:900;font-size:16px;text-decoration:none;transition:all .2s;}
-.btn-outline:hover{border-color:var(--white);transform:translateY(-2px);}
-
-@media(max-width:700px){
-  nav{padding:0 20px;}
-  .hero,.story,.values,.cta{padding-left:20px;padding-right:20px;}
-  .values-grid{grid-template-columns:1fr;}
-  .story{padding-top:60px;padding-bottom:60px;}
-}
+  header{padding:clamp(52px,10vh,100px) 0 40px}
+  .quote{font-size:clamp(22px,3.2vw,34px);line-height:1.32;letter-spacing:-.02em;
+    margin:38px 0;max-width:22ch}
+  .quote span{color:var(--jade)}
+  .split{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:start}
+  @media(max-width:860px){ .split{grid-template-columns:1fr;gap:32px} }
+  .facts{border:1px solid var(--line);border-radius:14px;padding:6px 24px;background:var(--card)}
+  .ff{padding:20px 0;border-bottom:1px solid var(--line)}
+  .ff:last-child{border:0}
+  .ff .k{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:7px}
+  .ff .v{font-size:15px;color:#cfcbc3}
+  p.body{color:#cfcbc3;font-size:16px;margin-top:16px;max-width:60ch}
 </style>
 </head>
 <body>
 
-<nav>
-  <a class="nav-logo" href="index.html">
-    <img src="logo.jpg" alt="Joy Box Company">
-    <div class="nav-logo-text"><span>Joy Box</span> Company</div>
-  </a>
-  <a class="back" href="index.html">← Back to Home</a>
-</nav>
-
-<div class="hero">
-  <div class="hero-tag">// OUR STORY</div>
-  <h1>Built by a Kid.<br>For <span>Disabled Kids.</span></h1>
-  <p>Joy Box Company exists because every disabled kid deserves to open a box and know that someone out there is thinking about them.</p>
-</div>
-
-<div class="story">
-  <div class="story-block">
-    <div class="tag">// HOW IT STARTED</div>
-    <h2>One kid decided to <span>do something.</span></h2>
-    <p>Joy Box Company was started by a kid who knows what it feels like to be different. Growing up with a disability, he saw how lonely it could get — and how much a small, unexpected act of kindness could change everything.</p>
-    <p>He wanted disabled kids to open their door and find a box full of surprise toys, a handwritten note, and the feeling that <strong>someone out there sees them and thinks they matter.</strong></p>
-    <p>So he built it. By himself. From scratch.</p>
+<nav><div class="wrap">
+  <a href="index.html" class="mark">Joy Box<i>.</i></a>
+  <div class="navlinks">
+    <a href="index.html#how">How it works</a>
+    <a href="index.html#boxes">Boxes</a>
+    <a href="about.html">About</a>
+    <a href="order.html" class="btn">Order a box</a>
   </div>
+</div></nav>
 
-  <div class="quote">
-    <p>"Every disabled kid deserves to feel <span>surprised, seen, and loved.</span> That's all this is."</p>
-  </div>
+<header><div class="wrap">
+  <div class="eyebrow">Our story</div>
+  <h1 style="margin-top:22px">Built by a kid.<br>For disabled kids.</h1>
+  <p class="lead" style="margin-top:22px">Joy Box Company exists because every disabled kid
+    deserves to open a box and know that someone out there is thinking about them.</p>
+</div></header>
 
-  <div class="story-block">
-    <div class="tag">// HOW IT WORKS</div>
-    <h2>Every box is <span>packed by hand.</span></h2>
-    <p>There's no warehouse. No factory. No robots. <strong>Every single Joy Box is packed by hand</strong> — toys picked one by one, a handwritten note written personally for the kid receiving it.</p>
-    <p>Local boxes get delivered by bike, for free. Boxes that ship anywhere go out fast. No giant corporation. Just one kid who cares.</p>
-  </div>
-
-  <div class="story-block">
-    <div class="tag">// THE MISSION</div>
-    <h2>Joy is not a <span>luxury.</span></h2>
-    <p>Disabled kids already deal with enough. Doctor appointments, therapy, people staring, feeling left out. A Joy Box doesn't fix any of that.</p>
-    <p>But it does one thing: <strong>it shows up at their door and says someone is thinking about you.</strong> That matters more than people realize.</p>
-    <p>That's the mission. That's all it's ever been.</p>
-  </div>
-</div>
-
-<div class="values">
-  <div class="values-inner">
-    <div class="values-tag">// WHAT WE BELIEVE</div>
-    <h2>The things we <span>never compromise.</span></h2>
-    <div class="values-grid">
-      <div class="value-card">
-        <div class="value-icon">✍️</div>
-        <div class="value-title">Handwritten Always</div>
-        <div class="value-desc">Every note is written by hand. Not typed. Not printed. Real words, written for that specific kid.</div>
-      </div>
-      <div class="value-card">
-        <div class="value-icon">🎁</div>
-        <div class="value-title">Real Surprise</div>
-        <div class="value-desc">We never tell kids what's inside. Every box is a genuine mystery. That's the whole point.</div>
-      </div>
-      <div class="value-card">
-        <div class="value-icon">🚲</div>
-        <div class="value-title">Free Local Delivery</div>
-        <div class="value-desc">Local boxes get delivered by bike for free. No hidden fees. No exceptions.</div>
-      </div>
-      <div class="value-card">
-        <div class="value-icon">💛</div>
-        <div class="value-title">Disabled Kids First</div>
-        <div class="value-desc">This company exists for one reason. Every decision we make comes back to that.</div>
-      </div>
-      <div class="value-card">
-        <div class="value-icon">📦</div>
-        <div class="value-title">Packed With Care</div>
-        <div class="value-desc">Every box is packed like it's going to a best friend. Because that's exactly how it should feel.</div>
-      </div>
-      <div class="value-card">
-        <div class="value-icon">⚡</div>
-        <div class="value-title">Fast & Real</div>
-        <div class="value-desc">We move fast because kids shouldn't have to wait for joy.</div>
-      </div>
+<section>
+  <div class="wrap split">
+    <div>
+      <div class="eyebrow">How it started</div>
+      <h2 style="margin-top:18px">One kid decided to do something.</h2>
+      <p class="body">Joy Box Company was started by a kid who knows what it feels like to be
+        different. Growing up with a disability, he saw how lonely it could get — and how much
+        a small, unexpected act of kindness could change everything.</p>
+      <p class="body">He wanted disabled kids to open their door and find a box full of surprise
+        toys, a handwritten note, and the feeling that someone out there sees them and thinks
+        they matter. So he built it. By himself. From scratch.</p>
+      <div class="quote serif">&ldquo;Every disabled kid deserves to feel surprised,
+        <span>seen</span>, and loved. That&rsquo;s all this is.&rdquo;</div>
+    </div>
+    <div class="facts">
+      <div class="ff"><div class="k">Founded</div><div class="v">2026, Mission Viejo, California</div></div>
+      <div class="ff"><div class="k">Founder</div><div class="v">Oliver Vo</div></div>
+      <div class="ff"><div class="k">Staff</div><div class="v">One kid, packing every box by hand</div></div>
+      <div class="ff"><div class="k">Payment</div><div class="v">Cash, arranged directly</div></div>
+      <div class="ff"><div class="k">Delivery</div><div class="v">By bike if you are local, by mail if you are not</div></div>
     </div>
   </div>
-</div>
+</section>
 
-<div class="cta">
-  <h2>Ready to send some joy?</h2>
-  <p>Order a box for a disabled kid in your life — or join the crew and help spread the word.</p>
-  <div class="cta-btns">
-    <a href="order.html" class="btn-white">🎁 Order a Box</a>
-    <a href="join.html" class="btn-outline">🚲 Join the Crew</a>
+<section>
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2 style="margin-top:18px">Every box is packed by hand.</h2>
+    <p class="body">There is no warehouse. No factory. No robots. Every single Joy Box is packed
+      by hand — toys picked one by one, a handwritten note written personally for the kid
+      receiving it.</p>
+    <p class="body">Local boxes get delivered by bike, for free. Boxes that ship anywhere else go
+      out by mail. No giant corporation. Just one kid who cares.</p>
   </div>
-</div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">The mission</div>
+    <h2 style="margin-top:18px">Joy is not a luxury.</h2>
+    <p class="body">Disabled kids already deal with enough. Doctor appointments, therapy, people
+      staring, feeling left out. A Joy Box does not fix any of that.</p>
+    <p class="body">But it does one thing: it shows up at their door and says
+      <em>someone is thinking about you</em>. That matters more than it sounds like it should.</p>
+    <a href="order.html" class="btn" style="margin-top:30px">Send a box</a>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  <div class="fgrid">
+    <div class="fcol"><h4>Joy Box</h4>
+      <a href="index.html">Home</a><a href="order.html">Order a box</a><a href="about.html">About</a></div>
+    <div class="fcol"><h4>More</h4>
+      <a href="press.html">Press</a><a href="join.html">Join</a><a href="index.html#film">Film</a></div>
+    <div class="fcol"><h4>Contact</h4>
+      <a href="mailto:truongnvo@gmail.com">truongnvo@gmail.com</a></div>
+  </div>
+  <div>Joy Box Company &middot; Mission Viejo, California &middot; Est. 2026</div>
+</div></footer>
 
 </body>
 </html>

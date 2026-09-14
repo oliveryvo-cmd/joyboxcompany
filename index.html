@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Joy Box Company — Buy something good. Send joy to a disabled kid.</title>
 <style>
@@ -119,6 +120,31 @@
   .mark img{display:block}
   .mark span{display:inline}
   body{padding-bottom:96px}
+
+  /* order form on the homepage */
+  label{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--dim);margin:20px 0 8px}
+  input,textarea{width:100%;background:#0d0d0f;border:1px solid var(--line);color:var(--paper);
+    padding:13px 15px;border-radius:10px;font-size:15px;font-family:inherit}
+  input:focus,textarea:focus{outline:0;border-color:var(--dim)}
+  input::placeholder,textarea::placeholder{color:#5c5a56}
+  textarea{min-height:96px;resize:vertical}
+  .row{display:flex;gap:10px}
+  .hint{font-size:12px;color:var(--dim);margin-top:6px}
+  .btn.wide{width:100%;padding:16px;border:1px solid var(--paper)}
+  .picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:18px 0 4px}
+  .box-opt{border:1px solid var(--line);border-radius:14px;padding:20px 14px;background:var(--card);
+    cursor:pointer;text-align:center;transition:.16s}
+  .box-opt:hover{border-color:#3a3a3f;transform:translateY(-2px)}
+  .box-opt.selected{border-color:var(--jade);background:#0f1512}
+  .box-opt-icon{font-size:28px;line-height:1}
+  .box-opt-name{font-size:14px;font-weight:600;margin-top:10px}
+  .box-opt-price{font-size:24px;font-weight:600;letter-spacing:-.03em;margin-top:3px}
+  .box-opt.selected .box-opt-price{color:var(--jade)}
+  .success{display:none;border:1px solid var(--jade);background:#0f1512;border-radius:14px;
+    padding:26px;margin-top:28px}
+  .success p{color:#cfcbc3;font-size:15px;margin-top:8px}
+  .success .mail{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);color:var(--jade)}
 </style>
 <link rel="icon" type="image/svg+xml" href="logo-icon.svg">
 
@@ -129,20 +155,20 @@
       <a href="#how">How it works</a>
       <a href="#boxes">Boxes</a>
       <a href="#film">Film</a>
-      <a href="order.html" class="btn">Order a box</a>
+      <a href="#order" class="btn">Order a box</a>
     </div>
   </div>
 </nav>
 
 <header>
-  <div class="wrap">
+<div class="wrap">
     <div class="eyebrow">Mission Viejo, California &nbsp;·&nbsp; Est. 2026</div>
     <h1 style="margin-top:28px">Buy something good.<br>Send joy to a kid<br>who needs it.</h1>
     <p class="lead">Joy Box Company makes mystery boxes worth owning. Part of every
       order funds a Joy Box — toys, games, and a handwritten note — delivered to a
       disabled kid. Both boxes are packed by hand.</p>
     <div class="cta">
-      <a href="order.html" class="btn">Order a box</a>
+      <a href="#order" class="btn">Order a box</a>
       <a href="#how" class="btn ghost">See how it works</a>
     </div>
     <div class="hero-note">
@@ -180,18 +206,11 @@
       <h2>The honest numbers.</h2>
     </div>
     <div class="impact">
-      <div class="stat live"><div class="v">0</div><div class="k">Joy Boxes delivered</div></div>
-      <div class="stat"><div class="v">120</div><div class="k">Visitors this month</div></div>
-      <div class="stat"><div class="v">7</div><div class="k">Countries reached</div></div>
-      <div class="stat"><div class="v">4</div><div class="k">Box tiers available</div></div>
+      <div class="stat live"><div class="v" id="s-orders">—</div><div class="k">Orders placed</div></div>
+      <div class="stat"><div class="v" id="s-delivered">—</div><div class="k">Boxes delivered</div></div>
+      <div class="stat"><div class="v" id="s-states">—</div><div class="k">States reached</div></div>
+      <div class="stat"><div class="v">4</div><div class="k">Box tiers</div></div>
     </div>
-    <div class="honest">
-      <strong>Zero delivered so far, and we're not hiding it.</strong> Joy Box Company
-      launched recently and no orders have shipped yet — so no Joy Boxes have gone out yet
-      either. This counter goes up when a real box reaches a real kid, and not before.
-      The first one is the one that matters.
-    </div>
-  </div>
 </section>
 
 <section id="boxes">
@@ -251,6 +270,69 @@
         <div class="ff"><div class="k">Screening</div><div class="v">A community theatre first. Then wherever it can go.</div></div>
       </div>
     </div>
+  </div>
+</section>
+
+
+<section id="order">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Order</div>
+      <h2>Send one now.</h2>
+      <p class="lead">Pick a box, tell us about the kid, and it gets packed by hand.
+        Payment is cash &mdash; Oliver will contact you to arrange it.</p>
+    </div>
+
+    <form onsubmit="return false" style="max-width:620px">
+      <div class="eyebrow">Choose a box</div>
+      <div class="picker">
+        <div class="box-opt" onclick="selectBox(this,'Smile','$1')">
+          <div class="box-opt-icon">&#128578;</div><div class="box-opt-name">Smile</div>
+          <div class="box-opt-price">$1</div></div>
+        <div class="box-opt" onclick="selectBox(this,'Giggle','$5')">
+          <div class="box-opt-icon">&#128516;</div><div class="box-opt-name">Giggle</div>
+          <div class="box-opt-price">$5</div></div>
+        <div class="box-opt" onclick="selectBox(this,'Sunshine','$10')">
+          <div class="box-opt-icon">&#9728;&#65039;</div><div class="box-opt-name">Sunshine</div>
+          <div class="box-opt-price">$10</div></div>
+        <div class="box-opt" onclick="selectBox(this,'Rainbow','$20')">
+          <div class="box-opt-icon">&#127752;</div><div class="box-opt-name">Rainbow</div>
+          <div class="box-opt-price">$20</div></div>
+      </div>
+
+      <label for="sender-name">Your name</label>
+      <input type="text" id="sender-name" placeholder="Your name" autocomplete="name">
+
+      <label for="sender-email">Your email</label>
+      <input type="email" id="sender-email" placeholder="you@email.com" autocomplete="email">
+
+      <label for="kid-name">Kid&rsquo;s name</label>
+      <input type="text" id="kid-name" placeholder="Who is this box for?">
+
+      <label for="kid-age">Kid&rsquo;s age</label>
+      <input type="number" id="kid-age" placeholder="How old are they?" min="1" max="18">
+
+      <label for="street">Delivery address</label>
+      <input type="text" id="street" placeholder="Street address" autocomplete="address-line1">
+      <div class="row" style="margin-top:10px">
+        <input type="text" id="city" placeholder="City" autocomplete="address-level2" style="flex:2">
+        <input type="text" id="state" placeholder="State" maxlength="20" autocomplete="address-level1" style="flex:1">
+        <input type="text" id="zip" placeholder="ZIP" maxlength="10" inputmode="numeric" autocomplete="postal-code" style="flex:1">
+      </div>
+      <div class="hint">We need all four or the box cannot be mailed.</div>
+
+      <label for="notes">Anything we should know about the kid?</label>
+      <textarea id="notes" placeholder="Favourite colours, interests, allergies &mdash; anything. Optional, but it makes the box better."></textarea>
+
+      <button class="btn wide" style="margin-top:28px" onclick="submitOrder()">Place order</button>
+
+      <div class="success" id="success">
+        <h3>Order received</h3>
+        <p>Oliver will reach out to arrange <strong>cash payment</strong> and delivery.
+           A confirmation is on its way to <span id="confirm-email"></span>.</p>
+        <div class="mail">truongnvo@gmail.com</div>
+      </div>
+    </form>
   </div>
 </section>
 
@@ -431,3 +513,51 @@ setInterval(async()=>{ if(!open) return; try{
     box.scrollTop=box.scrollHeight; seen=m.length; }
 }catch(e){} },4000);
 </script>
+
+<script>
+/* The numbers above are read live from the orders table, so they can
+   never drift out of date or overstate what has actually happened.
+   Duplicate submissions are collapsed the same way we count them by
+   hand: same kid, same buyer, same box counts once. */
+(async () => {
+  const SB = 'https://qbzpyhsbrjagyqsruzcb.supabase.co';
+  const SK = 'sb_publishable_fD1zz60o4p8oEDmWDKJeNg_wd-IAhbs';
+  try {
+    const r = await fetch(SB + '/rest/v1/orders?select=kid_name,sender_email,box,status,address',
+      { headers: { apikey: SK, Authorization: 'Bearer ' + SK } });
+    if (!r.ok) return;
+    const rows = await r.json();
+
+    const seen = new Set(), uniq = [];
+    for (const o of rows) {
+      const key = (o.kid_name||'').trim().toLowerCase() + '|' +
+                  (o.sender_email||'').trim().toLowerCase() + '|' + (o.box||'');
+      if (seen.has(key)) continue;
+      seen.add(key); uniq.push(o);
+    }
+
+    const delivered = uniq.filter(o => o.status === 'delivered').length;
+    const states = new Set();
+    for (const o of uniq) {
+      // spelled-out names and abbreviations must land on the SAME entry,
+      // or one state gets counted twice and the number is overstated
+      const NAMES = { 'texas':'TX', 'california':'CA', 'maryland':'MD',
+                      'new hampshire':'NH', 'new york':'NY', 'florida':'FL' };
+      const addr = (o.address || '').toLowerCase();
+      let code = null;
+      for (const name in NAMES) { if (addr.includes(name)) { code = NAMES[name]; break; } }
+      if (!code) {
+        const m = (o.address||'').match(/\b(A[LKZR]|C[AOT]|D[EC]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|PA|RI|S[CD]|T[NX]|UT|V[AT]|W[AIVY])\b/);
+        if (m) code = m[1].toUpperCase();
+      }
+      if (code) states.add(code);
+    }
+
+    const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    set('s-orders', uniq.length);
+    set('s-delivered', delivered);
+    set('s-states', states.size);
+  } catch (e) { /* leave the dashes rather than show a wrong number */ }
+})();
+</script>
+<script src="order.js"></script>

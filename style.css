@@ -1,0 +1,89 @@
+/* ==================================================================
+   Joy Box Company — one stylesheet for the whole site.
+   Every page links this, so the design can never drift apart again.
+   ================================================================== */
+:root{
+  --ink:#0a0a0b;        /* near-black, warm */
+  --paper:#f2efe9;      /* warm off-white */
+  --dim:#8d8a84;
+  --line:#232326;
+  --card:#111113;
+  --jade:#37c98d;       /* the single accent */
+  --sand:#c9a227;
+  --maxw:1120px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink);color:var(--paper);
+  font-family:"Helvetica Neue",Inter,system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;line-height:1.55;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+/* ---------- type ---------- */
+.eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);
+  display:flex;align-items:center;gap:12px}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+h1,h2,h3{font-weight:600;letter-spacing:-.02em;line-height:1.05}
+h1{font-size:clamp(40px,7vw,84px);letter-spacing:-.035em}
+h2{font-size:clamp(28px,4.2vw,48px)}
+h3{font-size:20px;letter-spacing:-.01em}
+.lead{font-size:clamp(16px,2vw,20px);color:#cfcbc3;max-width:58ch}
+.serif{font-family:"Hoefler Text",Baskerville,Georgia,serif;font-style:italic}
+
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:50;background:rgba(10,10,11,.82);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:32px;height:68px}
+.mark{font-weight:700;letter-spacing:-.03em;font-size:19px;margin-right:auto;
+  color:var(--paper);text-decoration:none}
+.mark i{color:var(--jade);font-style:normal}
+nav a{color:var(--dim);text-decoration:none;font-size:14px}
+nav a:hover{color:var(--paper)}
+.navlinks{display:flex;gap:26px;align-items:center}
+@media(max-width:820px){ .navlinks a:not(.btn){display:none} }
+
+/* ---------- buttons ---------- */
+.btn{display:inline-block;background:var(--paper);color:var(--ink);text-decoration:none;
+  padding:12px 22px;border-radius:100px;font-size:14px;font-weight:600;
+  transition:.18s;border:1px solid var(--paper);cursor:pointer;
+  font-family:inherit;text-align:center}
+.btn:hover{background:transparent;color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--paper);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--paper)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.wide{width:100%;padding:16px}
+
+/* ---------- sections ---------- */
+section{padding:clamp(56px,9vh,104px) 0;border-bottom:1px solid var(--line)}
+.head{margin-bottom:44px}
+.head h2{margin-top:16px}
+.head .lead{margin-top:14px}
+
+/* ---------- cards ---------- */
+.card{border:1px solid var(--line);border-radius:14px;padding:26px;background:var(--card)}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+
+/* ---------- forms ---------- */
+label{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--dim);margin:20px 0 8px}
+input,textarea,select{
+  width:100%;background:#0d0d0f;border:1px solid var(--line);color:var(--paper);
+  padding:13px 15px;border-radius:10px;font-size:15px;font-family:inherit}
+input:focus,textarea:focus,select:focus{outline:0;border-color:var(--dim)}
+input::placeholder,textarea::placeholder{color:#5c5a56}
+textarea{min-height:96px;resize:vertical}
+.row{display:flex;gap:10px}
+.hint{font-size:12px;color:var(--dim);margin-top:6px}
+
+/* ---------- footer ---------- */
+footer{padding:54px 0 70px;color:var(--dim);font-size:13.5px}
+.fgrid{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;
+  padding-bottom:32px;border-bottom:1px solid var(--line);margin-bottom:28px}
+footer a{color:var(--dim);text-decoration:none;display:block;margin-bottom:10px}
+footer a:hover{color:var(--paper)}
+.fcol h4{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--paper);
+  margin-bottom:16px;font-weight:600}
