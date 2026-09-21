@@ -528,13 +528,19 @@ setInterval(async()=>{ if(!open) return; try{
     if (!r.ok) return;
     const rows = await r.json();
 
-    const seen = new Set(), uniq = [];
+    // Collapse duplicates, but let a delivered row win over a 'new' one.
+    // The query returns rows in no guaranteed order, so keeping whichever
+    // arrived first made a delivered box look undelivered.
+    const byKey = new Map();
     for (const o of rows) {
       const key = (o.kid_name||'').trim().toLowerCase() + '|' +
                   (o.sender_email||'').trim().toLowerCase() + '|' + (o.box||'');
-      if (seen.has(key)) continue;
-      seen.add(key); uniq.push(o);
+      const kept = byKey.get(key);
+      if (!kept || (o.status === 'delivered' && kept.status !== 'delivered')) {
+        byKey.set(key, o);
+      }
     }
+    const uniq = [...byKey.values()];
 
     const delivered = uniq.filter(o => o.status === 'delivered').length;
     const states = new Set();
