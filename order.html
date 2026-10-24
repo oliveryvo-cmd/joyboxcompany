@@ -1,5 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
+<link rel="icon" type="image/png" href="favicon.png">
 <html lang="en">
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,30 +9,30 @@
 <style>
   header{padding:clamp(48px,9vh,88px) 0 36px}
   .picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:26px}
-  .box-opt{border:1px solid var(--line);border-radius:14px;padding:22px 16px;background:var(--card);
+  .box-opt{border:2px solid var(--line);border-radius:14px;padding:22px 16px;background:#ffffff;
     cursor:pointer;text-align:center;transition:.16s}
   .box-opt:hover{border-color:#3a3a3f;transform:translateY(-2px)}
-  .box-opt.selected{border-color:var(--jade);background:#0f1512}
+  .box-opt.selected{border-color:var(--pink);background:#ffeaf2;box-shadow:0 0 18px rgba(255,0,128,.35)}
   .box-opt-icon{font-size:30px;line-height:1}
-  .box-opt-name{font-size:15px;font-weight:600;margin-top:12px}
-  .box-opt-price{font-size:26px;font-weight:600;letter-spacing:-.03em;margin-top:4px}
-  .box-opt.selected .box-opt-price{color:var(--jade)}
+  .box-opt-name{font-family:'Fredoka One',cursive;font-size:18px;margin-top:12px}
+  .box-opt-size{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+  .box-opt.selected .box-opt-size{color:var(--jade)}
   form{max-width:620px}
   .note{font-size:13px;color:var(--dim);margin-top:14px;text-align:center}
-  .success{display:none;border:1px solid var(--jade);background:#0f1512;border-radius:14px;
+  .success{display:none;border:2px solid var(--green);background:#eafaf1;border-radius:20px;
     padding:28px;margin-top:30px}
   .success h2{font-size:24px;margin-bottom:10px}
-  .success p{color:#cfcbc3;font-size:15px}
+  .success p{color:#2d4463;font-size:15px}
   .success .mail{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);
     font-size:15px;color:var(--jade)}
-  .promise{border-left:2px solid var(--jade);background:#0f1512;padding:20px 22px;
-    margin-top:34px;font-size:14.5px;color:#cfcbc3;max-width:620px}
+  .promise{border-left:4px solid var(--green);background:#eafaf1;padding:20px 22px;
+    margin-top:34px;font-size:14.5px;color:#2d4463;max-width:620px}
 </style>
 </head>
 <body>
 
 <nav><div class="wrap">
-  <a href="index.html" class="mark">Joy Box<i>.</i></a>
+  <a href="index.html" class="mark"><img src="logo-nav.png" alt="" height="40">Joy Box<i>.</i></a>
   <div class="navlinks">
     <a href="index.html#how">How it works</a>
     <a href="index.html#boxes">Boxes</a>
@@ -54,18 +55,14 @@
 
       <div class="eyebrow">Choose a box</div>
       <div class="picker">
-        <div class="box-opt" onclick="selectBox(this,'Smile','$1')">
-          <div class="box-opt-icon">🙂</div><div class="box-opt-name">Smile</div>
-          <div class="box-opt-price">$1</div></div>
-        <div class="box-opt" onclick="selectBox(this,'Giggle','$5')">
-          <div class="box-opt-icon">😄</div><div class="box-opt-name">Giggle</div>
-          <div class="box-opt-price">$5</div></div>
-        <div class="box-opt" onclick="selectBox(this,'Sunshine','$10')">
-          <div class="box-opt-icon">☀️</div><div class="box-opt-name">Sunshine</div>
-          <div class="box-opt-price">$10</div></div>
-        <div class="box-opt" onclick="selectBox(this,'Rainbow','$20')">
-          <div class="box-opt-icon">🌈</div><div class="box-opt-name">Rainbow</div>
-          <div class="box-opt-price">$20</div></div>
+        <div class="box-opt" onclick="selectBox(this,'Smile')">
+          <div class="box-opt-icon">🙂</div><div class="box-opt-name">Smile</div><div class="box-opt-size">Small</div></div>
+        <div class="box-opt" onclick="selectBox(this,'Giggle')">
+          <div class="box-opt-icon">😄</div><div class="box-opt-name">Giggle</div><div class="box-opt-size">Medium</div></div>
+        <div class="box-opt" onclick="selectBox(this,'Sunshine')">
+          <div class="box-opt-icon">☀️</div><div class="box-opt-name">Sunshine</div><div class="box-opt-size">Large</div></div>
+        <div class="box-opt" onclick="selectBox(this,'Rainbow')">
+          <div class="box-opt-icon">🌈</div><div class="box-opt-name">Rainbow</div><div class="box-opt-size">Extra Large</div></div>
       </div>
 
       <label for="sender-name">Your name</label>

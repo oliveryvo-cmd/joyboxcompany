@@ -1,89 +1,124 @@
 /* ==================================================================
-   Joy Box Company — one stylesheet for the whole site.
-   Every page links this, so the design can never drift apart again.
+   Joy Box Company — the original look.
+   Fredoka One for anything loud, Nunito for anything you read, and
+   the neon palette on near-black. One stylesheet, every page.
    ================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+
 :root{
-  --ink:#0a0a0b;        /* near-black, warm */
-  --paper:#f2efe9;      /* warm off-white */
-  --dim:#8d8a84;
-  --line:#232326;
-  --card:#111113;
-  --jade:#37c98d;       /* the single accent */
-  --sand:#c9a227;
+  --ink:#cfe9fa;          /* page — light blue */
+  --card:#ffffff;         /* panels */
+  --paper:#13243a;        /* text, now dark because the page is light */
+  --dim:#5d7a93;
+  --line:#a9d2ea;
+
+  --pink:#ff0080;
+  --green:#00ff88;
+  --purple:#aa00ff;
+  --yellow:#ffff00;
+  --cyan:#00ccff;
+  --orange:#ff6600;
+
+  --jade:var(--green);    /* older markup still asks for these */
+  --sand:var(--yellow);
   --maxw:1120px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
   background:var(--ink);color:var(--paper);
-  font-family:"Helvetica Neue",Inter,system-ui,-apple-system,sans-serif;
-  -webkit-font-smoothing:antialiased;line-height:1.55;
+  font-family:'Nunito',system-ui,-apple-system,sans-serif;
+  font-weight:700;line-height:1.6;-webkit-font-smoothing:antialiased;
 }
-.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
 
 /* ---------- type ---------- */
-.eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);
-  display:flex;align-items:center;gap:12px}
-.eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
-h1,h2,h3{font-weight:600;letter-spacing:-.02em;line-height:1.05}
-h1{font-size:clamp(40px,7vw,84px);letter-spacing:-.035em}
-h2{font-size:clamp(28px,4.2vw,48px)}
-h3{font-size:20px;letter-spacing:-.01em}
-.lead{font-size:clamp(16px,2vw,20px);color:#cfcbc3;max-width:58ch}
-.serif{font-family:"Hoefler Text",Baskerville,Georgia,serif;font-style:italic}
+h1,h2,h3{
+  font-family:'Fredoka One',cursive;font-weight:400;line-height:1.05;letter-spacing:0;
+  background:linear-gradient(100deg,#e02047,#c2246b,#7b3bd0,#2a6fe0,#1f9be0,#e02047);
+  background-size:320% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  animation:swirl 7s linear infinite;
+}
+@keyframes swirl{ to{ background-position:320% 0 } }
+h1{font-size:clamp(42px,8vw,86px)}
+h2{font-size:clamp(30px,5vw,54px)}
+h3{font-size:24px}
+.lead{font-size:clamp(16px,2vw,20px);color:#2d4463;max-width:58ch;font-weight:700}
+.serif{font-family:'Fredoka One',cursive;font-style:normal}
+
+/* the rainbow wordmark the site always had */
+.rainbow{
+  background:linear-gradient(90deg,#ff0080,#ff6600,#ffff00,#00ff88,#00ccff,#aa00ff,#ff0080);
+  background-size:300% 100%;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  animation:rainbowShift 3s linear infinite;
+}
+@keyframes rainbowShift{ to{ background-position:300% 0 } }
+
+.eyebrow{font-family:'Fredoka One',cursive;font-size:13px;letter-spacing:.18em;
+  text-transform:uppercase;color:#d11f52;display:flex;align-items:center;gap:12px}
+.eyebrow::after{content:"";flex:1;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,var(--pink),transparent)}
 
 /* ---------- nav ---------- */
-nav{position:sticky;top:0;z-index:50;background:rgba(10,10,11,.82);
-  backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-nav .wrap{display:flex;align-items:center;gap:32px;height:68px}
-.mark{font-weight:700;letter-spacing:-.03em;font-size:19px;margin-right:auto;
-  color:var(--paper);text-decoration:none}
-.mark i{color:var(--jade);font-style:normal}
-nav a{color:var(--dim);text-decoration:none;font-size:14px}
+nav{position:sticky;top:0;z-index:50;background:rgba(223,242,253,.92);
+  backdrop-filter:blur(12px);border-bottom:2px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:28px;height:72px}
+.mark{font-family:'Fredoka One',cursive;font-size:24px;margin-right:auto;
+  text-decoration:none;color:#13243a;
+  display:flex;align-items:center;gap:10px;white-space:nowrap}
+.mark img{display:block;flex-shrink:0}
+.mark i{color:var(--pink);font-style:normal}
+nav a{color:#41618a;text-decoration:none;font-size:15px;font-weight:700}
 nav a:hover{color:var(--paper)}
-.navlinks{display:flex;gap:26px;align-items:center}
+.navlinks{display:flex;gap:24px;align-items:center}
 @media(max-width:820px){ .navlinks a:not(.btn){display:none} }
 
 /* ---------- buttons ---------- */
-.btn{display:inline-block;background:var(--paper);color:var(--ink);text-decoration:none;
-  padding:12px 22px;border-radius:100px;font-size:14px;font-weight:600;
-  transition:.18s;border:1px solid var(--paper);cursor:pointer;
-  font-family:inherit;text-align:center}
-.btn:hover{background:transparent;color:var(--paper)}
-.btn.ghost{background:transparent;color:var(--paper);border-color:var(--line)}
-.btn.ghost:hover{border-color:var(--paper)}
-.btn:disabled{opacity:.45;cursor:default}
-.btn.wide{width:100%;padding:16px}
+.btn{display:inline-block;border:0;cursor:pointer;text-decoration:none;text-align:center;
+  font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;letter-spacing:.04em;
+  padding:15px 30px;border-radius:100px;color:#fff;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  box-shadow:0 0 22px rgba(255,0,128,.42);transition:transform .14s, box-shadow .14s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(255,0,128,.6)}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:#fff;border:2px solid var(--line);box-shadow:none;color:#13243a}
+.btn.ghost:hover{border-color:var(--pink)}
+.btn:disabled{opacity:.45;cursor:default;box-shadow:none}
+.btn.wide{width:100%;padding:17px}
 
 /* ---------- sections ---------- */
-section{padding:clamp(56px,9vh,104px) 0;border-bottom:1px solid var(--line)}
-.head{margin-bottom:44px}
-.head h2{margin-top:16px}
+section{padding:clamp(54px,9vh,100px) 0;border-bottom:2px solid var(--line)}
+.head{margin-bottom:42px}
+.head h2{margin-top:14px}
 .head .lead{margin-top:14px}
 
 /* ---------- cards ---------- */
-.card{border:1px solid var(--line);border-radius:14px;padding:26px;background:var(--card)}
+.card{border:2px solid var(--line);border-radius:22px;padding:26px;background:var(--card);
+  box-shadow:0 6px 20px rgba(28,78,128,.10)}
 .grid{display:grid;gap:18px}
 .g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
 .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 
 /* ---------- forms ---------- */
-label{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--dim);margin:20px 0 8px}
+label{display:block;font-family:'Fredoka One',cursive;font-size:13px;letter-spacing:.08em;
+  text-transform:uppercase;color:#1c56b8;margin:22px 0 8px}
 input,textarea,select{
-  width:100%;background:#0d0d0f;border:1px solid var(--line);color:var(--paper);
-  padding:13px 15px;border-radius:10px;font-size:15px;font-family:inherit}
-input:focus,textarea:focus,select:focus{outline:0;border-color:var(--dim)}
-input::placeholder,textarea::placeholder{color:#5c5a56}
-textarea{min-height:96px;resize:vertical}
+  width:100%;background:#fff;border:2px solid var(--line);color:#13243a;
+  padding:14px 16px;border-radius:14px;font-size:16px;font-family:'Nunito',sans-serif;font-weight:700}
+input:focus,textarea:focus,select:focus{outline:0;border-color:var(--pink)}
+input::placeholder,textarea::placeholder{color:#8aa6c0;font-weight:700}
+textarea{min-height:100px;resize:vertical}
 .row{display:flex;gap:10px}
-.hint{font-size:12px;color:var(--dim);margin-top:6px}
+.hint{font-size:13px;color:#43607d;margin-top:7px}
 
 /* ---------- footer ---------- */
-footer{padding:54px 0 70px;color:var(--dim);font-size:13.5px}
+footer{padding:50px 0 70px;color:#3c5a76;font-size:14px}
 .fgrid{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;
-  padding-bottom:32px;border-bottom:1px solid var(--line);margin-bottom:28px}
-footer a{color:var(--dim);text-decoration:none;display:block;margin-bottom:10px}
-footer a:hover{color:var(--paper)}
-.fcol h4{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--paper);
-  margin-bottom:16px;font-weight:600}
+  padding-bottom:30px;border-bottom:2px solid var(--line);margin-bottom:26px}
+footer a{color:#3c5a76;text-decoration:none;display:block;margin-bottom:10px}
+footer a:hover{color:var(--pink)}
+.fcol h4{font-family:'Fredoka One',cursive;font-size:14px;letter-spacing:.06em;
+  text-transform:uppercase;color:#13243a;margin-bottom:14px}

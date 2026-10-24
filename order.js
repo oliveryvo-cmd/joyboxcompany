@@ -6,10 +6,10 @@ let submitted = false;   // one order per page load, no matter what
 
 let selectedBox = '';
 
-function selectBox(el, name, price) {
+function selectBox(el, name) {
   document.querySelectorAll('.box-opt').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
-  selectedBox = name + ' ' + price;
+  selectedBox = name;
 }
 
 async function submitOrder() {
