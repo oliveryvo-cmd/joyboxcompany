@@ -1,4 +1,13 @@
 <meta charset="utf-8">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PFH256DJ87"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PFH256DJ87');
+</script>
+
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Joy Box Company — Buy something good. Send joy to a disabled kid.</title>
 <link rel="stylesheet" href="style.css">
@@ -325,6 +334,8 @@
       </div>
     </div>
     © 2026 Joy Box Company. Every purchase sends a Joy Box to a disabled kid.
+    <div style="margin-top:10px;font-size:12.5px"><b id="visit-count">—</b> visits since 25 November 2026</div>
+    <div style="margin-top:8px;font-size:11.5px;opacity:.85">We count page visits with Google Analytics to see whether people are finding us. We never sell or share anything you send us, and the details you give when you order are only used to pack and deliver the box.</div>
   </div>
 </footer>
 
@@ -510,3 +521,4 @@ setInterval(async()=>{ if(!open) return; try{
 })();
 </script>
 <script src="order.js"></script>
+<script src="visits.js"></script>
